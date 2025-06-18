@@ -10,23 +10,23 @@
         },
         {
           "name": "SDE interview",
-          "prompt": "I am in amazon interview for SDE positions, ",
-          "text_input": "I am in amazon interview for SDE positions, "
+          "prompt": "I am in amazon interview for SDE positions for next 3 hours, ",
+          "text_input": "I am in amazon interview for SDE positions for next 3 hours, "
         },
         {
           "name": "DE interview",
-          "prompt": "I am in amazon interview for Data engineering positions, ",
-          "text_input": "I am in amazon interview for Data engineering positions, "
+          "prompt": "I am in amazon interview for Data engineering positions for next 3 hours, ",
+          "text_input": "I am in amazon interview for Data engineering positions for next 3 hours, "
         },
         {
           "name": "Coding",
-          "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well",
-          "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well"
+          "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours",
+          "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours"
         },
         {
           "name": "System Design",
-          "prompt": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality\u2028",
-          "text_input": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality\u2028"
+          "prompt": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality for next 3 hours\u2028",
+          "text_input": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality for next 3 hours\u2028"
         },
         {
           "name": "Whats ur name?",
@@ -34,8 +34,8 @@
           "text_input": "Whats your name?"
         },
         {
-          "name": "Into",
-          "prompt": "Givem intro for this interview as per this JD and attached resume",
+          "name": "Intro",
+          "prompt": "Give me intro for this interview as per this JD and attached resume",
           "text_input": "Givem intro for this interview as per this JD and attached resume"
         },
         {
