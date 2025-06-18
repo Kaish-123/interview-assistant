@@ -2,5 +2,8 @@
 cd /Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac
 git add .
 git commit -m "$1"
-git push --force origin main
+
+branch="fix-push-$(date +%s)"
+git checkout -b "$branch"
+git push origin "$branch"
 
