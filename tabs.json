@@ -29,8 +29,8 @@
           "text_input": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality for next 3 hours\u2028"
         },
         {
-          "name": "Whats ur name?",
-          "prompt": "Whats urname?",
+          "name": "Whats your name?",
+          "prompt": "Whats your name?",
           "text_input": "Whats your name?"
         },
         {

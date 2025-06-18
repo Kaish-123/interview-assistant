@@ -414,6 +414,8 @@ class ChatGPTAssistant:
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.geometry("572x967+-573+25")
+        
         self.toggle_lock = threading.Lock() 
         self.is_processing_audio = False 
         self.assistant = ChatGPTAssistant()  
@@ -430,6 +432,8 @@ class Application(tk.Tk):
         self.current_tab = -1
         self.current_subtab = -1
         self.always_on_top = False 
+        self.bind("<F1>", lambda e: print("Window geometry:", self.geometry()))
+
         
         # Load chat tabs after the UI is set up
         self.load_tabs()
