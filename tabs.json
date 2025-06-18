@@ -1,0 +1,49 @@
+{
+  "tabs": [
+    {
+      "name": "Amazon",
+      "subTabs": [
+        {
+          "name": "JD Resume Behavioural coding",
+          "prompt": "\nI am in an interview answer me everything as per this resume consider your self as resume candidate and give me all relevant answer as per this resume and given Job description. For next 3 hours.\n\nIf there is any behavioural questions then answer in STAR pattern 21relevant to resume for next 3 hours.\n\n\nExplain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours..\n",
+          "text_input": "\nI am in an interview answer me everything as per this resume consider your self as resume candidate and give me all relevant answer as per this resume and given Job description. For next 3 hours.\n\nIf there is any behavioural questions then answer in STAR pattern 21relevant to resume for next 3 hours.\n\n\nExplain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours..\n"
+        },
+        {
+          "name": "SDE interview",
+          "prompt": "I am in amazon interview for SDE positions, ",
+          "text_input": "I am in amazon interview for SDE positions, "
+        },
+        {
+          "name": "DE interview",
+          "prompt": "I am in amazon interview for Data engineering positions, ",
+          "text_input": "I am in amazon interview for Data engineering positions, "
+        },
+        {
+          "name": "Coding",
+          "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well",
+          "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well"
+        },
+        {
+          "name": "System Design",
+          "prompt": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality\u2028",
+          "text_input": "\nAnswer this system design question create it using keyboard characters and ask the clarifying questions on system design and explain each component which u have created with its functionality\u2028"
+        },
+        {
+          "name": "Whats ur name?",
+          "prompt": "Whats urname?",
+          "text_input": "Whats your name?"
+        },
+        {
+          "name": "Into",
+          "prompt": "Givem intro for this interview as per this JD and attached resume",
+          "text_input": "Givem intro for this interview as per this JD and attached resume"
+        },
+        {
+          "name": "Recent Porject",
+          "prompt": "Explain me about the recent project as per this resume properly I am in interview",
+          "text_input": "Explain me about the recent project as per this resume properly I am in interview"
+        }
+      ]
+    }
+  ]
+}

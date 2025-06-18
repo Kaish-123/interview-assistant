@@ -1,0 +1,81 @@
+{
+  "tabs": [
+    {
+      "name": "kkkk",
+      "subTabs": [
+        {
+          "name": "kk1",
+          "prompt": "kk1"
+        }
+      ]
+    },
+    {
+      "name": "newtest",
+      "subTabs": []
+    },
+    {
+      "name": "Amazon",
+      "subTabs": [
+        {
+          "name": "amazon 1",
+          "prompt": "az1"
+        },
+        {
+          "name": "\nI am in an interview answer me everything as per this resume consider your self as resume candidate and give me all relevant answer as per this resume and given Job description. For next 3 hours.\n\nIf there is any behavioural questions then answer in STAR pattern 21relevant to resume for next 3 hours.\n",
+          "prompt": "\nI am in an interview answer me everything as per this resume consider your self as resume candidate and give me all relevant answer as per this resume and given Job description. For next 3 hours.\n\nIf there is any behavioural questions then answer in STAR pattern 21relevant to resume for next 3 hours.\n"
+        }
+      ]
+    },
+    {
+      "name": "Amazon",
+      "subTabs": [
+        {
+          "name": "Resume + behavioural + coding",
+          "prompt": ""
+        },
+        {
+          "name": "\nI am in an interview answer me everything as per this resume consider your self as resume candidate and give me all relevant answer as per this resume and given Job description. For next 3 hours.\n\nIf there is any behavioural questions then answer in STAR pattern 21relevant to resume for next 3 hours.\n\n\nExplain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n",
+          "prompt": ""
+        }
+      ]
+    },
+    {
+      "name": "az",
+      "subTabs": []
+    },
+    {
+      "name": "az",
+      "subTabs": []
+    },
+    {
+      "name": "az",
+      "subTabs": [
+        {
+          "name": "hi",
+          "prompt": "hi",
+          "text_input": "hiii"
+        }
+      ]
+    },
+    {
+      "name": "AZ",
+      "subTabs": [
+        {
+          "name": "python",
+          "prompt": "pp",
+          "text_input": "pp"
+        }
+      ]
+    },
+    {
+      "name": "walmart",
+      "subTabs": [
+        {
+          "name": "resume",
+          "prompt": "wl",
+          "text_input": "wlwlwlwl"
+        }
+      ]
+    }
+  ]
+}
