@@ -26,6 +26,11 @@ import json
 import os
 import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
+from dotenv import load_dotenv
+import os
+
+
+
 # ... other imports remain the same ...
 
     
@@ -187,7 +192,8 @@ def on_activate():
 
 
 # Configuration
-API_KEY = "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"
+load_dotenv()
+API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=API_KEY)
 SAMPLE_RATE = 16000
 CHANNELS = 1
@@ -414,7 +420,7 @@ class ChatGPTAssistant:
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.geometry("572x967+-573+25")
+        self.geometry("643x967+-644+25")
         
         self.toggle_lock = threading.Lock() 
         self.is_processing_audio = False 
