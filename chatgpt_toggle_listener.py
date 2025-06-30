@@ -351,7 +351,7 @@ class ChatGPTAssistant:
                     last_update = time.time()
 
                     text_widget.config(state=tk.NORMAL)
-                    text_widget.insert(tk.END, "Answer: ")
+                    text_widget.insert(tk.END, "ANSWER: ")
                     text_widget.config(state=tk.DISABLED)
                     text_widget.see(tk.END)
 
@@ -396,9 +396,9 @@ class ChatGPTAssistant:
         text_widget.insert(tk.END, new_text_part)
 
         # Auto-scroll if the user is already at the bottom
-        bottom_visible = text_widget.yview()[1] >= 0.99
-        if bottom_visible:
-            text_widget.see(tk.END)
+        # bottom_visible = text_widget.yview()[1] >= 0.99
+        # if bottom_visible:
+        #     text_widget.see(tk.END)
 
         # Disable the widget to make it read-only again
         text_widget.config(state=tk.DISABLED)
@@ -497,9 +497,9 @@ class Application(tk.Tk):
                     text = "\n".join(c["text"] if c["type"] == "text" else "[Image]" for c in content)
                 else:
                     text = content
-                self.response_box.insert(tk.END, f"\n\nQuestion: {text.strip()}\n")
+                self.response_box.insert(tk.END, f"\n\n----------------------------------------------\nQUESTION: {text.strip()}\n")
             elif msg["role"] == "assistant":
-                self.response_box.insert(tk.END, f"Answer: {msg['content'].strip()}\n")
+                self.response_box.insert(tk.END, f"ANSWER: {msg['content'].strip()}\n")
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
@@ -890,7 +890,7 @@ class Application(tk.Tk):
 
         # ✅ Insert question only once
         self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(tk.END, f"\n\nQuestion: {flat_text.strip()}\n")
+        self.response_box.insert(tk.END, f"\n\n----------------------------------------------\nQUESTION: {flat_text.strip()}\n")
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
@@ -941,10 +941,14 @@ class Application(tk.Tk):
             self.status.config(text=message)
 
     def toggle_recording(self):
-        with self.toggle_lock:  # Ensure only one action is triggered at a time
+        with self.toggle_lock:
             if self.is_processing_audio:
-                print("⏳ Already processing. Please wait.")
-                return
+                # Instead of blocking, we now force a reset if the user explicitly tries to record
+                print("⚡️ Interrupting ongoing processing for new recording.")
+                self.stop_output()                # Trigger stop
+                self.is_processing_audio = False  # Reset
+                self.assistant.streaming = False
+                self.assistant.current_response = ""
 
             if not self.assistant.recorder.is_recording:
                 self.assistant.streaming = False
@@ -1170,8 +1174,16 @@ if __name__ == "__main__":
                 app.toggle_recording()
 
         def on_activate_stop():
-            print("🧠 Global hotkey ~: Stop generating answer")
+            """Stop GPT generation and reset any processing flags."""
+            print("🧠 Global hotkey ~: Force stop and reset state.")
             app.stop_output()
+            app.is_processing_audio = False            # ✅ Reset processing state
+            app.assistant.streaming = False            # ✅ Ensure streaming is stopped
+            app.assistant.current_response = ""        # ✅ Clear any lingering response
+            app.record_btn.config(text="🎤 Listen", state=tk.NORMAL)  # ✅ Reset button state
+            app.stop_btn.config(state=tk.DISABLED)     # ✅ Ensure stop button is disabled
+            app.status.config(text="✅ Stopped and Reset. Ready for next input.")
+
 
         def on_activate_screenshot():
             print("📸 Global hotkey !: Capturing full monitor under mouse and attaching...")
