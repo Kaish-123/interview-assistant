@@ -9,10 +9,18 @@ git rm --cached .env 2>/dev/null
 echo ".env" >> .gitignore
 git add .gitignore
 
-# Add and commit
+# Add all changes
 git add .
-git commit -m "$1"
 
-# Push to main
+# Determine commit message
+if [ -z "$1" ]; then
+  TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+  COMMIT_MSG="FIX_$TIMESTAMP"
+else
+  COMMIT_MSG="$1"
+fi
+
+# Commit and push
+git commit -m "$COMMIT_MSG"
 git push origin main
 

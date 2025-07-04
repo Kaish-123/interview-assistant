@@ -40,8 +40,8 @@
         },
         {
           "name": "Recent Porject",
-          "prompt": "Explain me about the recent project as per this resume properly I am in interview",
-          "text_input": "Explain me about the recent project as per this resume properly I am in interview"
+          "prompt": "Explain me about the recent project, requrement and its business goal as per this resume properly I am in interview",
+          "text_input": "Explain me about the recent project, requrement and its business goal as per this resume properly I am in interview"
         },
         {
           "name": "company name",
@@ -50,8 +50,8 @@
         },
         {
           "name": "Dry run",
-          "prompt": "Do the dry run of above code with given example step by step as per the code going through line by line",
-          "text_input": "Do the dry run of above code with given example step by step as per the code going through line by line"
+          "prompt": "Do the dry run of above code with given example step by step as per the code going through line by line give explanation and output dry run",
+          "text_input": "Do the dry run of above code with given example step by step as per the code going through line by line give explanation and output dry run"
         },
         {
           "name": "write Sql query and explain me propely line by line",
@@ -62,6 +62,11 @@
           "name": "Java coding",
           "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in java with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours..",
           "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in java with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours.."
+        },
+        {
+          "name": "complexity",
+          "prompt": "Tell me the time and space complexity of above code with explanation",
+          "text_input": "Tell me the time and space complexity of above code with explanation"
         }
       ]
     },
@@ -72,6 +77,11 @@
           "name": "Quck",
           "prompt": "I am in an assesment, answer me everything directly quickly for next 3 hours",
           "text_input": "I am in an assesment, answer me everything directly quickly for next 3 hours"
+        },
+        {
+          "name": "python coding",
+          "prompt": "Give me the python code for this, to pass all possible edge cases and to pass all test casess, for next 3 hours",
+          "text_input": "Give me the python code for this, to pass all possible edge cases and to pass all test casess, for next 3 hours"
         }
       ]
     }
