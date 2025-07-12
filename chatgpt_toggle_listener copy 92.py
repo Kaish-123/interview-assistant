@@ -28,6 +28,8 @@ import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 from dotenv import load_dotenv
 import os
+import requests
+from datetime import datetime, timedelta
 
 
 
@@ -201,6 +203,30 @@ DTYPE = 'int16'
 CHUNK = 1024
 BLACKHOLE_DEVICE = "BlackHole"
 
+
+import requests
+from datetime import datetime, timedelta
+
+def fetch_openai_usage(api_key):
+    try:
+        # OpenAI's usage API
+        headers = {"Authorization": f"Bearer {api_key}"}
+        
+        now = datetime.utcnow()
+        start = now.replace(day=1).date()
+        end = now.date()
+
+        url = f"https://api.openai.com/v1/dashboard/billing/usage?start_date={start}&end_date={end}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            return f"Error: {response.status_code}"
+
+        usage_data = response.json()
+        total_used = usage_data.get("total_usage", 0) / 100.0  # Convert cents to dollars
+        return f"${total_used:.2f} used this month"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
 class AudioRecorder:
     def __init__(self):
         self.frames = []
@@ -314,11 +340,7 @@ class ChatGPTAssistant:
     def load_resume(self, file_path):
         try:
             text = textract.process(file_path).decode('utf-8')
-            self.messages.append({
-                "role": "system",
-                "content": f"Use this resume content to contextualize answers (from file: {os.path.basename(file_path)}): {text}"
-            })
-
+            self.messages.append({"role": "system", "content": f"Use this resume content to contextualize answers: {text}"})
             return True, "📄 Resume uploaded and processed successfully."
         except Exception as e:
             return False, f"❌ Error processing resume: {str(e)}"
@@ -355,7 +377,7 @@ class ChatGPTAssistant:
                     last_update = time.time()
 
                     text_widget.config(state=tk.NORMAL)
-                    text_widget.insert(tk.END, "------------------\nANSWER: ")
+                    text_widget.insert(tk.END, "ANSWER: ")
                     text_widget.config(state=tk.DISABLED)
                     text_widget.see(tk.END)
 
@@ -447,6 +469,20 @@ class Application(tk.Tk):
         
         # Load chat tabs after the UI is set up
         self.load_tabs()
+        self.update_usage_periodically()
+
+    
+    
+    def update_usage_periodically(self):
+        def update_loop():
+            while True:
+                usage_text = fetch_openai_usage(API_KEY)
+                self.usage_label.config(text=f"💰 {usage_text}")
+                time.sleep(300)  # update every 5 minutes
+
+        threading.Thread(target=update_loop, daemon=True).start()
+
+    
     
     def load_tabs(self):
         self.tab_tree.delete(*self.tab_tree.get_children())
@@ -501,9 +537,9 @@ class Application(tk.Tk):
                     text = "\n".join(c["text"] if c["type"] == "text" else "[Image]" for c in content)
                 else:
                     text = content
-                self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {text.strip()}\n")
+                self.response_box.insert(tk.END, f"\n\n----------------------------------------------\nQUESTION: {text.strip()}\n")
             elif msg["role"] == "assistant":
-                self.response_box.insert(tk.END, f"------------------\nANSWER: {msg['content'].strip()}\n")
+                self.response_box.insert(tk.END, f"ANSWER: {msg['content'].strip()}\n")
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
@@ -570,6 +606,11 @@ class Application(tk.Tk):
         # Move existing UI to main_frame
         self.status = ttk.Label(self.main_frame, text="🔊 Ready", style='TLabel')
         self.status.pack(pady=5, anchor="w", padx=10)
+        
+        # Billing usage label (top right)
+        self.usage_label = ttk.Label(self.main_frame, text="💰 Loading usage...", anchor="e", style='TLabel')
+        self.usage_label.pack(pady=5, anchor="e", padx=10)
+
 
         text_frame = ttk.Frame(self.main_frame)
         text_frame.pack(fill="both", expand=True, padx=10)
@@ -768,37 +809,15 @@ class Application(tk.Tk):
         
     def handle_paste(self, event=None):
         try:
-            # Priority: if clipboard has text, treat it as plain text paste
-            if self.clipboard_get():
-                pasted_text = self.clipboard_get()
-
-                # User likely wants to overwrite → clear input and attachments
-                self.input_entry.delete(0, tk.END)
-                self.input_entry.insert(0, pasted_text)
-
-                # Ensure pending image attachment is cleared too
-                if hasattr(self, 'pending_attachments'):
-                    del self.pending_attachments
-
-                return "break"
-
-        except tk.TclError:
-            # clipboard_get() fails if clipboard doesn't contain text; fallback to image check
-            pass
-
-        try:
-            # No text → check for image
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
                 buffer = io.BytesIO()
                 image.save(buffer, format="PNG")
                 b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
+                # Store it temporarily for the next message
                 if not hasattr(self, 'pending_attachments'):
                     self.pending_attachments = []
-                else:
-                    self.pending_attachments.clear()
-
                 self.pending_attachments.append({
                     "type": "image_url",
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
@@ -806,18 +825,15 @@ class Application(tk.Tk):
 
                 print("📎 Image attachment ready")
                 self.status.config(text="📎 Image ready to send. Press Enter.")
-                self.input_entry.delete(0, tk.END)
                 self.input_entry.insert(tk.END, "📎 [Image attachment ready] ")
-
-                return "break"
-
+            else:
+                text = pyperclip.paste()
+                if text.strip():
+                    print("📋 Text pasted")
+                    self.input_entry.insert(tk.END, text.strip())
         except Exception as e:
             print(f"❌ Paste failed: {e}")
             self.status.config(text=f"❌ Paste error: {e}")
-
-        # If nothing handled → let native paste happen
-        return None
-
 
 
 
@@ -905,49 +921,38 @@ class Application(tk.Tk):
             return
 
         content = []
+        if question and not question.startswith("📎"):
+            content.append({"type": "text", "text": question})
 
         if hasattr(self, 'pending_attachments'):
-            current_input = question
-            if "📎" in current_input:
-                # 📎 present → respect attachment + include text if any
-                clean_text = current_input.replace("📎", "").strip()
-                if clean_text:
-                    content.append({"type": "text", "text": clean_text})
-                content.extend(self.pending_attachments)
-            else:
-                # 📎 removed → treat as pure text, ignore attachment
-                if current_input:
-                    content.append({"type": "text", "text": current_input})
+            content.extend(self.pending_attachments)
             del self.pending_attachments
-        else:
-            if question:
-                content.append({"type": "text", "text": question})
 
-        # Flatten for UI display
+        # Flatten for GPT and display
         flat_text = "\n".join(
             c["text"] if c["type"] == "text" else "[Image]" for c in content
         )
 
+        # ✅ Insert question only once
         self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
+        self.response_box.insert(tk.END, f"\n\n----------------------------------------------\nQUESTION: {flat_text.strip()}\n")
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
-        # Send to GPT: structured if image present, plain text if not
         if any(c["type"] == "image_url" for c in content):
             self.assistant.messages.append({
                 "role": "user",
-                "content": content
+                "content": content  # send as structured list when image is present
             })
         else:
             self.assistant.messages.append({
                 "role": "user",
-                "content": flat_text
+                "content": flat_text  # send as plain text when no image
             })
+
 
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-
 
 
             
@@ -1051,24 +1056,12 @@ class Application(tk.Tk):
 
 
     def start_new_chat(self):
-        # Save current session if not empty
+    # Save current session if not empty
         if any(m.get("role") == "user" for m in self.assistant.messages):
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-            
-            # Look for any resume attachment in system messages
-            resume_name = None
-            for msg in self.assistant.messages:
-                if msg["role"] == "system" and "Use this resume content to contextualize answers:" in msg["content"]:
-                    match = re.search(r'from file: (.+)', msg["content"])
-                    if match:
-                        resume_name = match.group(1).strip()
-                    break
-            
-            # If no file name found, fallback to default
-            session_title = f"{resume_name} - {timestamp}" if resume_name else timestamp
 
-            self.chat_manager.add_session(session_title, self.assistant.messages.copy())
-            self.chat_manager.save()
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            self.chat_manager.add_session(timestamp, self.assistant.messages.copy())
+            self.chat_manager.save()  # ✅ Ensure the file is written
             self.load_chat_tabs()
 
         # Start fresh session
@@ -1081,7 +1074,6 @@ class Application(tk.Tk):
         self.response_box.insert(tk.END, "🤖 New conversation started...")
         self.response_box.config(state=tk.DISABLED)
         self.status.config(text="🆕 New chat started")
-
 
 
 

@@ -768,37 +768,15 @@ class Application(tk.Tk):
         
     def handle_paste(self, event=None):
         try:
-            # Priority: if clipboard has text, treat it as plain text paste
-            if self.clipboard_get():
-                pasted_text = self.clipboard_get()
-
-                # User likely wants to overwrite → clear input and attachments
-                self.input_entry.delete(0, tk.END)
-                self.input_entry.insert(0, pasted_text)
-
-                # Ensure pending image attachment is cleared too
-                if hasattr(self, 'pending_attachments'):
-                    del self.pending_attachments
-
-                return "break"
-
-        except tk.TclError:
-            # clipboard_get() fails if clipboard doesn't contain text; fallback to image check
-            pass
-
-        try:
-            # No text → check for image
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
                 buffer = io.BytesIO()
                 image.save(buffer, format="PNG")
                 b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
+                # Store it temporarily for the next message
                 if not hasattr(self, 'pending_attachments'):
                     self.pending_attachments = []
-                else:
-                    self.pending_attachments.clear()
-
                 self.pending_attachments.append({
                     "type": "image_url",
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
@@ -806,18 +784,15 @@ class Application(tk.Tk):
 
                 print("📎 Image attachment ready")
                 self.status.config(text="📎 Image ready to send. Press Enter.")
-                self.input_entry.delete(0, tk.END)
                 self.input_entry.insert(tk.END, "📎 [Image attachment ready] ")
-
-                return "break"
-
+            else:
+                text = pyperclip.paste()
+                if text.strip():
+                    print("📋 Text pasted")
+                    self.input_entry.insert(tk.END, text.strip())
         except Exception as e:
             print(f"❌ Paste failed: {e}")
             self.status.config(text=f"❌ Paste error: {e}")
-
-        # If nothing handled → let native paste happen
-        return None
-
 
 
 
@@ -905,49 +880,38 @@ class Application(tk.Tk):
             return
 
         content = []
+        if question and not question.startswith("📎"):
+            content.append({"type": "text", "text": question})
 
         if hasattr(self, 'pending_attachments'):
-            current_input = question
-            if "📎" in current_input:
-                # 📎 present → respect attachment + include text if any
-                clean_text = current_input.replace("📎", "").strip()
-                if clean_text:
-                    content.append({"type": "text", "text": clean_text})
-                content.extend(self.pending_attachments)
-            else:
-                # 📎 removed → treat as pure text, ignore attachment
-                if current_input:
-                    content.append({"type": "text", "text": current_input})
+            content.extend(self.pending_attachments)
             del self.pending_attachments
-        else:
-            if question:
-                content.append({"type": "text", "text": question})
 
-        # Flatten for UI display
+        # Flatten for GPT and display
         flat_text = "\n".join(
             c["text"] if c["type"] == "text" else "[Image]" for c in content
         )
 
+        # ✅ Insert question only once
         self.response_box.config(state=tk.NORMAL)
         self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
-        # Send to GPT: structured if image present, plain text if not
         if any(c["type"] == "image_url" for c in content):
             self.assistant.messages.append({
                 "role": "user",
-                "content": content
+                "content": content  # send as structured list when image is present
             })
         else:
             self.assistant.messages.append({
                 "role": "user",
-                "content": flat_text
+                "content": flat_text  # send as plain text when no image
             })
+
 
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-
 
 
             

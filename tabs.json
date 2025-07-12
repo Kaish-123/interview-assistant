@@ -54,9 +54,9 @@
           "text_input": "Do the dry run of above code with given example step by step as per the code going through line by line give explanation and output dry run"
         },
         {
-          "name": "write Sql query and explain me propely line by line",
-          "prompt": "",
-          "text_input": ""
+          "name": "SQL Query",
+          "prompt": "write Sql query and explain me propely line by line",
+          "text_input": "write Sql query and explain me propely line by line"
         },
         {
           "name": "Java coding",
@@ -67,6 +67,11 @@
           "name": "complexity",
           "prompt": "Tell me the time and space complexity of above code with explanation",
           "text_input": "Tell me the time and space complexity of above code with explanation"
+        },
+        {
+          "name": "Behavioural",
+          "prompt": "I am in interview answer me as per my attched resume in previous chats to answer all behavioural question in STAR pattern based on my resume by explainig the clear context of situation alog with project and comany name for next 3 hours",
+          "text_input": "I am in interview answer me as per my attched resume in previous chats to answer all behavioural question in STAR pattern based on my resume by explainig the clear context of situation alog with project and comany name for next 3 hours"
         }
       ]
     },

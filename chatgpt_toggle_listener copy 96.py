@@ -768,26 +768,6 @@ class Application(tk.Tk):
         
     def handle_paste(self, event=None):
         try:
-            # Priority: if clipboard has text, treat it as plain text paste
-            if self.clipboard_get():
-                pasted_text = self.clipboard_get()
-
-                # User likely wants to overwrite → clear input and attachments
-                self.input_entry.delete(0, tk.END)
-                self.input_entry.insert(0, pasted_text)
-
-                # Ensure pending image attachment is cleared too
-                if hasattr(self, 'pending_attachments'):
-                    del self.pending_attachments
-
-                return "break"
-
-        except tk.TclError:
-            # clipboard_get() fails if clipboard doesn't contain text; fallback to image check
-            pass
-
-        try:
-            # No text → check for image
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
                 buffer = io.BytesIO()
@@ -796,9 +776,6 @@ class Application(tk.Tk):
 
                 if not hasattr(self, 'pending_attachments'):
                     self.pending_attachments = []
-                else:
-                    self.pending_attachments.clear()
-
                 self.pending_attachments.append({
                     "type": "image_url",
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
@@ -806,17 +783,16 @@ class Application(tk.Tk):
 
                 print("📎 Image attachment ready")
                 self.status.config(text="📎 Image ready to send. Press Enter.")
-                self.input_entry.delete(0, tk.END)
                 self.input_entry.insert(tk.END, "📎 [Image attachment ready] ")
 
-                return "break"
+                return "break"  # Prevent native paste for image case
+            else:
+                # Let native paste happen for text!
+                return None
 
         except Exception as e:
             print(f"❌ Paste failed: {e}")
             self.status.config(text=f"❌ Paste error: {e}")
-
-        # If nothing handled → let native paste happen
-        return None
 
 
 
