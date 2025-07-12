@@ -273,15 +273,6 @@ class ChatHistoryManager:
                     self.sessions = json.load(f)
             except:
                 self.sessions = []
-    def save_current_session(self, messages, title="AutoSave - Last Session"):
-        # Always store as first session (index 0)
-        if self.sessions and self.sessions[0].get("title") == "AutoSave - Last Session":
-            self.sessions[0]["messages"] = messages.copy()
-        else:
-            self.sessions.insert(0, {"title": title, "messages": messages.copy()})
-        self.save()
-
-
 
     def save(self):
         with open(self.file_path, "w") as f:
@@ -953,8 +944,7 @@ class Application(tk.Tk):
                 "role": "user",
                 "content": flat_text
             })
-            
-        self.chat_manager.save_current_session(self.assistant.messages)
+
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
 
@@ -1046,8 +1036,6 @@ class Application(tk.Tk):
             # Append flat question for GPT context
             self.assistant.messages.append({"role": "user", "content": flat_text})
             # Show updated history before streaming
-            self.chat_manager.save_current_session(self.assistant.messages)
-
             self.display_chat_history()
 
             self.status.config(text="💡 Generating answer...")
@@ -1066,21 +1054,18 @@ class Application(tk.Tk):
         # Save current session if not empty
         if any(m.get("role") == "user" for m in self.assistant.messages):
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-
+            
             # Look for any resume attachment in system messages
             resume_name = None
             for msg in self.assistant.messages:
-                if msg["role"] == "system" and "Use this resume content to contextualize answers" in msg["content"]:
-                    match = re.search(r'from file:\s*(.+?)\)', msg["content"])
+                if msg["role"] == "system" and "Use this resume content to contextualize answers:" in msg["content"]:
+                    match = re.search(r'from file: (.+)', msg["content"])
                     if match:
-                        resume_name = os.path.splitext(os.path.basename(match.group(1).strip()))[0]  # clean filename (no extension)
+                        resume_name = match.group(1).strip()
                     break
-
-            # Compose title using resume name if available
-            if resume_name:
-                session_title = f"{resume_name} - {timestamp}"
-            else:
-                session_title = timestamp
+            
+            # If no file name found, fallback to default
+            session_title = f"{resume_name} - {timestamp}" if resume_name else timestamp
 
             self.chat_manager.add_session(session_title, self.assistant.messages.copy())
             self.chat_manager.save()
