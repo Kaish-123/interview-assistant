@@ -1,5 +1,3 @@
-import sys
-import subprocess
 
 import sounddevice as sd
 import numpy as np
@@ -34,26 +32,6 @@ import os
 
 
 # ... other imports remain the same ...
-class UIPreferences:
-    FILE = "ui_prefs.json"
-
-    @staticmethod
-    def load():
-        try:
-            if os.path.exists(UIPreferences.FILE):
-                with open(UIPreferences.FILE, "r") as f:
-                    return json.load(f)
-        except Exception as e:
-            print("UI Prefs load error:", e)
-        return {}
-
-    @staticmethod
-    def save(data: dict):
-        try:
-            with open(UIPreferences.FILE, "w") as f:
-                json.dump(data, f, indent=2)
-        except Exception as e:
-            print("UI Prefs save error:", e)
 
     
 class PromptManager:
@@ -348,19 +326,14 @@ class ChatGPTAssistant:
     def load_resume(self, file_path):
         try:
             text = textract.process(file_path).decode('utf-8')
-            base = os.path.basename(file_path)
-
-            # keep your system context line the same, or change "resume"->"document" if you prefer
             self.messages.append({
                 "role": "system",
-                "content": f"Use this resume content to contextualize answers (from file: {base}): {text}"
+                "content": f"Use this resume content to contextualize answers (from file: {os.path.basename(file_path)}): {text}"
             })
 
-            # ✅ show the actual file name in the status message
-            return True, f"📄 {base} uploaded and processed successfully."
+            return True, "📄 Resume uploaded and processed successfully."
         except Exception as e:
-            return False, f"❌ Error processing document: {str(e)}"
-
+            return False, f"❌ Error processing resume: {str(e)}"
 
     def transcribe_audio(self, filename):
         try:
@@ -467,29 +440,20 @@ class ChatGPTAssistant:
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
-
-        # --- Load UI prefs first
-        self.ui_prefs = UIPreferences.load()
-
-        # Use saved geometry if present (falls back to your hardcoded one)
-        self.geometry(self.ui_prefs.get("geometry", "643x967+-644+25"))
-
-        self.toggle_lock = threading.Lock()
-        self._last_persisted_hash = None
-
-        self.is_processing_audio = False
-        self.assistant = ChatGPTAssistant(app=self)
+        self.geometry("643x967+-644+25")
+        
+        self.toggle_lock = threading.Lock() 
+        self.is_processing_audio = False 
+        self.assistant = ChatGPTAssistant(app=self)  
         self.prompt_manager = PromptManager()
         self.chat_manager = ChatHistoryManager()
+        
+        
 
-        # If user saved a preferred font size, use it before building widgets
-        if "response_font_size" in self.ui_prefs:
-            self.assistant.font_size = int(self.ui_prefs["response_font_size"])
-
-        self.setup_ui()
+        
+        self.setup_ui()  # Ensure UI setup is done first
         self.load_chat_tabs()
-
-        # Auto-load autosave session (unchanged)
+        # Auto-load session 0 if it is AutoSave
         if self.chat_manager.sessions and self.chat_manager.sessions[0]["title"] == "AutoSave - Last Session":
             self.assistant.messages = self.chat_manager.sessions[0]["messages"]
             self.display_chat_history()
@@ -499,163 +463,13 @@ class Application(tk.Tk):
         self.sidebar_visible = True
         self.current_tab = -1
         self.current_subtab = -1
-        self.always_on_top = False
-
-        # F1 already prints geometry
+        self.always_on_top = False 
         self.bind("<F1>", lambda e: print("Window geometry:", self.geometry()))
-        # 💾 New: F2 save, F3 apply
-        self.bind("<F2>", lambda e: self.save_ui_prefs())
-        self.bind("<F3>", lambda e: self.apply_ui_prefs())
 
-        # Apply sash (split) after widgets exist
-        self.after(0, self.apply_ui_prefs)
-
-        # Load tabs after UI setup
+        
+        # Load chat tabs after the UI is set up
         self.load_tabs()
-        # Ensure we start within limits
-        self.after(0, lambda: self.auto_prune_chats(max_chats=10))
-
     
-    def auto_prune_chats(self, max_chats=10):
-        """
-        If there are more than `max_chats` real chats (excluding AutoSave),
-        automatically delete all but the most recent real chat.
-        Always keep "AutoSave - Last Session" if present.
-        """
-        AUTO_TITLE = "AutoSave - Last Session"
-
-        # Split out real chats vs AutoSave
-        real_indices = [i for i, s in enumerate(self.chat_manager.sessions)
-                        if s.get("title") != AUTO_TITLE]
-        real_count = len(real_indices)
-
-        if real_count <= max_chats:
-            return  # nothing to do
-
-        # Keep only the MOST RECENT real chat (the last appended),
-        # plus AutoSave if it exists
-        keep_real_idx = real_indices[-1]  # most recent real chat by your append order
-        new_sessions = []
-        kept_title = None
-
-        for i, s in enumerate(self.chat_manager.sessions):
-            title = s.get("title", "Untitled")
-            if i == keep_real_idx or title == AUTO_TITLE:
-                new_sessions.append(s)
-                if i == keep_real_idx:
-                    kept_title = title
-
-        removed_count = len(self.chat_manager.sessions) - len(new_sessions)
-        if removed_count > 0:
-            self.chat_manager.sessions = new_sessions
-            self.chat_manager.save()
-            self.load_chat_tabs()
-
-            # Reselect the kept real chat if it exists, otherwise select AutoSave
-            reselect_index = 0
-            for i, s in enumerate(self.chat_manager.sessions):
-                if s.get("title", "") == kept_title:
-                    reselect_index = i
-                    break
-            kept_item_id = f"chat_{reselect_index}"
-            if self.chat_tabs.exists(kept_item_id):
-                self.chat_tabs.selection_set(kept_item_id)
-                self.chat_tabs.see(kept_item_id)
-
-            self.status.config(
-                text=f"🧹 Auto-pruned {removed_count} chat(s). Kept recent chat{f' “{kept_title}”' if kept_title else ''} and “{AUTO_TITLE}”."
-            )
-
-
-    def _get_tree_open_state(self, tree: ttk.Treeview):
-        """Return a list of item IDs that are expanded (open=True) in the given Treeview."""
-        open_iids = []
-
-        def walk(iid):
-            try:
-                if tree.item(iid, 'open'):
-                    open_iids.append(iid)
-            except Exception:
-                pass
-            for child in tree.get_children(iid):
-                walk(child)
-
-        # top-level nodes
-        for root in tree.get_children(''):
-            walk(root)
-
-        return open_iids
-
-
-    def _apply_tree_open_state(self, tree: ttk.Treeview, open_iids):
-        """Expand items whose IDs are in open_iids (ignore any that don't exist)."""
-        if not open_iids:
-            return
-        def do_apply():
-            for iid in open_iids:
-                if tree.exists(iid):
-                    tree.item(iid, open=True)
-        # Apply now and once more shortly after, in case the tree was just rebuilt
-        self.after(0, do_apply)
-        self.after(120, do_apply)
-
-    def _generate_session_title(self):
-        """Create a nice title for the current chat, reusing your start_new_chat logic."""
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-
-        # Look for any resume attachment in system messages
-        resume_name = None
-        for msg in self.assistant.messages:
-            if msg["role"] == "system" and "Use this resume content to contextualize answers" in msg.get("content", ""):
-                match = re.search(r'from file:\s*(.+?)\)', msg["content"])
-                if match:
-                    resume_name = os.path.splitext(os.path.basename(match.group(1).strip()))[0]
-                break
-
-        if resume_name:
-            return f"{resume_name} - {timestamp}"
-        return timestamp
-
-    def _persist_working_chat_if_needed(self):
-        """
-        If current working chat has user content and is not already saved as a real session
-        (i.e., beyond 'AutoSave - Last Session'), save it now as a new session.
-        """
-        msgs = self.assistant.messages or []
-        # Must have at least one user message to be meaningful
-        if not any(m.get("role") == "user" for m in msgs):
-            return
-
-        # Optional: use a hash to avoid saving exact duplicates repeatedly
-        try:
-            # Convert messages to a JSON string deterministically for hashing
-            payload = json.dumps(msgs, sort_keys=True, ensure_ascii=False)
-            cur_hash = hash(payload)
-            if self._last_persisted_hash is not None and self._last_persisted_hash == cur_hash:
-                return  # nothing new since last persist
-        except Exception:
-            cur_hash = None  # fall back to linear check
-
-        # Avoid duplicates: if an identical non-AutoSave session already exists, skip
-        for s in self.chat_manager.sessions:
-            if s.get("title") != "AutoSave - Last Session" and s.get("messages") == msgs:
-                # already saved
-                self._last_persisted_hash = cur_hash
-                return
-
-        # Save as a proper session with a generated title
-        title = self._generate_session_title()
-        self.chat_manager.add_session(title, msgs.copy())
-        self.chat_manager.save()
-        self.load_chat_tabs()
-        # 🔁 Auto-prune when over the limit
-        self.auto_prune_chats(max_chats=10)
-
-
-        self.status.config(text=f"💾 Saved current chat as: {title}")
-        self._last_persisted_hash = cur_hash
-
-
     def load_tabs(self):
         self.tab_tree.delete(*self.tab_tree.get_children())
 
@@ -669,74 +483,17 @@ class Application(tk.Tk):
         #     self.tab_tree.selection_set(f"sub_0_0")
         #     self.after(100, lambda: self.on_tab_select(None))  # Trigger selection logic
 
-    def save_ui_prefs(self):
-        """Save current window geometry, split position, font size, and tabs/subtabs open state."""
-        try:
-            sash = self.paned.sashpos(0)
-        except Exception:
-            sash = None
-
-        prefs = {
-            "geometry": self.geometry(),
-            "paned_sash": sash,
-            "response_font_size": int(self.assistant.font_size),
-            # NEW: expanded (“open”) items in the tabs/subtasks tree
-            "tab_tree_open": self._get_tree_open_state(self.tab_tree),
-        }
-        UIPreferences.save(prefs)
-        self.status.config(text="💾 Saved UI defaults (geometry, split, font, dropdowns).")
-        print("Saved UI Prefs:", prefs)
-
-
-    def apply_ui_prefs(self, *_):
-        """Apply saved defaults (geometry, split, font size, tabs/subtabs open state)."""
-        prefs = self.ui_prefs = UIPreferences.load()
-
-        # Geometry
-        if "geometry" in prefs:
-            try:
-                self.geometry(prefs["geometry"])
-            except Exception as e:
-                print("Geometry apply error:", e)
-
-        # Font
-        if "response_font_size" in prefs:
-            try:
-                self.assistant.font_size = int(prefs["response_font_size"])
-                self.response_box.config(font=('Consolas', self.assistant.font_size))
-            except Exception as e:
-                print("Font apply error:", e)
-
-        # Split
-        if "paned_sash" in prefs and prefs["paned_sash"] is not None:
-            try:
-                self.paned.sashpos(0, int(prefs["paned_sash"]))
-            except Exception as e:
-                print("Sash apply error, retrying...", e)
-                self.after(50, lambda: self.paned.sashpos(0, int(prefs["paned_sash"])))
-
-        # NEW: tabs/subtabs expanded state
-        if "tab_tree_open" in prefs:
-            self._apply_tree_open_state(self.tab_tree, prefs["tab_tree_open"])
-
-        self.status.config(text="✅ Applied UI defaults.")
-
 
         
     def on_chat_tab_select(self, event):
         selected = self.chat_tabs.selection()
-        if not selected:
-            return
-
-        # ✅ Ensure the working chat is saved before switching away
-        self._persist_working_chat_if_needed()
-
-        tab_id = selected[0]
-        if tab_id.startswith("chat_"):
-            index = int(tab_id.split("_")[1])
-            self.assistant.messages = self.chat_manager.get_session(index)
-            self.display_chat_history()
-            self.status.config(text=f"📂 Loaded chat: {self.chat_manager.get_titles()[index]}")
+        if selected:
+            tab_id = selected[0]
+            if tab_id.startswith("chat_"):
+                index = int(tab_id.split("_")[1])
+                self.assistant.messages = self.chat_manager.get_session(index)
+                self.display_chat_history()
+                self.status.config(text=f"📂 Loaded chat: {self.chat_manager.get_titles()[index]}")
 
     def add_new_tab(self):
         name = simpledialog.askstring("New Tab", "Enter tab name:")
@@ -898,76 +655,29 @@ class Application(tk.Tk):
             self.chat_tabs.insert("", "end", iid=f"chat_{i}", text=title)
             
     def delete_chat(self):
-        """
-        Delete ALL chats except:
-            - the currently selected chat
-            - the "AutoSave - Last Session" chat
-        """
-        AUTO_TITLE = "AutoSave - Last Session"
-
-        # Require a selection to know which one to keep (the 'current chat')
         selected = self.chat_tabs.selection()
         if not selected:
-            messagebox.showwarning("No Chat Selected", "Please select the chat you want to KEEP.")
+            messagebox.showwarning("No Chat Selected", "Please select a chat first")
             return
 
+        # Get the chat index from the selected tab
         tab_id = selected[0]
-        if not tab_id.startswith("chat_"):
-            messagebox.showwarning("Invalid Selection", "Please select a valid chat.")
-            return
+        if tab_id.startswith("chat_"):
+            index = int(tab_id.split("_")[1])
+            title = self.chat_manager.get_titles()[index]
+            
+            # Ask for confirmation before deletion
+            confirm = messagebox.askyesno("Delete Chat", f"Are you sure you want to delete the chat '{title}'?")
+            if confirm:
+                # Remove chat from chat history manager
+                self.chat_manager.sessions.pop(index)
+                self.chat_manager.save()
 
-        keep_index = int(tab_id.split("_")[1])
-        titles = self.chat_manager.get_titles()
-        if keep_index < 0 or keep_index >= len(titles):
-            messagebox.showwarning("Invalid Selection", "Selected chat index is out of range.")
-            return
+                # Remove the chat from the sidebar UI
+                self.chat_tabs.delete(tab_id)
 
-        keep_title = titles[keep_index]
-
-        # Build the new chat list, keeping only the selected chat and the AutoSave session (if present)
-        original_count = len(self.chat_manager.sessions)
-        new_sessions = []
-        for i, s in enumerate(self.chat_manager.sessions):
-            title = s.get("title", "Untitled")
-            if i == keep_index or title == AUTO_TITLE:
-                new_sessions.append(s)
-
-        removed_count = original_count - len(new_sessions)
-        if removed_count <= 0:
-            messagebox.showinfo("Nothing to Delete", "There are no other chats to delete.")
-            return
-
-        confirm = messagebox.askyesno(
-            "Delete Chats",
-            f"This will permanently delete {removed_count} chat(s), keeping only:\n\n"
-            f"• {keep_title}\n"
-            f"• {AUTO_TITLE} (if it exists)\n\n"
-            "Are you sure?"
-        )
-        if not confirm:
-            return
-
-        # Commit changes
-        self.chat_manager.sessions = new_sessions
-        self.chat_manager.save()
-
-        # Refresh UI list
-        self.load_chat_tabs()
-
-        # Reselect the kept chat (find it again by title)
-        reselect_index = 0
-        for i, s in enumerate(self.chat_manager.sessions):
-            if s.get("title", "") == keep_title:
-                reselect_index = i
-                break
-        kept_item_id = f"chat_{reselect_index}"
-        if self.chat_tabs.exists(kept_item_id):
-            self.chat_tabs.selection_set(kept_item_id)
-            self.chat_tabs.see(kept_item_id)
-
-        self.status.config(text=f"🧹 Deleted {removed_count} chat(s). Kept: “{keep_title}” and “{AUTO_TITLE}”.")
-        print(f"Deleted {removed_count} chat(s). Kept: {keep_title} (index {reselect_index}) and '{AUTO_TITLE}'.")
-
+                self.status.config(text=f"❌ Deleted chat: {title}")
+                print(f"Deleted chat: {title}")
 
     def rename_chat(self):
         selected = self.chat_tabs.selection()
@@ -1047,10 +757,6 @@ class Application(tk.Tk):
                 self.tab_tree.insert(tab_id, "end", text=name, iid=f"sub_{tab_index}_{subtab_index}")
 
     def on_tab_select(self, event):
-        # Reentrancy guard (TreeviewSelect can fire more than once)
-        if getattr(self, "_subtab_sending", False):
-            return
-
         selected = self.tab_tree.selection()
         if not selected:
             self.current_tab = -1
@@ -1058,86 +764,58 @@ class Application(tk.Tk):
             return
 
         item_id = selected[0]
-
-        # Tab (top level) clicked: just remember selection; do not send
         if item_id.startswith("tab_"):
             self.current_tab = int(item_id.split("_")[1])
             self.current_subtab = -1
             self.add_subtab_btn.config(state=tk.NORMAL)
-            return
+        elif item_id.startswith("sub_"):
+            parts = item_id.split("_")
+            self.current_tab = int(parts[1])
+            self.current_subtab = int(parts[2])
+            self.add_subtab_btn.config(state=tk.NORMAL)
 
-        # Only handle subtab clicks from here on
-        if not item_id.startswith("sub_"):
-            return
+            prompt = self.prompt_manager.get_subtab_prompt(self.current_tab, self.current_subtab)
+            text_input = self.prompt_manager.get_subtab_text_input(self.current_tab, self.current_subtab)
 
-        parts = item_id.split("_")
-        self.current_tab = int(parts[1])
-        self.current_subtab = int(parts[2])
-        self.add_subtab_btn.config(state=tk.NORMAL)
+            if prompt:
+                self.input_entry.delete(0, tk.END)
+                self.input_entry.insert(0, prompt)
 
-        # Prefer text_input, then prompt, then subtab name
-        sub_name   = self.prompt_manager.get_subtab_name(self.current_tab, self.current_subtab) or "Request"
-        prompt     = self.prompt_manager.get_subtab_prompt(self.current_tab, self.current_subtab) or ""
-        text_input = self.prompt_manager.get_subtab_text_input(self.current_tab, self.current_subtab) or ""
-        sub_text   = (text_input or prompt or sub_name).strip()
-
-        # If nothing found, still send the subtab name as a fallback
-        if not sub_text:
-            sub_text = sub_name
-
-        # Append sub_text to whatever is already in the entry (do NOT wipe)
-        current = self.input_entry.get()
-        prefix = "" if (not current or current.endswith((" ", "\n", "\t"))) else " "
-        self.input_entry.insert(tk.END, f"{prefix}{sub_text}")
-
-        # Auto-send the combined message (existing text + subchat text + any queued images)
-        try:
-            self._subtab_sending = True  # guard
-            # submit_text_question() will:
-            #  - read the entry,
-            #  - include self.pending_attachments (if any),
-            #  - clear entry & attachments,
-            #  - stream the response.
-            self.submit_text_question()
-
-            # UX hint
-            if hasattr(self, "pending_attachments"):
-                # (submit_text_question clears pending_attachments after sending)
-                pass
-            self.status.config(text="🚀 Sub chat sent with your current text and any attached image(s).")
-        finally:
-            self._subtab_sending = False
-
-
+            if text_input and not self.assistant.streaming:
+                self.input_entry.delete(0, tk.END)
+                self.input_entry.insert(0, text_input)
+                self.submit_text_question()
 
 
         
     def handle_paste(self, event=None):
-        # 1) Try text first
         try:
-            text = self.clipboard_get()
-            if isinstance(text, str) and text.strip():
-                # ✅ Append text at caret, do not clear previous input or attachments
-                self.input_entry.insert(tk.INSERT, text)
-                # keep any queued attachments
-                return "break"
-        except tk.TclError:
-            # no text in clipboard; try image next
-            pass
-        except Exception as e:
-            print(f"❌ Paste (text) failed: {e}")
-            self.status.config(text=f"❌ Paste error: {e}")
-            # fall through to image
+            # Priority: if clipboard has text, treat it as plain text paste
+            if self.clipboard_get():
+                pasted_text = self.clipboard_get()
 
-        # 2) Try image
+                # User likely wants to overwrite → clear input and attachments
+                self.input_entry.delete(0, tk.END)
+                self.input_entry.insert(0, pasted_text)
+
+                # Ensure pending image attachment is cleared too
+                if hasattr(self, 'pending_attachments'):
+                    del self.pending_attachments
+
+                return "break"
+
+        except tk.TclError:
+            # clipboard_get() fails if clipboard doesn't contain text; fallback to image check
+            pass
+
         try:
+            # No text → check for image
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
                 buffer = io.BytesIO()
                 image.save(buffer, format="PNG")
                 b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
-                # ✅ Keep a growing list of attachments
                 if not hasattr(self, 'pending_attachments'):
                     self.pending_attachments = []
 
@@ -1146,17 +824,23 @@ class Application(tk.Tk):
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
                 })
 
-                # ✅ Insert a placeholder at caret (don’t wipe existing text)
-                idx = len(self.pending_attachments)
-                self.input_entry.insert(tk.INSERT, f" [📎 Image {idx}] ")
+                print("📎 Image attachment ready")
+                self.status.config(text=f"📎 Total {len(self.pending_attachments)} image(s) ready to send. Press Enter.")
 
-                self.status.config(text=f"📎 {idx} image(s) attached. You can paste more or type; press Enter to send.")
+                # 👇 Show all image placeholders explicitly
+                self.input_entry.delete(0, tk.END)
+                for i in range(len(self.pending_attachments)):
+                    self.input_entry.insert(tk.END, f"📎 [Image {i+1}]\n")
+
                 return "break"
+
+
+
         except Exception as e:
-            print(f"❌ Paste (image) failed: {e}")
+            print(f"❌ Paste failed: {e}")
             self.status.config(text=f"❌ Paste error: {e}")
 
-        # Let native paste happen if neither text nor image detected
+        # If nothing handled → let native paste happen
         return None
 
 
@@ -1238,25 +922,31 @@ class Application(tk.Tk):
         question = self.input_entry.get().strip()
         self.input_entry.delete(0, tk.END)
 
-        # If nothing to send at all
         if not question and not hasattr(self, 'pending_attachments'):
             return
 
-        # Screenshot shortcut remains
         if question == "--":
             self.capture_and_submit_screenshot()
             return
 
         content = []
 
-        # ✅ Always include text if present
-        if question:
-            content.append({"type": "text", "text": question})
-
-        # ✅ Always include any queued images (don’t depend on “📎” being in the text)
         if hasattr(self, 'pending_attachments'):
-            content.extend(self.pending_attachments)
-            del self.pending_attachments  # clear only after sending
+            current_input = question
+            if "📎" in current_input:
+                # 📎 present → respect attachment + include text if any
+                clean_text = current_input.replace("📎", "").strip()
+                if clean_text:
+                    content.append({"type": "text", "text": clean_text})
+                content.extend(self.pending_attachments)
+            else:
+                # 📎 removed → treat as pure text, ignore attachment
+                if current_input:
+                    content.append({"type": "text", "text": current_input})
+            del self.pending_attachments
+        else:
+            if question:
+                content.append({"type": "text", "text": question})
 
         # Flatten for UI display
         flat_text = "\n".join(
@@ -1268,19 +958,21 @@ class Application(tk.Tk):
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
-        # Send to GPT
+        # Send to GPT: structured if image present, plain text if not
         if any(c["type"] == "image_url" for c in content):
-            self.assistant.messages.append({"role": "user", "content": content})
+            self.assistant.messages.append({
+                "role": "user",
+                "content": content
+            })
         else:
-            self.assistant.messages.append({"role": "user", "content": flat_text})
-
-        # Mark as dirty so auto-persist can save if you switch chats
-        self._last_persisted_hash = None
-
+            self.assistant.messages.append({
+                "role": "user",
+                "content": flat_text
+            })
+            
         self.chat_manager.save_current_session(self.assistant.messages)
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-
 
 
 
@@ -1419,9 +1111,6 @@ class Application(tk.Tk):
             self.chat_manager.add_session(session_title, self.assistant.messages.copy())
             self.chat_manager.save()
             self.load_chat_tabs()
-            # 🔁 Auto-prune when over the limit
-            self.auto_prune_chats(max_chats=10)
-
 
         # Start fresh session
         self.assistant.messages = [{
@@ -1462,41 +1151,6 @@ if __name__ == "__main__":
     style.configure('TButton', font=('Arial', 12))
     style.configure('TLabel', background='#343541', foreground='white')
     style.configure('TButton', font=('Arial', 12))
-    
-    def _restart_self():
-        """
-        Relaunch the current script using the same Python interpreter and args,
-        then terminate this process (after closing Tk and the hotkey listener).
-        """
-        try:
-            # Spawn the new process first
-            python = sys.executable
-            script = os.path.abspath(sys.argv[0])
-            args = [python, script] + sys.argv[1:]
-            subprocess.Popen(args)
-        except Exception as e:
-            print(f"❌ Restart spawn failed: {e}")
-            return
-
-        # Try to persist UI prefs before exit (optional but nice)
-        try:
-            app.save_ui_prefs()
-        except Exception:
-            pass
-
-        # Stop listener if present
-        try:
-            listener.stop()
-        except Exception:
-            pass
-
-        # Destroy Tk and hard-exit (to kill worker threads cleanly)
-        try:
-            app.destroy()
-        except Exception:
-            pass
-        os._exit(0)
-
 
     # Define this AFTER app is created
     def setup_hotkey_listener():
@@ -1505,11 +1159,9 @@ if __name__ == "__main__":
         combo_focus_chatbox = {keyboard.KeyCode(char='1'), keyboard.KeyCode(char='2')}
         combo_toggle_input_mode = {keyboard.KeyCode(char='3'), keyboard.KeyCode(char='4')}
         combo_listen_external = {keyboard.KeyCode(char='5'), keyboard.KeyCode(char='6')}
-        combo_increase_font = {keyboard.Key.cmd,keyboard.Key.shift,  keyboard.KeyCode(char='=')}   # Cmd + +
-        combo_decrease_font = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='-')}   # Cmd + -
+        combo_increase_font = {keyboard.Key.cmd, keyboard.KeyCode(char='=')}   # Cmd + +
+        combo_decrease_font = {keyboard.Key.cmd, keyboard.KeyCode(char='-')}   # Cmd + -
         combo_pin_window     = {keyboard.Key.cmd, keyboard.KeyCode(char='p')}  # Cmd + P
-        combo_restart = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='z')}
-
 
 
 
@@ -1549,9 +1201,9 @@ if __name__ == "__main__":
             hotkey_stop.press(listener.canonical(key))
             hotkey_screenshot.press(listener.canonical(key))
 
-            if key in (combo_focus_chatbox | combo_upload_resume | combo_toggle_input_mode |
-                    combo_listen_external | combo_increase_font | combo_decrease_font |
-                    combo_pin_window | combo_restart):
+            # Track combo key state
+            
+            if key in combo_focus_chatbox or key in combo_upload_resume or key in combo_toggle_input_mode or key in combo_listen_external or key in combo_increase_font or key in combo_decrease_font or key in combo_pin_window:
                 current_keys.add(key)
 
                 if combo_focus_chatbox.issubset(current_keys):
@@ -1566,27 +1218,15 @@ if __name__ == "__main__":
                     print("🔎 Global hotkey Cmd + +: Increase font")
                     app.increase_font()
                 elif combo_decrease_font.issubset(current_keys):
-                    print("🔍 Global hotkey Cmd -: Decrease font")
+                    print("🔍 Global hotkey Cmd + -: Decrease font")
                     app.decrease_font()
                 elif combo_pin_window.issubset(current_keys):
                     print("📌 Global hotkey Cmd + P: Toggle pin")
                     app.toggle_always_on_top()
-                elif combo_restart.issubset(current_keys):
-                    on_activate_restart()
-
 
                         
 
             
-        def on_activate_restart():
-            print("🔁 Global hotkey Cmd + R: Restarting app...")
-            # Do it on a short timer so the print/status can flush
-            try:
-                app.status.config(text="🔁 Restarting...")
-            except Exception:
-                pass
-            threading.Thread(target=_restart_self, daemon=True).start()
-
                     
         def on_activate_listen_external():
             if not app.assistant.recorder.is_recording:

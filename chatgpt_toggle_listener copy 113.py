@@ -1,5 +1,3 @@
-import sys
-import subprocess
 
 import sounddevice as sd
 import numpy as np
@@ -348,19 +346,14 @@ class ChatGPTAssistant:
     def load_resume(self, file_path):
         try:
             text = textract.process(file_path).decode('utf-8')
-            base = os.path.basename(file_path)
-
-            # keep your system context line the same, or change "resume"->"document" if you prefer
             self.messages.append({
                 "role": "system",
-                "content": f"Use this resume content to contextualize answers (from file: {base}): {text}"
+                "content": f"Use this resume content to contextualize answers (from file: {os.path.basename(file_path)}): {text}"
             })
 
-            # ✅ show the actual file name in the status message
-            return True, f"📄 {base} uploaded and processed successfully."
+            return True, "📄 Resume uploaded and processed successfully."
         except Exception as e:
-            return False, f"❌ Error processing document: {str(e)}"
-
+            return False, f"❌ Error processing resume: {str(e)}"
 
     def transcribe_audio(self, filename):
         try:
@@ -1462,41 +1455,6 @@ if __name__ == "__main__":
     style.configure('TButton', font=('Arial', 12))
     style.configure('TLabel', background='#343541', foreground='white')
     style.configure('TButton', font=('Arial', 12))
-    
-    def _restart_self():
-        """
-        Relaunch the current script using the same Python interpreter and args,
-        then terminate this process (after closing Tk and the hotkey listener).
-        """
-        try:
-            # Spawn the new process first
-            python = sys.executable
-            script = os.path.abspath(sys.argv[0])
-            args = [python, script] + sys.argv[1:]
-            subprocess.Popen(args)
-        except Exception as e:
-            print(f"❌ Restart spawn failed: {e}")
-            return
-
-        # Try to persist UI prefs before exit (optional but nice)
-        try:
-            app.save_ui_prefs()
-        except Exception:
-            pass
-
-        # Stop listener if present
-        try:
-            listener.stop()
-        except Exception:
-            pass
-
-        # Destroy Tk and hard-exit (to kill worker threads cleanly)
-        try:
-            app.destroy()
-        except Exception:
-            pass
-        os._exit(0)
-
 
     # Define this AFTER app is created
     def setup_hotkey_listener():
@@ -1505,11 +1463,9 @@ if __name__ == "__main__":
         combo_focus_chatbox = {keyboard.KeyCode(char='1'), keyboard.KeyCode(char='2')}
         combo_toggle_input_mode = {keyboard.KeyCode(char='3'), keyboard.KeyCode(char='4')}
         combo_listen_external = {keyboard.KeyCode(char='5'), keyboard.KeyCode(char='6')}
-        combo_increase_font = {keyboard.Key.cmd,keyboard.Key.shift,  keyboard.KeyCode(char='=')}   # Cmd + +
-        combo_decrease_font = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='-')}   # Cmd + -
+        combo_increase_font = {keyboard.Key.cmd, keyboard.KeyCode(char='=')}   # Cmd + +
+        combo_decrease_font = {keyboard.Key.cmd, keyboard.KeyCode(char='-')}   # Cmd + -
         combo_pin_window     = {keyboard.Key.cmd, keyboard.KeyCode(char='p')}  # Cmd + P
-        combo_restart = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='z')}
-
 
 
 
@@ -1549,9 +1505,9 @@ if __name__ == "__main__":
             hotkey_stop.press(listener.canonical(key))
             hotkey_screenshot.press(listener.canonical(key))
 
-            if key in (combo_focus_chatbox | combo_upload_resume | combo_toggle_input_mode |
-                    combo_listen_external | combo_increase_font | combo_decrease_font |
-                    combo_pin_window | combo_restart):
+            # Track combo key state
+            
+            if key in combo_focus_chatbox or key in combo_upload_resume or key in combo_toggle_input_mode or key in combo_listen_external or key in combo_increase_font or key in combo_decrease_font or key in combo_pin_window:
                 current_keys.add(key)
 
                 if combo_focus_chatbox.issubset(current_keys):
@@ -1566,27 +1522,15 @@ if __name__ == "__main__":
                     print("🔎 Global hotkey Cmd + +: Increase font")
                     app.increase_font()
                 elif combo_decrease_font.issubset(current_keys):
-                    print("🔍 Global hotkey Cmd -: Decrease font")
+                    print("🔍 Global hotkey Cmd + -: Decrease font")
                     app.decrease_font()
                 elif combo_pin_window.issubset(current_keys):
                     print("📌 Global hotkey Cmd + P: Toggle pin")
                     app.toggle_always_on_top()
-                elif combo_restart.issubset(current_keys):
-                    on_activate_restart()
-
 
                         
 
             
-        def on_activate_restart():
-            print("🔁 Global hotkey Cmd + R: Restarting app...")
-            # Do it on a short timer so the print/status can flush
-            try:
-                app.status.config(text="🔁 Restarting...")
-            except Exception:
-                pass
-            threading.Thread(target=_restart_self, daemon=True).start()
-
                     
         def on_activate_listen_external():
             if not app.assistant.recorder.is_recording:

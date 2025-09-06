@@ -92,6 +92,11 @@
           "name": "About company",
           "prompt": "Tell me the overview about the interviewing company.",
           "text_input": "Tell me the overview about the interviewing company."
+        },
+        {
+          "name": "Answer above",
+          "prompt": "Answer above",
+          "text_input": "Answer above"
         }
       ]
     },

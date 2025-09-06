@@ -348,19 +348,14 @@ class ChatGPTAssistant:
     def load_resume(self, file_path):
         try:
             text = textract.process(file_path).decode('utf-8')
-            base = os.path.basename(file_path)
-
-            # keep your system context line the same, or change "resume"->"document" if you prefer
             self.messages.append({
                 "role": "system",
-                "content": f"Use this resume content to contextualize answers (from file: {base}): {text}"
+                "content": f"Use this resume content to contextualize answers (from file: {os.path.basename(file_path)}): {text}"
             })
 
-            # ✅ show the actual file name in the status message
-            return True, f"📄 {base} uploaded and processed successfully."
+            return True, "📄 Resume uploaded and processed successfully."
         except Exception as e:
-            return False, f"❌ Error processing document: {str(e)}"
-
+            return False, f"❌ Error processing resume: {str(e)}"
 
     def transcribe_audio(self, filename):
         try:

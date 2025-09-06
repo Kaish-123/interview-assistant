@@ -1,5 +1,3 @@
-import sys
-import subprocess
 
 import sounddevice as sd
 import numpy as np
@@ -348,19 +346,14 @@ class ChatGPTAssistant:
     def load_resume(self, file_path):
         try:
             text = textract.process(file_path).decode('utf-8')
-            base = os.path.basename(file_path)
-
-            # keep your system context line the same, or change "resume"->"document" if you prefer
             self.messages.append({
                 "role": "system",
-                "content": f"Use this resume content to contextualize answers (from file: {base}): {text}"
+                "content": f"Use this resume content to contextualize answers (from file: {os.path.basename(file_path)}): {text}"
             })
 
-            # ✅ show the actual file name in the status message
-            return True, f"📄 {base} uploaded and processed successfully."
+            return True, "📄 Resume uploaded and processed successfully."
         except Exception as e:
-            return False, f"❌ Error processing document: {str(e)}"
-
+            return False, f"❌ Error processing resume: {str(e)}"
 
     def transcribe_audio(self, filename):
         try:
@@ -512,60 +505,6 @@ class Application(tk.Tk):
 
         # Load tabs after UI setup
         self.load_tabs()
-        # Ensure we start within limits
-        self.after(0, lambda: self.auto_prune_chats(max_chats=10))
-
-    
-    def auto_prune_chats(self, max_chats=10):
-        """
-        If there are more than `max_chats` real chats (excluding AutoSave),
-        automatically delete all but the most recent real chat.
-        Always keep "AutoSave - Last Session" if present.
-        """
-        AUTO_TITLE = "AutoSave - Last Session"
-
-        # Split out real chats vs AutoSave
-        real_indices = [i for i, s in enumerate(self.chat_manager.sessions)
-                        if s.get("title") != AUTO_TITLE]
-        real_count = len(real_indices)
-
-        if real_count <= max_chats:
-            return  # nothing to do
-
-        # Keep only the MOST RECENT real chat (the last appended),
-        # plus AutoSave if it exists
-        keep_real_idx = real_indices[-1]  # most recent real chat by your append order
-        new_sessions = []
-        kept_title = None
-
-        for i, s in enumerate(self.chat_manager.sessions):
-            title = s.get("title", "Untitled")
-            if i == keep_real_idx or title == AUTO_TITLE:
-                new_sessions.append(s)
-                if i == keep_real_idx:
-                    kept_title = title
-
-        removed_count = len(self.chat_manager.sessions) - len(new_sessions)
-        if removed_count > 0:
-            self.chat_manager.sessions = new_sessions
-            self.chat_manager.save()
-            self.load_chat_tabs()
-
-            # Reselect the kept real chat if it exists, otherwise select AutoSave
-            reselect_index = 0
-            for i, s in enumerate(self.chat_manager.sessions):
-                if s.get("title", "") == kept_title:
-                    reselect_index = i
-                    break
-            kept_item_id = f"chat_{reselect_index}"
-            if self.chat_tabs.exists(kept_item_id):
-                self.chat_tabs.selection_set(kept_item_id)
-                self.chat_tabs.see(kept_item_id)
-
-            self.status.config(
-                text=f"🧹 Auto-pruned {removed_count} chat(s). Kept recent chat{f' “{kept_title}”' if kept_title else ''} and “{AUTO_TITLE}”."
-            )
-
 
     def _get_tree_open_state(self, tree: ttk.Treeview):
         """Return a list of item IDs that are expanded (open=True) in the given Treeview."""
@@ -648,9 +587,6 @@ class Application(tk.Tk):
         self.chat_manager.add_session(title, msgs.copy())
         self.chat_manager.save()
         self.load_chat_tabs()
-        # 🔁 Auto-prune when over the limit
-        self.auto_prune_chats(max_chats=10)
-
 
         self.status.config(text=f"💾 Saved current chat as: {title}")
         self._last_persisted_hash = cur_hash
@@ -1047,10 +983,6 @@ class Application(tk.Tk):
                 self.tab_tree.insert(tab_id, "end", text=name, iid=f"sub_{tab_index}_{subtab_index}")
 
     def on_tab_select(self, event):
-        # Reentrancy guard (TreeviewSelect can fire more than once)
-        if getattr(self, "_subtab_sending", False):
-            return
-
         selected = self.tab_tree.selection()
         if not selected:
             self.current_tab = -1
@@ -1058,86 +990,58 @@ class Application(tk.Tk):
             return
 
         item_id = selected[0]
-
-        # Tab (top level) clicked: just remember selection; do not send
         if item_id.startswith("tab_"):
             self.current_tab = int(item_id.split("_")[1])
             self.current_subtab = -1
             self.add_subtab_btn.config(state=tk.NORMAL)
-            return
+        elif item_id.startswith("sub_"):
+            parts = item_id.split("_")
+            self.current_tab = int(parts[1])
+            self.current_subtab = int(parts[2])
+            self.add_subtab_btn.config(state=tk.NORMAL)
 
-        # Only handle subtab clicks from here on
-        if not item_id.startswith("sub_"):
-            return
+            prompt = self.prompt_manager.get_subtab_prompt(self.current_tab, self.current_subtab)
+            text_input = self.prompt_manager.get_subtab_text_input(self.current_tab, self.current_subtab)
 
-        parts = item_id.split("_")
-        self.current_tab = int(parts[1])
-        self.current_subtab = int(parts[2])
-        self.add_subtab_btn.config(state=tk.NORMAL)
+            if prompt:
+                self.input_entry.delete(0, tk.END)
+                self.input_entry.insert(0, prompt)
 
-        # Prefer text_input, then prompt, then subtab name
-        sub_name   = self.prompt_manager.get_subtab_name(self.current_tab, self.current_subtab) or "Request"
-        prompt     = self.prompt_manager.get_subtab_prompt(self.current_tab, self.current_subtab) or ""
-        text_input = self.prompt_manager.get_subtab_text_input(self.current_tab, self.current_subtab) or ""
-        sub_text   = (text_input or prompt or sub_name).strip()
-
-        # If nothing found, still send the subtab name as a fallback
-        if not sub_text:
-            sub_text = sub_name
-
-        # Append sub_text to whatever is already in the entry (do NOT wipe)
-        current = self.input_entry.get()
-        prefix = "" if (not current or current.endswith((" ", "\n", "\t"))) else " "
-        self.input_entry.insert(tk.END, f"{prefix}{sub_text}")
-
-        # Auto-send the combined message (existing text + subchat text + any queued images)
-        try:
-            self._subtab_sending = True  # guard
-            # submit_text_question() will:
-            #  - read the entry,
-            #  - include self.pending_attachments (if any),
-            #  - clear entry & attachments,
-            #  - stream the response.
-            self.submit_text_question()
-
-            # UX hint
-            if hasattr(self, "pending_attachments"):
-                # (submit_text_question clears pending_attachments after sending)
-                pass
-            self.status.config(text="🚀 Sub chat sent with your current text and any attached image(s).")
-        finally:
-            self._subtab_sending = False
-
-
+            if text_input and not self.assistant.streaming:
+                self.input_entry.delete(0, tk.END)
+                self.input_entry.insert(0, text_input)
+                self.submit_text_question()
 
 
         
     def handle_paste(self, event=None):
-        # 1) Try text first
         try:
-            text = self.clipboard_get()
-            if isinstance(text, str) and text.strip():
-                # ✅ Append text at caret, do not clear previous input or attachments
-                self.input_entry.insert(tk.INSERT, text)
-                # keep any queued attachments
-                return "break"
-        except tk.TclError:
-            # no text in clipboard; try image next
-            pass
-        except Exception as e:
-            print(f"❌ Paste (text) failed: {e}")
-            self.status.config(text=f"❌ Paste error: {e}")
-            # fall through to image
+            # Priority: if clipboard has text, treat it as plain text paste
+            if self.clipboard_get():
+                pasted_text = self.clipboard_get()
 
-        # 2) Try image
+                # User likely wants to overwrite → clear input and attachments
+                self.input_entry.delete(0, tk.END)
+                self.input_entry.insert(0, pasted_text)
+
+                # Ensure pending image attachment is cleared too
+                if hasattr(self, 'pending_attachments'):
+                    del self.pending_attachments
+
+                return "break"
+
+        except tk.TclError:
+            # clipboard_get() fails if clipboard doesn't contain text; fallback to image check
+            pass
+
         try:
+            # No text → check for image
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
                 buffer = io.BytesIO()
                 image.save(buffer, format="PNG")
                 b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
-                # ✅ Keep a growing list of attachments
                 if not hasattr(self, 'pending_attachments'):
                     self.pending_attachments = []
 
@@ -1146,17 +1050,23 @@ class Application(tk.Tk):
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
                 })
 
-                # ✅ Insert a placeholder at caret (don’t wipe existing text)
-                idx = len(self.pending_attachments)
-                self.input_entry.insert(tk.INSERT, f" [📎 Image {idx}] ")
+                print("📎 Image attachment ready")
+                self.status.config(text=f"📎 Total {len(self.pending_attachments)} image(s) ready to send. Press Enter.")
 
-                self.status.config(text=f"📎 {idx} image(s) attached. You can paste more or type; press Enter to send.")
+                # 👇 Show all image placeholders explicitly
+                self.input_entry.delete(0, tk.END)
+                for i in range(len(self.pending_attachments)):
+                    self.input_entry.insert(tk.END, f"📎 [Image {i+1}]\n")
+
                 return "break"
+
+
+
         except Exception as e:
-            print(f"❌ Paste (image) failed: {e}")
+            print(f"❌ Paste failed: {e}")
             self.status.config(text=f"❌ Paste error: {e}")
 
-        # Let native paste happen if neither text nor image detected
+        # If nothing handled → let native paste happen
         return None
 
 
@@ -1238,25 +1148,31 @@ class Application(tk.Tk):
         question = self.input_entry.get().strip()
         self.input_entry.delete(0, tk.END)
 
-        # If nothing to send at all
         if not question and not hasattr(self, 'pending_attachments'):
             return
 
-        # Screenshot shortcut remains
         if question == "--":
             self.capture_and_submit_screenshot()
             return
 
         content = []
 
-        # ✅ Always include text if present
-        if question:
-            content.append({"type": "text", "text": question})
-
-        # ✅ Always include any queued images (don’t depend on “📎” being in the text)
         if hasattr(self, 'pending_attachments'):
-            content.extend(self.pending_attachments)
-            del self.pending_attachments  # clear only after sending
+            current_input = question
+            if "📎" in current_input:
+                # 📎 present → respect attachment + include text if any
+                clean_text = current_input.replace("📎", "").strip()
+                if clean_text:
+                    content.append({"type": "text", "text": clean_text})
+                content.extend(self.pending_attachments)
+            else:
+                # 📎 removed → treat as pure text, ignore attachment
+                if current_input:
+                    content.append({"type": "text", "text": current_input})
+            del self.pending_attachments
+        else:
+            if question:
+                content.append({"type": "text", "text": question})
 
         # Flatten for UI display
         flat_text = "\n".join(
@@ -1268,19 +1184,21 @@ class Application(tk.Tk):
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
-        # Send to GPT
+        # Send to GPT: structured if image present, plain text if not
         if any(c["type"] == "image_url" for c in content):
-            self.assistant.messages.append({"role": "user", "content": content})
+            self.assistant.messages.append({
+                "role": "user",
+                "content": content
+            })
         else:
-            self.assistant.messages.append({"role": "user", "content": flat_text})
-
-        # Mark as dirty so auto-persist can save if you switch chats
-        self._last_persisted_hash = None
-
+            self.assistant.messages.append({
+                "role": "user",
+                "content": flat_text
+            })
+            
         self.chat_manager.save_current_session(self.assistant.messages)
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-
 
 
 
@@ -1419,9 +1337,6 @@ class Application(tk.Tk):
             self.chat_manager.add_session(session_title, self.assistant.messages.copy())
             self.chat_manager.save()
             self.load_chat_tabs()
-            # 🔁 Auto-prune when over the limit
-            self.auto_prune_chats(max_chats=10)
-
 
         # Start fresh session
         self.assistant.messages = [{
@@ -1462,41 +1377,6 @@ if __name__ == "__main__":
     style.configure('TButton', font=('Arial', 12))
     style.configure('TLabel', background='#343541', foreground='white')
     style.configure('TButton', font=('Arial', 12))
-    
-    def _restart_self():
-        """
-        Relaunch the current script using the same Python interpreter and args,
-        then terminate this process (after closing Tk and the hotkey listener).
-        """
-        try:
-            # Spawn the new process first
-            python = sys.executable
-            script = os.path.abspath(sys.argv[0])
-            args = [python, script] + sys.argv[1:]
-            subprocess.Popen(args)
-        except Exception as e:
-            print(f"❌ Restart spawn failed: {e}")
-            return
-
-        # Try to persist UI prefs before exit (optional but nice)
-        try:
-            app.save_ui_prefs()
-        except Exception:
-            pass
-
-        # Stop listener if present
-        try:
-            listener.stop()
-        except Exception:
-            pass
-
-        # Destroy Tk and hard-exit (to kill worker threads cleanly)
-        try:
-            app.destroy()
-        except Exception:
-            pass
-        os._exit(0)
-
 
     # Define this AFTER app is created
     def setup_hotkey_listener():
@@ -1505,11 +1385,9 @@ if __name__ == "__main__":
         combo_focus_chatbox = {keyboard.KeyCode(char='1'), keyboard.KeyCode(char='2')}
         combo_toggle_input_mode = {keyboard.KeyCode(char='3'), keyboard.KeyCode(char='4')}
         combo_listen_external = {keyboard.KeyCode(char='5'), keyboard.KeyCode(char='6')}
-        combo_increase_font = {keyboard.Key.cmd,keyboard.Key.shift,  keyboard.KeyCode(char='=')}   # Cmd + +
-        combo_decrease_font = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='-')}   # Cmd + -
+        combo_increase_font = {keyboard.Key.cmd, keyboard.KeyCode(char='=')}   # Cmd + +
+        combo_decrease_font = {keyboard.Key.cmd, keyboard.KeyCode(char='-')}   # Cmd + -
         combo_pin_window     = {keyboard.Key.cmd, keyboard.KeyCode(char='p')}  # Cmd + P
-        combo_restart = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='z')}
-
 
 
 
@@ -1549,9 +1427,9 @@ if __name__ == "__main__":
             hotkey_stop.press(listener.canonical(key))
             hotkey_screenshot.press(listener.canonical(key))
 
-            if key in (combo_focus_chatbox | combo_upload_resume | combo_toggle_input_mode |
-                    combo_listen_external | combo_increase_font | combo_decrease_font |
-                    combo_pin_window | combo_restart):
+            # Track combo key state
+            
+            if key in combo_focus_chatbox or key in combo_upload_resume or key in combo_toggle_input_mode or key in combo_listen_external or key in combo_increase_font or key in combo_decrease_font or key in combo_pin_window:
                 current_keys.add(key)
 
                 if combo_focus_chatbox.issubset(current_keys):
@@ -1566,27 +1444,15 @@ if __name__ == "__main__":
                     print("🔎 Global hotkey Cmd + +: Increase font")
                     app.increase_font()
                 elif combo_decrease_font.issubset(current_keys):
-                    print("🔍 Global hotkey Cmd -: Decrease font")
+                    print("🔍 Global hotkey Cmd + -: Decrease font")
                     app.decrease_font()
                 elif combo_pin_window.issubset(current_keys):
                     print("📌 Global hotkey Cmd + P: Toggle pin")
                     app.toggle_always_on_top()
-                elif combo_restart.issubset(current_keys):
-                    on_activate_restart()
-
 
                         
 
             
-        def on_activate_restart():
-            print("🔁 Global hotkey Cmd + R: Restarting app...")
-            # Do it on a short timer so the print/status can flush
-            try:
-                app.status.config(text="🔁 Restarting...")
-            except Exception:
-                pass
-            threading.Thread(target=_restart_self, daemon=True).start()
-
                     
         def on_activate_listen_external():
             if not app.assistant.recorder.is_recording:
