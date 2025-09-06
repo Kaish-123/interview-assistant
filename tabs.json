@@ -19,9 +19,19 @@
           "text_input": "I am in amazon interview for Data engineering positions for next 3 hours, "
         },
         {
-          "name": "Coding",
+          "name": "Python Coding",
           "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours",
           "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in python with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours"
+        },
+        {
+          "name": "JavaScript Coding",
+          "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in JavaScript with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours",
+          "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in JavaScript with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours"
+        },
+        {
+          "name": ".Net Coding",
+          "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in .Net with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours",
+          "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in .Net with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well for next 3 hours"
         },
         {
           "name": "System Design",
@@ -64,6 +74,11 @@
           "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in java with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours.."
         },
         {
+          "name": "C# coding",
+          "prompt": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in C# with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours..",
+          "text_input": "Explain me problem statement ,, Ask some questions from interviewer about question \nThen Tell me code in C# with space and time complexity and explain me APPROACH to solve the problem, add proper comment on each syntax\nAnd handle and explain edge cases as well\n\nfor next 3 hours.."
+        },
+        {
           "name": "complexity",
           "prompt": "Tell me the time and space complexity of above code with explanation",
           "text_input": "Tell me the time and space complexity of above code with explanation"
@@ -72,6 +87,11 @@
           "name": "Behavioural",
           "prompt": "I am in interview answer me as per my attched resume in previous chats to answer all behavioural question in STAR pattern based on my resume by explainig the clear context of situation alog with project and comany name for next 3 hours",
           "text_input": "I am in interview answer me as per my attched resume in previous chats to answer all behavioural question in STAR pattern based on my resume by explainig the clear context of situation alog with project and comany name for next 3 hours"
+        },
+        {
+          "name": "About company",
+          "prompt": "Tell me the overview about the interviewing company.",
+          "text_input": "Tell me the overview about the interviewing company."
         }
       ]
     },
