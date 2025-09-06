@@ -1457,6 +1457,9 @@ class Application(tk.Tk):
 
 if __name__ == "__main__":
     app = Application()
+    # after app = Application()
+    app.bind_all("<Command-Shift-N>", lambda e: app.start_new_chat())
+
     style = ttk.Style()
     style.configure('TLabel', background='#343541', foreground='white')
     style.configure('TButton', font=('Arial', 12))
@@ -1505,10 +1508,12 @@ if __name__ == "__main__":
         combo_focus_chatbox = {keyboard.KeyCode(char='1'), keyboard.KeyCode(char='2')}
         combo_toggle_input_mode = {keyboard.KeyCode(char='3'), keyboard.KeyCode(char='4')}
         combo_listen_external = {keyboard.KeyCode(char='5'), keyboard.KeyCode(char='6')}
-        combo_increase_font = {keyboard.Key.cmd,keyboard.Key.shift,  keyboard.KeyCode(char='=')}   # Cmd + +
-        combo_decrease_font = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='-')}   # Cmd + -
+        combo_increase_font = {keyboard.Key.cmd,keyboard.Key.ctrl,  keyboard.KeyCode(char='=')}   # Cmd + +
+        combo_decrease_font = {keyboard.Key.cmd, keyboard.Key.ctrl, keyboard.KeyCode(char='-')}   # Cmd + -
         combo_pin_window     = {keyboard.Key.cmd, keyboard.KeyCode(char='p')}  # Cmd + P
         combo_restart = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='z')}
+        combo_new_chat = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='n')}
+
 
 
 
@@ -1523,6 +1528,19 @@ if __name__ == "__main__":
             app.attributes('-topmost', True)
             app.attributes('-topmost', False)
             app.toggle_input_mode()
+            
+        def on_activate_new_chat():
+            print("🆕 Global hotkey Cmd + Shift + N: New chat")
+            try:
+                app.focus_force()
+                app.lift()
+                # flash-to-front trick
+                app.attributes('-topmost', True)
+                app.attributes('-topmost', False)
+            except Exception:
+                pass
+            app.start_new_chat()
+
 
             
         def on_activate_upload_resume():
@@ -1543,15 +1561,10 @@ if __name__ == "__main__":
             app.input_entry.icursor(tk.END)
 
         def on_press(key):
-            if key not in combo_listen_external:
-                hotkey_listen.press(listener.canonical(key))
-
-            hotkey_stop.press(listener.canonical(key))
-            hotkey_screenshot.press(listener.canonical(key))
-
+            # add combo_new_chat to this tuple/set:
             if key in (combo_focus_chatbox | combo_upload_resume | combo_toggle_input_mode |
                     combo_listen_external | combo_increase_font | combo_decrease_font |
-                    combo_pin_window | combo_restart):
+                    combo_pin_window | combo_restart | combo_new_chat):
                 current_keys.add(key)
 
                 if combo_focus_chatbox.issubset(current_keys):
@@ -1573,6 +1586,9 @@ if __name__ == "__main__":
                     app.toggle_always_on_top()
                 elif combo_restart.issubset(current_keys):
                     on_activate_restart()
+                elif combo_new_chat.issubset(current_keys):
+                    on_activate_new_chat()
+
 
 
                         
