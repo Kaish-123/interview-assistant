@@ -534,7 +534,7 @@ class ChatGPTAssistant:
                 self._maybe_summarize_history()
                 self.current_response = ""
                 self.streaming = True
-                placeholder = {"12role": "assistant", "content": ""}
+                placeholder = {"role": "assistant", "content": ""}
                 self.messages.append(placeholder)
 
                 try:
@@ -643,6 +643,7 @@ class Application(tk.Tk):
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
         self.chat_manager = ChatHistoryManager()
+        
 
         # If user saved a preferred font size, use it before building widgets
         if "response_font_size" in self.ui_prefs:
@@ -652,9 +653,15 @@ class Application(tk.Tk):
         self.load_chat_tabs()
 
         # Auto-load autosave session (unchanged)
-        if self.chat_manager.sessions and self.chat_manager.sessions[0]["title"] == "AutoSave - Last Session":
-            self.assistant.messages = self.chat_manager.sessions[0]["messages"]
-            self.display_chat_history()
+        # Auto-load autosave session (unchanged)
+        # Auto-load autosave session (safer)
+        if self.chat_manager.sessions and self.chat_manager.sessions[0].get("title") == "AutoSave - Last Session":
+            msgs = self.chat_manager.sessions[0].get("messages", [])
+            if isinstance(msgs, list):
+                self.assistant.messages = msgs
+                self.display_chat_history()
+
+
             self.status.config(text="🕑 Resumed from last auto-save session")
 
         self.bind_all("<Command-v>", self.handle_paste)
@@ -1024,33 +1031,48 @@ class Application(tk.Tk):
         self.response_box.config(state=tk.NORMAL)
         self.response_box.delete(1.0, tk.END)
 
-        # filter to user/assistant only to count “rounds”
-        ua = [m for m in self.assistant.messages if m["role"] in ("user", "assistant")]
+        # Normalize / skip malformed messages
+        ua = []
+        for m in self.assistant.messages:
+            if not isinstance(m, dict):
+                continue
+            role = m.get("role")
+            if role in ("user", "assistant"):
+                ua.append(m)
+
         # keep last max_rounds * 2 msgs
         keep = max_rounds * 2
         recent_ua = ua[-keep:] if len(ua) > keep else ua
 
         for msg in recent_ua:
-            if msg["role"] == "user":
-                content = msg["content"]
-                if isinstance(content, list):
-                    text = "\n".join(c["text"] if c["type"] == "text" else "[Image]" for c in content)
-                else:
-                    text = content
+            role = msg.get("role")
+            content = msg.get("content", "")
+
+            # Normalize content to text
+            if isinstance(content, list):
+                text = "\n".join(
+                    c.get("text", "[non-text]")
+                    if c.get("type") == "text"
+                    else "[Image]"
+                    for c in content
+                )
+            else:
+                text = str(content)
+
+            if role == "user":
                 self.response_box.insert(
                     tk.END,
                     f"\n\n---------------------------------------------------------------------\nQUESTION: {text.strip()}\n"
                 )
-            else:  # assistant
+            elif role == "assistant":
                 self.response_box.insert(
                     tk.END,
-                    f"------------------\nANSWER: {msg['content'].strip()}\n"
+                    f"------------------\nANSWER: {text.strip()}\n"
                 )
 
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
-    
 
 
     def setup_ui(self):
