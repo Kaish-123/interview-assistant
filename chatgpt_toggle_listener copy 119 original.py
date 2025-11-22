@@ -19,8 +19,6 @@ import base64
 import pyperclip
 from PIL import ImageGrab
 from pynput import keyboard
-import tempfile
-
 
 from pynput import keyboard
 import Quartz
@@ -232,19 +230,6 @@ class AudioRecorder:
         self.stream = None
         self.audio_queue = queue.Queue()
         self.input_mode = "internal"  # internal = BlackHole, external = mic
-        self.lock = threading.Lock() 
-        
-    def get_snapshot(self):
-        """
-        Return a numpy array with all audio recorded so far (copy),
-        or None if there is no audio yet.
-        """
-        with self.lock:
-            if not self.frames:
-                return None
-            return np.concatenate(self.frames).copy()
-
-
 
     def find_device(self):
         devices = sd.query_devices()
@@ -278,13 +263,9 @@ class AudioRecorder:
     def process_audio(self):
         while self.is_recording or not self.audio_queue.empty():
             try:
-                frame = self.audio_queue.get(timeout=0.1)
+                self.frames.append(self.audio_queue.get(timeout=0.1))
             except queue.Empty:
                 continue
-
-            with self.lock:
-                self.frames.append(frame)
-
 
     def stop_recording(self, filename="interviewer.wav"):
         self.is_recording = False
@@ -292,18 +273,14 @@ class AudioRecorder:
             self.stream.stop()
             self.stream.close()
 
-        with self.lock:
-            frames_copy = list(self.frames)
-
-        if frames_copy:
-            audio_data = np.concatenate(frames_copy)
+        if self.frames:
+            audio_data = np.concatenate(self.frames)
             with wave.open(filename, 'wb') as wf:
                 wf.setnchannels(CHANNELS)
                 wf.setsampwidth(2)
                 wf.setframerate(SAMPLE_RATE)
                 wf.writeframes(audio_data.tobytes())
         return filename
-
 
 class ChatHistoryManager:
     def __init__(self, file_path="chats.json"):
@@ -501,10 +478,6 @@ class Application(tk.Tk):
         self._last_persisted_hash = None
 
         self.is_processing_audio = False
-        self.live_transcription_running = False
-        self.latest_live_question = ""   # last incremental text from Whisper
-        self.live_question_index = None  # index of the "Live Question" line in the Text widget
-
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
         self.chat_manager = ChatHistoryManager()
@@ -542,79 +515,7 @@ class Application(tk.Tk):
         # Ensure we start within limits
         self.after(0, lambda: self.auto_prune_chats(max_chats=10))
 
-    def update_live_question_in_ui(self, text: str):
-        """
-        Safely update the 'Live Question: ...' line in the response_box.
-        This is called from a background thread via .after().
-        """
-        if not self.live_question_index:
-            return
-
-        try:
-            self.response_box.config(state=tk.NORMAL)
-            # Delete current line contents from live_question_index to end-of-line
-            line_start = self.live_question_index
-            line_end = f"{line_start.split('.')[0]}.end"
-            self.response_box.delete(line_start, line_end)
-            self.response_box.insert(line_start, f"Live Question: {text}")
-            self.response_box.config(state=tk.DISABLED)
-            self.response_box.see(tk.END)
-        except Exception as e:
-            print(f"Live UI update error: {e}")
-
-
-    def live_transcription_loop(self):
-        """
-        Runs in a background thread while recording.
-        Every ~2s, takes a snapshot of audio so far, sends it to Whisper,
-        and updates the Live Question line with the latest text.
-        """
-        last_text = ""
-        while self.live_transcription_running and self.assistant.recorder.is_recording:
-            snapshot = self.assistant.recorder.get_snapshot()
-            if snapshot is None:
-                time.sleep(0.5)
-                continue
-
-            # Build a temporary WAV file for Whisper
-            try:
-                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-                    with wave.open(tmp, 'wb') as wf:
-                        wf.setnchannels(CHANNELS)
-                        wf.setsampwidth(2)
-                        wf.setframerate(SAMPLE_RATE)
-                        wf.writeframes(snapshot.tobytes())
-                    temp_name = tmp.name
-
-                with open(temp_name, "rb") as audio_file:
-                    transcription = client.audio.transcriptions.create(
-                        model="whisper-1",
-                        file=audio_file
-                    )
-                text = (transcription.text or "").strip()
-            except Exception as e:
-                print(f"❌ Live transcription error: {e}")
-                time.sleep(1.0)
-                continue
-            finally:
-                try:
-                    os.remove(temp_name)
-                except Exception:
-                    pass
-
-            if text and text != last_text:
-                last_text = text
-                self.latest_live_question = text
-                # Schedule UI update on main thread
-                self.after(0, lambda t=text: self.update_live_question_in_ui(t))
-
-            # Small sleep to avoid too many API calls
-            for _ in range(6):
-                if not self.live_transcription_running or not self.assistant.recorder.is_recording:
-                    break
-                time.sleep(0.3)
-
-
+    
     def auto_prune_chats(self, max_chats=10):
         """
         If there are more than `max_chats` real chats (excluding AutoSave),
@@ -1425,13 +1326,8 @@ class Application(tk.Tk):
 
             if not self.assistant.recorder.is_recording:
                 self.assistant.streaming = False
-
-                # Show listening + create a Live Question line
                 self.response_box.config(state=tk.NORMAL)
                 self.response_box.insert(tk.END, "\n\n🎙 Listening to your question...\n")
-                # Remember where the live question line starts
-                self.live_question_index = self.response_box.index(tk.END)
-                self.response_box.insert(tk.END, "Live Question: ")
                 self.response_box.config(state=tk.DISABLED)
                 self.response_box.see(tk.END)
 
@@ -1439,11 +1335,6 @@ class Application(tk.Tk):
                 self.status.config(text="🎙 Listening to interviewer...")
                 self.record_btn.config(text="🛑 Stop & Process")
                 self.stop_btn.config(state=tk.DISABLED)
-
-                # 🔴 Start live / incremental transcription
-                self.live_transcription_running = True
-                threading.Thread(target=self.live_transcription_loop, daemon=True).start()
-
             else:
                 self.is_processing_audio = True  # Set flag to True when processing audio
                 self.record_btn.config(state=tk.DISABLED)
@@ -1454,18 +1345,9 @@ class Application(tk.Tk):
 
 
     def process_recording(self):
-        self.live_transcription_running = False
-        try:
-            self.live_question_index = None
-        except Exception:
-            pass
         try:
             filename = self.assistant.recorder.stop_recording()
-            question = self.latest_live_question.strip() if self.latest_live_question else ""
-
-            # Optional: fallback to full file transcription if live text is empty
-            if not question:
-                question = self.assistant.transcribe_audio(filename)
+            question = self.assistant.transcribe_audio(filename)
 
             if question.startswith("❌"):
                 self.status.config(text=question)

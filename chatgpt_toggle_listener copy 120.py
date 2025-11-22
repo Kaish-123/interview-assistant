@@ -183,9 +183,9 @@ def get_window_under_mouse():
     return None
 
 # Example usage:
-window = get_window_under_mouse()
-if window:
-    print(f"Window under mouse: {window.get('kCGWindowName', 'No Title')}")
+# window = get_window_under_mouse()
+# if window:
+#     print(f"Window under mouse: {window.get('kCGWindowName', 'No Title')}")
 
 
 def get_window_list():
@@ -197,9 +197,9 @@ def get_window_list():
     return window_list
 
 # Example usage:
-windows = get_window_list()
-for window in windows:
-    print(window.get('kCGWindowName', 'No Title'))
+# windows = get_window_list()
+# for window in windows:
+#     print(window.get('kCGWindowName', 'No Title'))
 
 
 def on_activate():
@@ -232,8 +232,57 @@ class AudioRecorder:
         self.stream = None
         self.audio_queue = queue.Queue()
         self.input_mode = "internal"  # internal = BlackHole, external = mic
-        self.lock = threading.Lock() 
-        
+        self.lock = threading.Lock()
+        self.process_thread = None      # ✅ NEW
+
+    def find_device(self):
+        """
+        Resolve a sounddevice input device index based on self.input_mode.
+
+        - internal  => prefer BLACKHOLE_DEVICE
+        - external  => prefer first non-BlackHole input device
+
+        If nothing matches, return None so sounddevice uses its default.
+        """
+        try:
+            devices = sd.query_devices()
+        except Exception as e:
+            print(f"⚠️ Could not query audio devices: {e}")
+            return None
+
+        target_index = None
+        bh_name = BLACKHOLE_DEVICE.lower()
+
+        if self.input_mode == "internal":
+            # Prefer BlackHole for internal audio
+            for idx, dev in enumerate(devices):
+                try:
+                    if dev.get("max_input_channels", 0) > 0 and bh_name in dev.get("name", "").lower():
+                        target_index = idx
+                        break
+                except Exception:
+                    continue
+        else:
+            # Prefer first *non*-BlackHole input device as "external" mic
+            for idx, dev in enumerate(devices):
+                try:
+                    if dev.get("max_input_channels", 0) > 0 and bh_name not in dev.get("name", "").lower():
+                        target_index = idx
+                        break
+                except Exception:
+                    continue
+
+        if target_index is None:
+            print(f"⚠️ No specific device found for mode={self.input_mode!r}, falling back to default.")
+            return None  # let sounddevice pick default
+
+        try:
+            print(f"🎧 Using device #{target_index}: {devices[target_index]['name']} (mode={self.input_mode})")
+        except Exception:
+            pass
+
+        return target_index
+
     def get_snapshot(self):
         """
         Return a numpy array with all audio recorded so far (copy),
@@ -243,17 +292,6 @@ class AudioRecorder:
             if not self.frames:
                 return None
             return np.concatenate(self.frames).copy()
-
-
-
-    def find_device(self):
-        devices = sd.query_devices()
-        for i, device in enumerate(devices):
-            if self.input_mode == "internal" and "BlackHole" in device['name']:
-                return i
-            elif self.input_mode == "external" and device['max_input_channels'] > 0 and "BlackHole" not in device['name']:
-                return i
-        raise ValueError("🎙 Desired input device not found")
 
     def start_recording(self):
         device_id = self.find_device()
@@ -273,24 +311,29 @@ class AudioRecorder:
             blocksize=CHUNK
         )
         self.stream.start()
-        threading.Thread(target=self.process_audio, daemon=True).start()
-    
+        # ✅ track the thread so we can join it on stop
+        self.process_thread = threading.Thread(target=self.process_audio, daemon=True)
+        self.process_thread.start()
+
     def process_audio(self):
         while self.is_recording or not self.audio_queue.empty():
             try:
                 frame = self.audio_queue.get(timeout=0.1)
             except queue.Empty:
                 continue
-
             with self.lock:
                 self.frames.append(frame)
 
-
     def stop_recording(self, filename="interviewer.wav"):
+        # 🔚 stop callbacks first
         self.is_recording = False
         if self.stream:
             self.stream.stop()
             self.stream.close()
+
+        # ✅ wait for the process_audio thread to drain the queue
+        if self.process_thread and self.process_thread.is_alive():
+            self.process_thread.join(timeout=1.0)
 
         with self.lock:
             frames_copy = list(self.frames)
@@ -303,6 +346,7 @@ class AudioRecorder:
                 wf.setframerate(SAMPLE_RATE)
                 wf.writeframes(audio_data.tobytes())
         return filename
+
 
 
 class ChatHistoryManager:
@@ -385,12 +429,14 @@ class ChatGPTAssistant:
             return False, f"❌ Error processing document: {str(e)}"
 
 
-    def transcribe_audio(self, filename):
+    def transcribe_audio(self, filename, prompt: str | None = None):
         try:
             with open(filename, "rb") as audio_file:
                 transcription = client.audio.transcriptions.create(
                     model="whisper-1",
-                    file=audio_file
+                    file=audio_file,
+                    # ✅ use live preview as a hint, not as the final text
+                    prompt=prompt or ""
                 )
             return transcription.text
         except Exception as e:
@@ -503,7 +549,7 @@ class Application(tk.Tk):
         self.is_processing_audio = False
         self.live_transcription_running = False
         self.latest_live_question = ""   # last incremental text from Whisper
-        self.live_question_index = None  # index of the "Live Question" line in the Text widget
+        #self.live_question_index = None  # index of the "Live Question" line in the Text widget
 
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
@@ -544,23 +590,45 @@ class Application(tk.Tk):
 
     def update_live_question_in_ui(self, text: str):
         """
-        Safely update the 'Live Question: ...' line in the response_box.
-        This is called from a background thread via .after().
+        Show a single live-updating 'Live Question:' block in the Text widget.
+
+        Every time this is called, we delete the previous
+        '🎙 Listening to your question...' + 'Live Question: ...'
+        block and re-add it, so there is NO duplication.
         """
-        if not self.live_question_index:
+        if not text:
             return
 
         try:
             self.response_box.config(state=tk.NORMAL)
-            # Delete current line contents from live_question_index to end-of-line
-            line_start = self.live_question_index
-            line_end = f"{line_start.split('.')[0]}.end"
-            self.response_box.delete(line_start, line_end)
-            self.response_box.insert(line_start, f"Live Question: {text}")
+
+            # 1) Find where the 'Listening...' block starts (if it already exists)
+            start_index = self.response_box.search(
+                "🎙 Listening to your question...",
+                "1.0",
+                tk.END
+            )
+
+            if start_index:
+                # If found, delete from that point to the end
+                self.response_box.delete(start_index, tk.END)
+
+            # 2) Ensure there is a blank line before the listening block
+            # (optional, just for spacing)
+            current_end = self.response_box.index(tk.END)
+            if not current_end.endswith(".0"):
+                self.response_box.insert(tk.END, "\n")
+
+            # 3) Re-insert the listening + single live question line
+            self.response_box.insert(tk.END, "\n🎙 Listening to your question...\n")
+            self.response_box.insert(tk.END, f"Live Question: {text}\n")
+
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
+
         except Exception as e:
             print(f"Live UI update error: {e}")
+
 
 
     def live_transcription_loop(self):
@@ -609,10 +677,12 @@ class Application(tk.Tk):
                 self.after(0, lambda t=text: self.update_live_question_in_ui(t))
 
             # Small sleep to avoid too many API calls
-            for _ in range(6):
+            # inside live_transcription_loop
+            for _ in range(10):
                 if not self.live_transcription_running or not self.assistant.recorder.is_recording:
                     break
-                time.sleep(0.3)
+                time.sleep(0.1)
+
 
 
     def auto_prune_chats(self, max_chats=10):
@@ -1331,6 +1401,41 @@ class Application(tk.Tk):
         
     #     self.load_chat_tabs()
 
+    def capture_and_submit_screenshot(self):
+        self.status.config(text="📸 Capturing screen...")
+        print("📸 Got the screen capture")
+
+        screenshot = pyautogui.screenshot()
+        buffer = io.BytesIO()
+        screenshot.save(buffer, format="PNG")
+        buffer.seek(0)
+        b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+        # Build multimodal message (text + image)
+        content = [
+            {"type": "text", "text": "Please analyze this screenshot."},
+            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64_image}"}}
+        ]
+
+        # UI preview
+        self.response_box.config(state=tk.NORMAL)
+        self.response_box.insert(
+            tk.END,
+            "\n\n---------------------------------------------------------------------\nQUESTION: [Screenshot attached]\n"
+        )
+        self.response_box.config(state=tk.DISABLED)
+        self.response_box.see(tk.END)
+
+        # Add to chat history & stream
+        self.assistant.messages.append({"role": "user", "content": content})
+        self.chat_manager.save_current_session(self.assistant.messages)
+
+        self.status.config(text="🧠 Analyzing screenshot...")
+        threading.Thread(
+            target=self.assistant.stream_gpt_response,
+            args=(self.response_box, self.status, self.record_btn),
+            daemon=True
+        ).start()
 
 
     def submit_text_question(self):
@@ -1352,7 +1457,7 @@ class Application(tk.Tk):
         if question:
             content.append({"type": "text", "text": question})
 
-        # ✅ Always include any queued images (don’t depend on “📎” being in the text)
+        # ✅ Always include any queued images
         if hasattr(self, 'pending_attachments'):
             content.extend(self.pending_attachments)
             del self.pending_attachments  # clear only after sending
@@ -1363,7 +1468,10 @@ class Application(tk.Tk):
         )
 
         self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
+        self.response_box.insert(
+            tk.END,
+            f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n"
+        )
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
@@ -1379,7 +1487,6 @@ class Application(tk.Tk):
         self.chat_manager.save_current_session(self.assistant.messages)
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-
 
 
 
@@ -1426,23 +1533,18 @@ class Application(tk.Tk):
             if not self.assistant.recorder.is_recording:
                 self.assistant.streaming = False
 
-                # Show listening + create a Live Question line
-                self.response_box.config(state=tk.NORMAL)
-                self.response_box.insert(tk.END, "\n\n🎙 Listening to your question...\n")
-                # Remember where the live question line starts
-                self.live_question_index = self.response_box.index(tk.END)
-                self.response_box.insert(tk.END, "Live Question: ")
-                self.response_box.config(state=tk.DISABLED)
-                self.response_box.see(tk.END)
+                # Just mark that there is no active live line yet
+                #self.live_question_index = None
+                self.latest_live_question = ""
 
                 self.assistant.recorder.start_recording()
                 self.status.config(text="🎙 Listening to interviewer...")
                 self.record_btn.config(text="🛑 Stop & Process")
                 self.stop_btn.config(state=tk.DISABLED)
 
-                # 🔴 Start live / incremental transcription
                 self.live_transcription_running = True
                 threading.Thread(target=self.live_transcription_loop, daemon=True).start()
+
 
             else:
                 self.is_processing_audio = True  # Set flag to True when processing audio
@@ -1454,26 +1556,42 @@ class Application(tk.Tk):
 
 
     def process_recording(self):
+        # stop live preview loop
         self.live_transcription_running = False
         try:
-            self.live_question_index = None
+            live_preview = self.latest_live_question.strip()
         except Exception:
-            pass
+            live_preview = ""
+        self.latest_live_question = ""
+        #self.live_question_index = None
+
         try:
             filename = self.assistant.recorder.stop_recording()
-            question = self.latest_live_question.strip() if self.latest_live_question else ""
 
-            # Optional: fallback to full file transcription if live text is empty
+            # ❌ OLD:
+            # final_text = self.assistant.transcribe_audio(filename, prompt=live_preview or None)
+
+            # ✅ NEW: full clean transcription, no prompt (to avoid duplication)
+            final_text = self.assistant.transcribe_audio(filename)
+
+            if isinstance(final_text, str) and final_text.startswith("❌"):
+                self.status.config(text=final_text)
+                return
+
+            question = (final_text or "").strip()
+
+            # Fallback to live preview only if final_text is truly empty
+            if not question and live_preview:
+                question = live_preview
+
+
             if not question:
-                question = self.assistant.transcribe_audio(filename)
-
-            if question.startswith("❌"):
-                self.status.config(text=question)
+                self.status.config(text="⚠️ No speech detected in the recording.")
                 return
 
             # === Maintain consistent format with typed input ===
             content = [{"type": "text", "text": question}]
-            # Explicitly show all attachments in chat history preview too
+
             preview_lines = []
             for c in content:
                 if c["type"] == "text":
@@ -1483,20 +1601,14 @@ class Application(tk.Tk):
 
             flat_text = "\n".join(preview_lines)
 
-            # Flatten input for GPT model
-            flat_text = "\n".join(
-                c["text"] if c["type"] == "text" else "[Image]" for c in content
-            )
-
-            # Show question in UI
+            # Show question in UI (final, complete text)
             self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\nQuestion: {flat_text.strip()}\n")
+            self.response_box.insert(tk.END, f"\n\nQUESTION: {flat_text.strip()}\n")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
 
             # Append flat question for GPT context
             self.assistant.messages.append({"role": "user", "content": flat_text})
-            # Show updated history before streaming
             self.chat_manager.save_current_session(self.assistant.messages)
 
             self.display_chat_history()

@@ -19,6 +19,8 @@ import base64
 import pyperclip
 from PIL import ImageGrab
 from pynput import keyboard
+import tempfile
+
 
 from pynput import keyboard
 import Quartz
@@ -181,9 +183,9 @@ def get_window_under_mouse():
     return None
 
 # Example usage:
-window = get_window_under_mouse()
-if window:
-    print(f"Window under mouse: {window.get('kCGWindowName', 'No Title')}")
+# window = get_window_under_mouse()
+# if window:
+#     print(f"Window under mouse: {window.get('kCGWindowName', 'No Title')}")
 
 
 def get_window_list():
@@ -195,9 +197,9 @@ def get_window_list():
     return window_list
 
 # Example usage:
-windows = get_window_list()
-for window in windows:
-    print(window.get('kCGWindowName', 'No Title'))
+# windows = get_window_list()
+# for window in windows:
+#     print(window.get('kCGWindowName', 'No Title'))
 
 
 def on_activate():
@@ -230,15 +232,66 @@ class AudioRecorder:
         self.stream = None
         self.audio_queue = queue.Queue()
         self.input_mode = "internal"  # internal = BlackHole, external = mic
+        self.lock = threading.Lock()
+        self.process_thread = None      # ✅ NEW
 
     def find_device(self):
-        devices = sd.query_devices()
-        for i, device in enumerate(devices):
-            if self.input_mode == "internal" and "BlackHole" in device['name']:
-                return i
-            elif self.input_mode == "external" and device['max_input_channels'] > 0 and "BlackHole" not in device['name']:
-                return i
-        raise ValueError("🎙 Desired input device not found")
+        """
+        Resolve a sounddevice input device index based on self.input_mode.
+
+        - internal  => prefer BLACKHOLE_DEVICE
+        - external  => prefer first non-BlackHole input device
+
+        If nothing matches, return None so sounddevice uses its default.
+        """
+        try:
+            devices = sd.query_devices()
+        except Exception as e:
+            print(f"⚠️ Could not query audio devices: {e}")
+            return None
+
+        target_index = None
+        bh_name = BLACKHOLE_DEVICE.lower()
+
+        if self.input_mode == "internal":
+            # Prefer BlackHole for internal audio
+            for idx, dev in enumerate(devices):
+                try:
+                    if dev.get("max_input_channels", 0) > 0 and bh_name in dev.get("name", "").lower():
+                        target_index = idx
+                        break
+                except Exception:
+                    continue
+        else:
+            # Prefer first *non*-BlackHole input device as "external" mic
+            for idx, dev in enumerate(devices):
+                try:
+                    if dev.get("max_input_channels", 0) > 0 and bh_name not in dev.get("name", "").lower():
+                        target_index = idx
+                        break
+                except Exception:
+                    continue
+
+        if target_index is None:
+            print(f"⚠️ No specific device found for mode={self.input_mode!r}, falling back to default.")
+            return None  # let sounddevice pick default
+
+        try:
+            print(f"🎧 Using device #{target_index}: {devices[target_index]['name']} (mode={self.input_mode})")
+        except Exception:
+            pass
+
+        return target_index
+
+    def get_snapshot(self):
+        """
+        Return a numpy array with all audio recorded so far (copy),
+        or None if there is no audio yet.
+        """
+        with self.lock:
+            if not self.frames:
+                return None
+            return np.concatenate(self.frames).copy()
 
     def start_recording(self):
         device_id = self.find_device()
@@ -258,23 +311,35 @@ class AudioRecorder:
             blocksize=CHUNK
         )
         self.stream.start()
-        threading.Thread(target=self.process_audio, daemon=True).start()
-    
+        # ✅ track the thread so we can join it on stop
+        self.process_thread = threading.Thread(target=self.process_audio, daemon=True)
+        self.process_thread.start()
+
     def process_audio(self):
         while self.is_recording or not self.audio_queue.empty():
             try:
-                self.frames.append(self.audio_queue.get(timeout=0.1))
+                frame = self.audio_queue.get(timeout=0.1)
             except queue.Empty:
                 continue
+            with self.lock:
+                self.frames.append(frame)
 
     def stop_recording(self, filename="interviewer.wav"):
+        # 🔚 stop callbacks first
         self.is_recording = False
         if self.stream:
             self.stream.stop()
             self.stream.close()
 
-        if self.frames:
-            audio_data = np.concatenate(self.frames)
+        # ✅ wait for the process_audio thread to drain the queue
+        if self.process_thread and self.process_thread.is_alive():
+            self.process_thread.join(timeout=1.0)
+
+        with self.lock:
+            frames_copy = list(self.frames)
+
+        if frames_copy:
+            audio_data = np.concatenate(frames_copy)
             with wave.open(filename, 'wb') as wf:
                 wf.setnchannels(CHANNELS)
                 wf.setsampwidth(2)
@@ -282,11 +347,23 @@ class AudioRecorder:
                 wf.writeframes(audio_data.tobytes())
         return filename
 
+
+
 class ChatHistoryManager:
     def __init__(self, file_path="chats.json"):
         self.file_path = file_path
         self.sessions = []  # Each item: {"title": str, "messages": List[dict]}
+        self._last_save_time = 0
+        self.min_save_interval = 3.0 
         self.load()
+    
+    def save(self, force=False):
+        now = time.time()
+        if not force and (now - self._last_save_time) < self.min_save_interval:
+            return
+        with open(self.file_path, "w") as f:
+            json.dump(self.sessions, f, indent=2)
+        self._last_save_time = now
 
     def load(self):
         if os.path.exists(self.file_path):
@@ -334,7 +411,80 @@ class ChatGPTAssistant:
         self.last_scroll_position = 0
         self.font_size = 12
         self.stream_thread = None 
-        
+        self.max_rounds_for_model = 8
+        self.summary_message = None           # a synthetic summary system message
+        self.summary_threshold_rounds = 20   
+    
+    def _maybe_summarize_history(self):
+        """
+        If chat is long, summarize older user/assistant messages into a single
+        system message and keep only recent turns in detail.
+        """
+        user_assistant = [m for m in self.messages if m["role"] in ("user", "assistant")]
+        rounds = len(user_assistant) // 2
+
+        if rounds < self.summary_threshold_rounds:
+            return  # no need yet
+
+        # 1) Build a plain-text transcript to summarize
+        transcript_lines = []
+        for m in user_assistant:
+            role = "User" if m["role"] == "user" else "Assistant"
+            content = m["content"]
+            if isinstance(content, list):
+                text_parts = [c["text"] for c in content if c["type"] == "text"]
+                content = "\n".join(text_parts)
+            transcript_lines.append(f"{role}: {content}")
+
+        transcript = "\n".join(transcript_lines)
+
+        # 2) Call a smaller/faster model to summarize
+        try:
+            resp = client.chat.completions.create(
+                model="gpt-4o-mini",  # faster & cheaper for summarization
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a summarizer. Summarize this conversation so far "
+                            "into key technical points, constraints, and decisions. "
+                            "Be concise but not cryptic."
+                        ),
+                    },
+                    {"role": "user", "content": transcript},
+                ],
+            )
+            summary_text = resp.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"❌ Summary error: {e}")
+            return
+
+        # 3) Store as synthetic system message and prune older turns
+        self.summary_message = {
+            "role": "system",
+            "content": f"Summary of past conversation:\n{summary_text}",
+        }
+
+        # Keep system messages + summary + last few rounds
+        system_msgs = [m for m in self.messages if m["role"] == "system"]
+        recent_other = user_assistant[-(self.max_rounds_for_model * 2):]
+
+        self.messages = system_msgs + [self.summary_message] + recent_other
+
+    
+    def _build_messages_for_model(self):
+        system_msgs = [m for m in self.messages if m["role"] == "system"]
+
+        # ensure summary goes last among system messages (most recent instruction)
+        if self.summary_message and self.summary_message not in system_msgs:
+            system_msgs.append(self.summary_message)
+
+        other_msgs = [m for m in self.messages if m["role"] != "system"]
+        keep = self.max_rounds_for_model * 2
+        recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
+        return system_msgs + recent
+
+            
     def cancel_streaming(self):
         self.streaming = False
         if self.stream_thread and self.stream_thread.is_alive():
@@ -362,12 +512,14 @@ class ChatGPTAssistant:
             return False, f"❌ Error processing document: {str(e)}"
 
 
-    def transcribe_audio(self, filename):
+    def transcribe_audio(self, filename, prompt: str | None = None):
         try:
             with open(filename, "rb") as audio_file:
                 transcription = client.audio.transcriptions.create(
                     model="whisper-1",
-                    file=audio_file
+                    file=audio_file,
+                    # ✅ use live preview as a hint, not as the final text
+                    prompt=prompt or ""
                 )
             return transcription.text
         except Exception as e:
@@ -376,19 +528,25 @@ class ChatGPTAssistant:
     def stream_gpt_response(self, text_widget, status_label, button):
         self.cancel_streaming()  # 🔴 Cancel any ongoing output
 
+        
         def run_stream():
             with self.lock:
+                self._maybe_summarize_history()
                 self.current_response = ""
                 self.streaming = True
-                placeholder = {"role": "assistant", "content": ""}
+                placeholder = {"12role": "assistant", "content": ""}
                 self.messages.append(placeholder)
 
                 try:
+                    # ⬇️ use trimmed context instead of full history
+                    model_messages = self._build_messages_for_model()
+
                     stream = client.chat.completions.create(
-                        model="gpt-4o",
-                        messages=self.messages,
-                        stream=True
-                    )
+                    model="gpt-4o",
+                    messages=model_messages,
+                    stream=True,
+                    max_tokens=800  # or whatever fits your style
+                )
 
                     buffer = ""
                     last_update = time.time()
@@ -478,6 +636,10 @@ class Application(tk.Tk):
         self._last_persisted_hash = None
 
         self.is_processing_audio = False
+        self.live_transcription_running = False
+        self.latest_live_question = ""   # last incremental text from Whisper
+        #self.live_question_index = None  # index of the "Live Question" line in the Text widget
+
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
         self.chat_manager = ChatHistoryManager()
@@ -515,7 +677,109 @@ class Application(tk.Tk):
         # Ensure we start within limits
         self.after(0, lambda: self.auto_prune_chats(max_chats=10))
 
-    
+    def update_live_question_in_ui(self, text: str):
+        """
+        Show a single live-updating 'Live Question:' block in the Text widget.
+
+        Every time this is called, we delete the previous
+        '🎙 Listening to your question...' + 'Live Question: ...'
+        block and re-add it, so there is NO duplication.
+        """
+        if not text:
+            return
+
+        try:
+            self.response_box.config(state=tk.NORMAL)
+
+            # 1) Find where the 'Listening...' block starts (if it already exists)
+            start_index = self.response_box.search(
+                "🎙 Listening to your question...",
+                "1.0",
+                tk.END
+            )
+
+            if start_index:
+                # If found, delete from that point to the end
+                self.response_box.delete(start_index, tk.END)
+
+            # 2) Ensure there is a blank line before the listening block
+            # (optional, just for spacing)
+            current_end = self.response_box.index(tk.END)
+            if not current_end.endswith(".0"):
+                self.response_box.insert(tk.END, "\n")
+
+            # 3) Re-insert the listening + single live question line
+            self.response_box.insert(tk.END, "\n🎙 Listening to your question...\n")
+            self.response_box.insert(tk.END, f"Live Question: {text}\n")
+
+            self.response_box.config(state=tk.DISABLED)
+            self.response_box.see(tk.END)
+
+        except Exception as e:
+            print(f"Live UI update error: {e}")
+
+
+
+    def live_transcription_loop(self):
+        last_text = ""
+        in_flight = False
+
+        while self.live_transcription_running and self.assistant.recorder.is_recording:
+            if in_flight:
+                time.sleep(0.2)
+                continue
+
+            snapshot = self.assistant.recorder.get_snapshot()
+            if snapshot is None:
+                time.sleep(0.5)
+                continue
+
+            def do_call(snapshot_copy):
+                nonlocal last_text, in_flight
+                in_flight = True
+                try:
+                    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                        with wave.open(tmp, 'wb') as wf:
+                            wf.setnchannels(CHANNELS)
+                            wf.setsampwidth(2)
+                            wf.setframerate(SAMPLE_RATE)
+                            wf.writeframes(snapshot_copy.tobytes())
+                        temp_name = tmp.name
+
+                    with open(temp_name, "rb") as audio_file:
+                        transcription = client.audio.transcriptions.create(
+                            model="whisper-1",
+                            file=audio_file
+                        )
+                    text = (transcription.text or "").strip()
+                except Exception as e:
+                    print(f"❌ Live transcription error: {e}")
+                    text = ""
+                finally:
+                    try:
+                        os.remove(temp_name)
+                    except Exception:
+                        pass
+                    in_flight = False
+
+                if text and text != last_text:
+                    last_text = text
+                    self.latest_live_question = text
+                    self.after(0, lambda t=text: self.update_live_question_in_ui(t))
+
+            # launch Whisper call in a short-lived thread
+            snapshot_copy = snapshot.copy()
+            threading.Thread(target=do_call, args=(snapshot_copy,), daemon=True).start()
+
+            # slower polling interval = fewer calls
+            for _ in range(15):  # ~3 seconds
+                if not self.live_transcription_running or not self.assistant.recorder.is_recording:
+                    break
+                time.sleep(0.2)
+
+
+
+
     def auto_prune_chats(self, max_chats=10):
         """
         If there are more than `max_chats` real chats (excluding AutoSave),
@@ -756,19 +1020,33 @@ class Application(tk.Tk):
             self.toggle_input_btn.config(text="🔈 Internal Audio (BlackHole)")
             self.status.config(text="🔈 Switched to Internal Audio (BlackHole)")
 
-    def display_chat_history(self):
+    def display_chat_history(self, max_rounds=20):
         self.response_box.config(state=tk.NORMAL)
         self.response_box.delete(1.0, tk.END)
-        for msg in self.assistant.messages:
+
+        # filter to user/assistant only to count “rounds”
+        ua = [m for m in self.assistant.messages if m["role"] in ("user", "assistant")]
+        # keep last max_rounds * 2 msgs
+        keep = max_rounds * 2
+        recent_ua = ua[-keep:] if len(ua) > keep else ua
+
+        for msg in recent_ua:
             if msg["role"] == "user":
                 content = msg["content"]
-                if isinstance(content, list):  # for image or mixed content
+                if isinstance(content, list):
                     text = "\n".join(c["text"] if c["type"] == "text" else "[Image]" for c in content)
                 else:
                     text = content
-                self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {text.strip()}\n")
-            elif msg["role"] == "assistant":
-                self.response_box.insert(tk.END, f"------------------\nANSWER: {msg['content'].strip()}\n")
+                self.response_box.insert(
+                    tk.END,
+                    f"\n\n---------------------------------------------------------------------\nQUESTION: {text.strip()}\n"
+                )
+            else:  # assistant
+                self.response_box.insert(
+                    tk.END,
+                    f"------------------\nANSWER: {msg['content'].strip()}\n"
+                )
+
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
@@ -1232,6 +1510,41 @@ class Application(tk.Tk):
         
     #     self.load_chat_tabs()
 
+    def capture_and_submit_screenshot(self):
+        self.status.config(text="📸 Capturing screen...")
+        print("📸 Got the screen capture")
+
+        screenshot = pyautogui.screenshot()
+        buffer = io.BytesIO()
+        screenshot.save(buffer, format="PNG")
+        buffer.seek(0)
+        b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+        # Build multimodal message (text + image)
+        content = [
+            {"type": "text", "text": "Please analyze this screenshot."},
+            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64_image}"}}
+        ]
+
+        # UI preview
+        self.response_box.config(state=tk.NORMAL)
+        self.response_box.insert(
+            tk.END,
+            "\n\n---------------------------------------------------------------------\nQUESTION: [Screenshot attached]\n"
+        )
+        self.response_box.config(state=tk.DISABLED)
+        self.response_box.see(tk.END)
+
+        # Add to chat history & stream
+        self.assistant.messages.append({"role": "user", "content": content})
+        self.chat_manager.save_current_session(self.assistant.messages)
+
+        self.status.config(text="🧠 Analyzing screenshot...")
+        threading.Thread(
+            target=self.assistant.stream_gpt_response,
+            args=(self.response_box, self.status, self.record_btn),
+            daemon=True
+        ).start()
 
 
     def submit_text_question(self):
@@ -1253,7 +1566,7 @@ class Application(tk.Tk):
         if question:
             content.append({"type": "text", "text": question})
 
-        # ✅ Always include any queued images (don’t depend on “📎” being in the text)
+        # ✅ Always include any queued images
         if hasattr(self, 'pending_attachments'):
             content.extend(self.pending_attachments)
             del self.pending_attachments  # clear only after sending
@@ -1264,7 +1577,10 @@ class Application(tk.Tk):
         )
 
         self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
+        self.response_box.insert(
+            tk.END,
+            f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n"
+        )
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
@@ -1280,7 +1596,6 @@ class Application(tk.Tk):
         self.chat_manager.save_current_session(self.assistant.messages)
         self.assistant.cancel_streaming()
         self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-
 
 
 
@@ -1326,15 +1641,20 @@ class Application(tk.Tk):
 
             if not self.assistant.recorder.is_recording:
                 self.assistant.streaming = False
-                self.response_box.config(state=tk.NORMAL)
-                self.response_box.insert(tk.END, "\n\n🎙 Listening to your question...\n")
-                self.response_box.config(state=tk.DISABLED)
-                self.response_box.see(tk.END)
+
+                # Just mark that there is no active live line yet
+                #self.live_question_index = None
+                self.latest_live_question = ""
 
                 self.assistant.recorder.start_recording()
                 self.status.config(text="🎙 Listening to interviewer...")
                 self.record_btn.config(text="🛑 Stop & Process")
                 self.stop_btn.config(state=tk.DISABLED)
+
+                self.live_transcription_running = True
+                threading.Thread(target=self.live_transcription_loop, daemon=True).start()
+
+
             else:
                 self.is_processing_audio = True  # Set flag to True when processing audio
                 self.record_btn.config(state=tk.DISABLED)
@@ -1345,17 +1665,42 @@ class Application(tk.Tk):
 
 
     def process_recording(self):
+        # stop live preview loop
+        self.live_transcription_running = False
+        try:
+            live_preview = self.latest_live_question.strip()
+        except Exception:
+            live_preview = ""
+        self.latest_live_question = ""
+        #self.live_question_index = None
+
         try:
             filename = self.assistant.recorder.stop_recording()
-            question = self.assistant.transcribe_audio(filename)
 
-            if question.startswith("❌"):
-                self.status.config(text=question)
+            # ❌ OLD:
+            # final_text = self.assistant.transcribe_audio(filename, prompt=live_preview or None)
+
+            # ✅ NEW: full clean transcription, no prompt (to avoid duplication)
+            final_text = self.assistant.transcribe_audio(filename)
+
+            if isinstance(final_text, str) and final_text.startswith("❌"):
+                self.status.config(text=final_text)
+                return
+
+            question = (final_text or "").strip()
+
+            # Fallback to live preview only if final_text is truly empty
+            if not question and live_preview:
+                question = live_preview
+
+
+            if not question:
+                self.status.config(text="⚠️ No speech detected in the recording.")
                 return
 
             # === Maintain consistent format with typed input ===
             content = [{"type": "text", "text": question}]
-            # Explicitly show all attachments in chat history preview too
+
             preview_lines = []
             for c in content:
                 if c["type"] == "text":
@@ -1365,20 +1710,14 @@ class Application(tk.Tk):
 
             flat_text = "\n".join(preview_lines)
 
-            # Flatten input for GPT model
-            flat_text = "\n".join(
-                c["text"] if c["type"] == "text" else "[Image]" for c in content
-            )
-
-            # Show question in UI
+            # Show question in UI (final, complete text)
             self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\nQuestion: {flat_text.strip()}\n")
+            self.response_box.insert(tk.END, f"\n\nQUESTION: {flat_text.strip()}\n")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
 
             # Append flat question for GPT context
             self.assistant.messages.append({"role": "user", "content": flat_text})
-            # Show updated history before streaming
             self.chat_manager.save_current_session(self.assistant.messages)
 
             self.display_chat_history()
