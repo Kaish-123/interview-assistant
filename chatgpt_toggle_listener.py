@@ -419,29 +419,48 @@ class ChatGPTAssistant:
         """
         If chat is long, summarize older user/assistant messages into a single
         system message and keep only recent turns in detail.
+        This version is defensive against malformed messages.
         """
-        user_assistant = [m for m in self.messages if m["role"] in ("user", "assistant")]
-        rounds = len(user_assistant) // 2
+        # ✅ Safely collect only well-formed user/assistant messages
+        user_assistant = []
+        for m in self.messages:
+            if not isinstance(m, dict):
+                continue
+            role = m.get("role")
+            if role in ("user", "assistant"):
+                user_assistant.append(m)
 
+        rounds = len(user_assistant) // 2
         if rounds < self.summary_threshold_rounds:
             return  # no need yet
 
         # 1) Build a plain-text transcript to summarize
         transcript_lines = []
         for m in user_assistant:
-            role = "User" if m["role"] == "user" else "Assistant"
-            content = m["content"]
+            role = m.get("role")
+            role_label = "User" if role == "user" else "Assistant"
+
+            content = m.get("content", "")
             if isinstance(content, list):
-                text_parts = [c["text"] for c in content if c["type"] == "text"]
+                # multimodal: extract only text chunks
+                text_parts = []
+                for c in content:
+                    if not isinstance(c, dict):
+                        continue
+                    if c.get("type") == "text":
+                        text_parts.append(c.get("text", ""))
                 content = "\n".join(text_parts)
-            transcript_lines.append(f"{role}: {content}")
+            else:
+                content = str(content)
+
+            transcript_lines.append(f"{role_label}: {content}")
 
         transcript = "\n".join(transcript_lines)
 
         # 2) Call a smaller/faster model to summarize
         try:
             resp = client.chat.completions.create(
-                model="gpt-4o-mini",  # faster & cheaper for summarization
+                model="gpt-4o-mini",
                 messages=[
                     {
                         "role": "system",
@@ -466,23 +485,38 @@ class ChatGPTAssistant:
         }
 
         # Keep system messages + summary + last few rounds
-        system_msgs = [m for m in self.messages if m["role"] == "system"]
-        recent_other = user_assistant[-(self.max_rounds_for_model * 2):]
+        system_msgs = []
+        for m in self.messages:
+            if isinstance(m, dict) and m.get("role") == "system":
+                system_msgs.append(m)
 
+        recent_other = user_assistant[-(self.max_rounds_for_model * 2):]
         self.messages = system_msgs + [self.summary_message] + recent_other
+
 
     
     def _build_messages_for_model(self):
-        system_msgs = [m for m in self.messages if m["role"] == "system"]
+        system_msgs = []
+        other_msgs = []
+
+        for m in self.messages:
+            if not isinstance(m, dict):
+                continue
+            role = m.get("role")
+            if role == "system":
+                system_msgs.append(m)
+            elif role in ("user", "assistant"):
+                other_msgs.append(m)
+            # ignore anything else / malformed
 
         # ensure summary goes last among system messages (most recent instruction)
         if self.summary_message and self.summary_message not in system_msgs:
             system_msgs.append(self.summary_message)
 
-        other_msgs = [m for m in self.messages if m["role"] != "system"]
         keep = self.max_rounds_for_model * 2
         recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
         return system_msgs + recent
+
 
             
     def cancel_streaming(self):
@@ -877,15 +911,27 @@ class Application(tk.Tk):
         # Look for any resume attachment in system messages
         resume_name = None
         for msg in self.assistant.messages:
-            if msg["role"] == "system" and "Use this resume content to contextualize answers" in msg.get("content", ""):
-                match = re.search(r'from file:\s*(.+?)\)', msg["content"])
+            if not isinstance(msg, dict):
+                continue
+            if msg.get("role") != "system":
+                continue
+
+            content = msg.get("content", "")
+            if not isinstance(content, str):
+                continue
+
+            if "Use this resume content to contextualize answers" in content:
+                match = re.search(r'from file:\s*(.+?)\)', content)
                 if match:
-                    resume_name = os.path.splitext(os.path.basename(match.group(1).strip()))[0]
+                    resume_name = os.path.splitext(
+                        os.path.basename(match.group(1).strip())
+                    )[0]
                 break
 
         if resume_name:
             return f"{resume_name} - {timestamp}"
         return timestamp
+
 
     def _persist_working_chat_if_needed(self):
         """
@@ -1759,16 +1805,27 @@ class Application(tk.Tk):
 
     def start_new_chat(self):
         # Save current session if not empty
-        if any(m.get("role") == "user" for m in self.assistant.messages):
+        if any(isinstance(m, dict) and m.get("role") == "user" for m in self.assistant.messages):
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
 
             # Look for any resume attachment in system messages
             resume_name = None
             for msg in self.assistant.messages:
-                if msg["role"] == "system" and "Use this resume content to contextualize answers" in msg["content"]:
-                    match = re.search(r'from file:\s*(.+?)\)', msg["content"])
+                if not isinstance(msg, dict):
+                    continue
+                if msg.get("role") != "system":
+                    continue
+
+                content = msg.get("content", "")
+                if not isinstance(content, str):
+                    continue
+
+                if "Use this resume content to contextualize answers" in content:
+                    match = re.search(r'from file:\s*(.+?)\)', content)
                     if match:
-                        resume_name = os.path.splitext(os.path.basename(match.group(1).strip()))[0]  # clean filename (no extension)
+                        resume_name = os.path.splitext(
+                            os.path.basename(match.group(1).strip())
+                        )[0]
                     break
 
             # Compose title using resume name if available
@@ -1783,11 +1840,11 @@ class Application(tk.Tk):
             # 🔁 Auto-prune when over the limit
             self.auto_prune_chats(max_chats=10)
 
-
         # Start fresh session
         self.assistant.messages = [{
             "role": "system",
-            "content": "You are a helpful interview assistant. Provide detailed technical answers and ask follow-up questions when appropriate."
+            "content": "You are a helpful interview assistant. "
+                       "Provide detailed technical answers and ask follow-up questions when appropriate."
         }]
         self.response_box.config(state=tk.NORMAL)
         self.response_box.delete(1.0, tk.END)
