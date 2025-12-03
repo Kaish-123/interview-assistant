@@ -858,13 +858,12 @@ class Application(tk.Tk):
         # Ensure we start within limits
         self.after(0, lambda: self.auto_prune_chats(max_chats=10))
 
-    def update_live_question_in_ui(self, text: str):
+    def update_live_question_in_ui(self, text: str, is_final: bool = False):
         """
         Show a single live-updating 'Live Question:' block in the Text widget.
-
-        Every time this is called, we delete the previous
-        '🎙 Listening to your question...' + 'Live Question: ...'
-        block and re-add it, so there is NO duplication.
+        
+        Streams the question in REAL-TIME as the interviewer speaks.
+        When is_final=True, formats it as the final question ready for answer.
         """
         if not text:
             return
@@ -874,7 +873,7 @@ class Application(tk.Tk):
 
             # 1) Find where the 'Listening...' block starts (if it already exists)
             start_index = self.response_box.search(
-                "🎙 Listening to your question...",
+                "🎙 Listening",
                 "1.0",
                 tk.END
             )
@@ -884,14 +883,19 @@ class Application(tk.Tk):
                 self.response_box.delete(start_index, tk.END)
 
             # 2) Ensure there is a blank line before the listening block
-            # (optional, just for spacing)
             current_end = self.response_box.index(tk.END)
             if not current_end.endswith(".0"):
                 self.response_box.insert(tk.END, "\n")
 
-            # 3) Re-insert the listening + single live question line
-            self.response_box.insert(tk.END, "\n🎙 Listening to your question...\n")
-            self.response_box.insert(tk.END, f"Live Question: {text}\n")
+            if is_final:
+                # Final question - format for answer
+                self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {text}\n")
+            else:
+                # Still listening - show live streaming
+                self.response_box.insert(tk.END, "\n🎙 Listening... (press ` to stop)\n")
+                self.response_box.insert(tk.END, f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+                self.response_box.insert(tk.END, f"📝 {text}\n")
+                self.response_box.insert(tk.END, f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
@@ -902,22 +906,35 @@ class Application(tk.Tk):
 
 
     def live_transcription_loop(self):
+        """
+        OPTIMIZED: Faster polling (1.5s) for near real-time question display.
+        Shows what interviewer is saying AS THEY SPEAK.
+        """
         last_text = ""
         in_flight = False
+        last_snapshot_size = 0
 
         while self.live_transcription_running and self.assistant.recorder.is_recording:
             if in_flight:
-                time.sleep(0.2)
+                time.sleep(0.1)  # Faster check when waiting
                 continue
 
             snapshot = self.assistant.recorder.get_snapshot()
             if snapshot is None:
-                time.sleep(0.5)
+                time.sleep(0.3)
                 continue
+            
+            # Skip if no new audio (avoids redundant API calls)
+            current_size = len(snapshot)
+            if current_size == last_snapshot_size:
+                time.sleep(0.2)
+                continue
+            last_snapshot_size = current_size
 
             def do_call(snapshot_copy):
                 nonlocal last_text, in_flight
                 in_flight = True
+                temp_name = None
                 try:
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
                         with wave.open(tmp, 'wb') as wf:
@@ -937,23 +954,26 @@ class Application(tk.Tk):
                     print(f"❌ Live transcription error: {e}")
                     text = ""
                 finally:
-                    try:
-                        os.remove(temp_name)
-                    except Exception:
-                        pass
+                    if temp_name:
+                        try:
+                            os.remove(temp_name)
+                        except Exception:
+                            pass
                     in_flight = False
 
+                # Update UI with new text (streaming effect)
                 if text and text != last_text:
                     last_text = text
                     self.latest_live_question = text
-                    self.after(0, lambda t=text: self.update_live_question_in_ui(t))
+                    self._last_live_update_time = time.time()
+                    self.after(0, lambda t=text: self.update_live_question_in_ui(t, is_final=False))
 
-            # launch Whisper call in a short-lived thread
+            # Launch Whisper call in background
             snapshot_copy = snapshot.copy()
             threading.Thread(target=do_call, args=(snapshot_copy,), daemon=True).start()
 
-            # slower polling interval = fewer calls
-            for _ in range(15):  # ~3 seconds
+            # FASTER polling: ~1.5 seconds for more real-time feel
+            for _ in range(8):  # 8 * 0.2 = 1.6 seconds
                 if not self.live_transcription_running or not self.assistant.recorder.is_recording:
                     break
                 time.sleep(0.2)
@@ -1890,95 +1910,150 @@ class Application(tk.Tk):
                 self.assistant.current_response = ""
 
             if not self.assistant.recorder.is_recording:
+                # === STARTING RECORDING ===
                 self.assistant.streaming = False
-
-                # Just mark that there is no active live line yet
-                #self.live_question_index = None
                 self.latest_live_question = ""
+                self._last_live_update_time = 0
+                
+                # Show immediate feedback
+                self.response_box.config(state=tk.NORMAL)
+                
+                # Clear any previous listening block
+                start_index = self.response_box.search("🎙 Listening", "1.0", tk.END)
+                if start_index:
+                    self.response_box.delete(start_index, tk.END)
+                
+                self.response_box.insert(tk.END, "\n\n🎙 Listening... (speak now, press ` to stop)\n")
+                self.response_box.insert(tk.END, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+                self.response_box.insert(tk.END, "📝 (waiting for speech...)\n")
+                self.response_box.insert(tk.END, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+                self.response_box.config(state=tk.DISABLED)
+                self.response_box.see(tk.END)
 
                 self.assistant.recorder.start_recording()
-                self.status.config(text="🎙 Listening to interviewer...")
+                self.status.config(text="🎙 Listening to interviewer... (press ` to stop)")
                 self.record_btn.config(text="🛑 Stop & Process")
                 self.stop_btn.config(state=tk.DISABLED)
 
+                # Start live transcription with faster polling
                 self.live_transcription_running = True
                 threading.Thread(target=self.live_transcription_loop, daemon=True).start()
 
-
             else:
-                self.is_processing_audio = True  # Set flag to True when processing audio
+                # === STOPPING RECORDING ===
+                self.is_processing_audio = True
                 self.record_btn.config(state=tk.DISABLED)
                 self.stop_btn.config(state=tk.NORMAL)
-                self.status.config(text="💭 Processing question...")
+                
+                # Show instant feedback
+                if self.latest_live_question:
+                    self.status.config(text="⚡ Got it! Generating answer...")
+                else:
+                    self.status.config(text="💭 Processing question...")
+                    
                 threading.Thread(target=self.process_recording, daemon=True).start()
 
 
 
     def process_recording(self):
-        # stop live preview loop
+        """
+        OPTIMIZED: Uses live transcription IMMEDIATELY for instant response.
+        
+        Strategy:
+        1. Grab the live transcription we already have (no waiting!)
+        2. Start GPT response IMMEDIATELY with live text
+        3. Do final Whisper call in background (optional refinement)
+        
+        This gives you answers in <1 second after pressing stop!
+        """
+        # Stop live preview loop
         self.live_transcription_running = False
+        
+        # Grab the live transcription immediately
+        live_question = ""
         try:
-            live_preview = self.latest_live_question.strip()
+            live_question = (self.latest_live_question or "").strip()
         except Exception:
-            live_preview = ""
+            pass
         self.latest_live_question = ""
-        #self.live_question_index = None
 
         try:
+            # Stop recording and save file
             filename = self.assistant.recorder.stop_recording()
-
-            # ❌ OLD:
-            # final_text = self.assistant.transcribe_audio(filename, prompt=live_preview or None)
-
-            # ✅ NEW: full clean transcription, no prompt (to avoid duplication)
-            final_text = self.assistant.transcribe_audio(filename)
-
-            if isinstance(final_text, str) and final_text.startswith("❌"):
-                self.status.config(text=final_text)
-                return
-
-            question = (final_text or "").strip()
-
-            # Fallback to live preview only if final_text is truly empty
-            if not question and live_preview:
-                question = live_preview
-
-
-            if not question:
-                self.status.config(text="⚠️ No speech detected in the recording.")
-                return
-
-            # === Maintain consistent format with typed input ===
-            content = [{"type": "text", "text": question}]
-
-            preview_lines = []
-            for c in content:
-                if c["type"] == "text":
-                    preview_lines.append(c["text"])
-                elif c["type"] == "image_url":
-                    preview_lines.append("[Image attached]")
-
-            flat_text = "\n".join(preview_lines)
-
-            # Show question in UI (final, complete text)
-            self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\nQUESTION: {flat_text.strip()}\n")
-            self.response_box.config(state=tk.DISABLED)
-            self.response_box.see(tk.END)
-
-            # Append flat question for GPT context
-            self.assistant.messages.append({"role": "user", "content": flat_text})
-            self.chat_manager.save_current_session(self.assistant.messages)
-
-            self.display_chat_history()
-
-            self.status.config(text="💡 Generating answer...")
-            self.assistant.cancel_streaming()
-            self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-            self.chat_manager.save_current_session(self.assistant.messages)
+            
+            # INSTANT MODE: If we have live transcription, use it immediately!
+            if live_question and len(live_question) > 10:
+                print(f"⚡ INSTANT MODE: Using live transcription ({len(live_question)} chars)")
+                question = live_question
+                
+                # Show question in UI immediately
+                self.update_live_question_in_ui(question, is_final=True)
+                
+                # Start GPT response IMMEDIATELY (don't wait for final transcription)
+                self._send_question_to_gpt(question)
+                
+                # Optionally: Do final transcription in background for logging
+                # (but don't block the response)
+                threading.Thread(
+                    target=self._background_final_transcription,
+                    args=(filename,),
+                    daemon=True
+                ).start()
+                
+            else:
+                # Fallback: No live transcription, do full Whisper call
+                print("📝 No live transcription available, doing full Whisper call...")
+                self.status.config(text="💭 Processing question...")
+                
+                final_text = self.assistant.transcribe_audio(filename)
+                
+                if isinstance(final_text, str) and final_text.startswith("❌"):
+                    self.status.config(text=final_text)
+                    return
+                
+                question = (final_text or "").strip()
+                
+                if not question:
+                    self.status.config(text="⚠️ No speech detected in the recording.")
+                    return
+                
+                # Show and send
+                self.update_live_question_in_ui(question, is_final=True)
+                self._send_question_to_gpt(question)
 
         finally:
-            self.is_processing_audio = False  # Reset the flag after processing is complete
+            self.is_processing_audio = False
+
+    def _send_question_to_gpt(self, question: str):
+        """
+        Helper: Send question to GPT and stream response.
+        Extracted for reuse in instant mode.
+        """
+        if not question:
+            return
+            
+        # Append question to chat history
+        self.assistant.messages.append({"role": "user", "content": question})
+        self.chat_manager.save_current_session(self.assistant.messages)
+        
+        # Update status and start streaming
+        self.status.config(text="💡 Generating answer...")
+        self.assistant.cancel_streaming()
+        self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
+        self.chat_manager.save_current_session(self.assistant.messages)
+
+    def _background_final_transcription(self, filename: str):
+        """
+        Background task: Do final Whisper transcription for logging/accuracy.
+        Doesn't block the main response.
+        """
+        try:
+            final_text = self.assistant.transcribe_audio(filename)
+            if final_text and not final_text.startswith("❌"):
+                print(f"📝 Background transcription complete: {len(final_text)} chars")
+                # Could optionally compare with live and log differences
+        except Exception as e:
+            print(f"❌ Background transcription error: {e}")  # Reset the flag after processing is complete
 
 
 
