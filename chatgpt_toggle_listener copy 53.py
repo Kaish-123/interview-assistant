@@ -679,7 +679,7 @@ class Application(tk.Tk):
 
             
         def capture_and_submit_screenshot(self):
-            self.status.config(text="📸 Capturing screen...")
+            self.status.config(text="📸 Capturing screen...")!
             print("📸 Got the screen capture")
 
             screenshot = pyautogui.screenshot()

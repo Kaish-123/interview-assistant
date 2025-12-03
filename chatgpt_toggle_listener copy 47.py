@@ -398,7 +398,7 @@ class Application(tk.Tk):
             return f"❌ GPT Error: {e}"
 
 
-
+ 
     def full_process(self):
         file = self.record_until_stop()
         question = self.transcribe_audio(file)

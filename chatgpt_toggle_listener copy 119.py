@@ -534,7 +534,7 @@ class ChatGPTAssistant:
                 self._maybe_summarize_history()
                 self.current_response = ""
                 self.streaming = True
-                placeholder = {"role": "assistant", "content": ""}
+                placeholder = {"12role": "assistant", "content": ""}
                 self.messages.append(placeholder)
 
                 try:

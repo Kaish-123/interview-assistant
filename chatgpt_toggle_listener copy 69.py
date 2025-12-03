@@ -608,72 +608,72 @@ class Application(tk.Tk):
 
 
 
-    # def setup_ui(self):
-    #     self.status = ttk.Label(self, text="🔊 Ready", style='TLabel')
-    #     self.status.pack(pady=5, anchor="w", padx=10)
+    def setup_ui(self):
+        self.status = ttk.Label(self, text="🔊 Ready", style='TLabel')
+        self.status.pack(pady=5, anchor="w", padx=10)
         
 
 
-    #     text_frame = ttk.Frame(self)
-    #     text_frame.pack(fill="both", expand=True, padx=10)
+        text_frame = ttk.Frame(self)
+        text_frame.pack(fill="both", expand=True, padx=10)
 
-    #     self.response_box = tk.Text(
-    #         text_frame, wrap=tk.WORD, font=('Consolas', self.assistant.font_size),
-    #         bg='#343541', fg='white', insertbackground='white',
-    #         selectbackground='#4E4E4E', highlightthickness=0
-    #     )
-    #     self.response_box.pack(side="left", fill="both", expand=True)
-    #     self.response_box.insert(tk.END, "🤖 Start a new conversation or ask your first question...")
-    #     self.response_box.config(state=tk.DISABLED)
-    #     self.response_box.tag_configure('code', foreground='#4EC9B0')
+        self.response_box = tk.Text(
+            text_frame, wrap=tk.WORD, font=('Consolas', self.assistant.font_size),
+            bg='#343541', fg='white', insertbackground='white',
+            selectbackground='#4E4E4E', highlightthickness=0
+        )
+        self.response_box.pack(side="left", fill="both", expand=True)
+        self.response_box.insert(tk.END, "🤖 Start a new conversation or ask your first question...")
+        self.response_box.config(state=tk.DISABLED)
+        self.response_box.tag_configure('code', foreground='#4EC9B0')
 
-    #     scrollbar = ttk.Scrollbar(text_frame, command=self.response_box.yview)
-    #     scrollbar.pack(side="right", fill="y")
-    #     self.response_box.config(yscrollcommand=scrollbar.set)
+        scrollbar = ttk.Scrollbar(text_frame, command=self.response_box.yview)
+        scrollbar.pack(side="right", fill="y")
+        self.response_box.config(yscrollcommand=scrollbar.set)
 
-    #     # Button bar above chat entry
-    #     control_frame = ttk.Frame(self)
-    #     control_frame.pack(fill="x", padx=10, pady=5)
+        # Button bar above chat entry
+        control_frame = ttk.Frame(self)
+        control_frame.pack(fill="x", padx=10, pady=5)
 
-    #     self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
-    #     self.record_btn.pack(side="left", padx=4)
+        self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
+        self.record_btn.pack(side="left", padx=4)
         
-    #     self.toggle_input_btn = ttk.Button(control_frame, text="🔈 Internal Audio (BlackHole)", command=self.toggle_input_mode)
-    #     self.toggle_input_btn.pack(side="left", padx=4)
-        
-        
-
-    #     self.new_chat_btn = ttk.Button(control_frame, text="🆕 New", command=self.start_new_chat)
-    #     self.new_chat_btn.pack(side="left", padx=4)
-
-    #     self.stop_btn = ttk.Button(control_frame, text="⏹ Stop", command=self.stop_output, state=tk.DISABLED)
-    #     self.stop_btn.pack(side="left", padx=4)
-
-    #     self.upload_btn = ttk.Button(control_frame, text="📁 Resume", command=self.upload_resume)
-    #     self.upload_btn.pack(side="left", padx=4)
-
-    #     font_controls = ttk.Frame(control_frame)
-    #     font_controls.pack(side="left", padx=10)
-    #     ttk.Button(font_controls, text="A+", command=self.increase_font).pack(side="left")
-    #     ttk.Button(font_controls, text="A-", command=self.decrease_font).pack(side="left")
+        self.toggle_input_btn = ttk.Button(control_frame, text="🔈 Internal Audio (BlackHole)", command=self.toggle_input_mode)
+        self.toggle_input_btn.pack(side="left", padx=4)
         
         
 
+        self.new_chat_btn = ttk.Button(control_frame, text="🆕 New", command=self.start_new_chat)
+        self.new_chat_btn.pack(side="left", padx=4)
 
-    #     self.topmost_btn = ttk.Button(control_frame, text="📌 Pin", command=self.toggle_always_on_top)
-    #     self.topmost_btn.pack(side="right", padx=4)
+        self.stop_btn = ttk.Button(control_frame, text="⏹ Stop", command=self.stop_output, state=tk.DISABLED)
+        self.stop_btn.pack(side="left", padx=4)
 
-    #     # Chat input bar at bottom
-    #     input_frame = ttk.Frame(self)
-    #     input_frame.pack(side="bottom", fill="x", padx=10, pady=5)
+        self.upload_btn = ttk.Button(control_frame, text="📁 Resume", command=self.upload_resume)
+        self.upload_btn.pack(side="left", padx=4)
 
-    #     self.input_entry = ttk.Entry(input_frame, font=('Arial', 14), width=80)
-    #     self.input_entry.pack(side="left", fill="x", expand=True, padx=(5, 10))
+        font_controls = ttk.Frame(control_frame)
+        font_controls.pack(side="left", padx=10)
+        ttk.Button(font_controls, text="A+", command=self.increase_font).pack(side="left")
+        ttk.Button(font_controls, text="A-", command=self.decrease_font).pack(side="left")
+        
+        
 
-    #     self.input_entry.bind("<Return>", lambda event: self.submit_text_question())
 
-    #     self.submit_btn = ttk.Button(input_frame, text="➡️", width=4, command=self.submit_text_question)
-    #     self.submit_btn.pack(side="right")
+        self.topmost_btn = ttk.Button(control_frame, text="📌 Pin", command=self.toggle_always_on_top)
+        self.topmost_btn.pack(side="right", padx=4)
+
+        # Chat input bar at bottom
+        input_frame = ttk.Frame(self)
+        input_frame.pack(side="bottom", fill="x", padx=10, pady=5)
+
+        self.input_entry = ttk.Entry(input_frame, font=('Arial', 14), width=80)
+        self.input_entry.pack(side="left", fill="x", expand=True, padx=(5, 10))
+
+        self.input_entry.bind("<Return>", lambda event: self.submit_text_question())
+
+        self.submit_btn = ttk.Button(input_frame, text="➡️", width=4, command=self.submit_text_question)
+        self.submit_btn.pack(side="right")
 
 
     def submit_text_question(self):

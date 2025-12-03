@@ -879,7 +879,7 @@ if __name__ == "__main__":
                 target_screen = None
                 for screen in screens:
                     frame = screen.frame()
-                    x = int(frame.origin.x)
+                    x = int(frame.origin.x)!
                     y = int(frame.origin.y)
                     width = int(frame.size.width)
                     height = int(frame.size.height)
