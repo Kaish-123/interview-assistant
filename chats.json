@@ -41,6 +41,38 @@
       {
         "role": "assistant",
         "content": "Of course! Let's consider some behavioral questions based on situations and projects from your resume. I'll structure each response using the STAR (Situation, Task, Action, Result) method.\n\n### Behavioral Question: Describe a time when you faced a significant challenge in a project. How did you handle it?\n\n**Situation**: While at Bayer AG, I was involved in a project that required real-time processing of millions of events daily with strict SLAs and delivery guarantees. This project had a critical business impact, involving a highly complex data pipeline.\n\n**Task**: The task was to ensure the pipeline maintained high throughput and low latency while ensuring data integrity and accuracy. There was pressure to meet tight timelines and maintain system stability despite frequent schema evolutions and unexpected data patterns.\n\n**Action**: I engineered an end-to-end solution using Apache Kafka for streaming and Spark for real-time processing. I implemented custom serializers to handle schema evolution and used automated alerting with AWS CloudWatch to monitor system performance. I also integrated detailed data validation checkpoints and lineage tracking for auditing and debugging purposes.\n\n**Result**: The project successfully achieved real-time data processing with a 99.9% uptime, adhering to SLAs and ensuring delivery guarantees. We also reduced data errors by 75%, thanks to the robust validation mechanisms and proactive monitoring we put in place.\n\n### Behavioral Question: Can you provide an example where you led a team to accomplish a challenging technical goal?\n\n**Situation**: While working with Bank of America, I led the initiative to migrate and optimize ETL jobs for better performance and cost-effectiveness in handling large-scale data.\n\n**Task**: My role involved leading technical discussions with stakeholders, gathering requirements, and translating business needs into scalable data solutions. We needed to streamline ETL processes to accommodate a growing amount of data, which was critical for the bank's analytics operations.\n\n**Action**: I led the development of reusable ETL templates with schema drift handling and auto-recovery features. I collaborated closely with cross-functional teams to design new features and refine technical specifications. Additionally, I optimized Snowflake data models to streamline transformation logic and improve testability.\n\n**Result**: This effort led to a 30% reduction in data pipeline costs and significantly reduced manual intervention requirements, enhancing the reliability and performance of our data platforms. Our optimized solution also improved run times by 40%, providing faster insights to stakeholders.\n\n### Behavioral Question: Tell me about a time you had to quickly adapt to significant changes in a project or task.\n\n**Situation**: At Comcast, there was a project involving the transition of applications from Java to Scala to improve application performance for big data processing.\n\n**Task**: The immediate need was to enhance the performance of existing applications and successfully transition them to the Scala programming language without disrupting ongoing operations.\n\n**Action**: I dove into the existing Java applications to understand their architecture thoroughly, then developed a strategic migration plan focusing on critical performance bottlenecks first. I wrote Scala applications and implemented Spark Streaming for improved real-time data processing. During this transition, I ensured regular code reviews and engaged with team members to upskill them in Scala.\n\n**Result**: The migration resulted in a 20% improvement in application performance and enhanced our system's ability to handle large datasets. The successful transition not only improved efficiency but also bolstered overall team capacity to manage future data processing demands more effectively.\n\nFeel free to ask more questions or provide specific scenarios you would like to explore further in the STAR format!"
+      },
+      {
+        "role": "user",
+        "content": "M\u1eb9 \u01a1i m\u1eb9 \u0111\u1eebng b\u1ecf con l\u1ea1i m\u00e0 h\u00fa h\u00fa"
+      },
+      {
+        "role": "assistant",
+        "content": "I'm here to help. If you're facing a difficult time or need assistance with something, please let me know how I can support you."
+      },
+      {
+        "role": "user",
+        "content": "I am in an assesment, answer me everything directly quickly for next 3 hours"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course, I'll provide direct and concise answers to your questions for the next three hours. Please go ahead and ask your questions or provide specific scenarios, and I'll assist you promptly."
+      },
+      {
+        "role": "user",
+        "content": "\u0906\u092a\u0915\u0947 \u092a\u0940\u091b\u0947 \u0915\u094b\u0908 \u0906\u0938\u093e \u0915\u092c\u0940 \u0928\u0939\u0940\u0902 \u0915\u094b\u0908 \u0906\u0938\u093e \u0939\u0948"
+      },
+      {
+        "role": "assistant",
+        "content": "\u092e\u0941\u091d\u0947 \u0916\u0947\u0926 \u0939\u0948, \u0910\u0938\u093e \u0932\u0917\u0924\u093e \u0939\u0948 \u0915\u093f \u092f\u0939 \u090f\u0915 \u0935\u094d\u092f\u0915\u094d\u0924\u093f\u0917\u0924 \u092f\u093e \u0938\u0902\u0935\u093e\u0926\u093e\u0924\u094d\u092e\u0915 \u0938\u0902\u0926\u0930\u094d\u092d \u0939\u0948\u0964 \u092f\u0926\u093f \u0906\u092a\u0915\u0947 \u092a\u093e\u0938 \u0915\u094b\u0908 \u0935\u093f\u0936\u0947\u0937 \u092a\u094d\u0930\u0936\u094d\u0928 \u0939\u0948 \u092f\u093e \u0915\u093f\u0938\u0940 \u0935\u093f\u0937\u092f \u092a\u0930 \u0938\u0939\u093e\u092f\u0924\u093e \u0915\u0940 \u0906\u0935\u0936\u094d\u092f\u0915\u0924\u093e \u0939\u0948, \u0924\u094b \u0915\u0943\u092a\u092f\u093e \u0905\u0927\u093f\u0915 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0947\u0902, \u0914\u0930 \u092e\u0948\u0902 \u0906\u092a\u0915\u0940 \u092e\u0926\u0926 \u0915\u0930\u0928\u0947 \u0915\u0940 \u092a\u0942\u0930\u0940 \u0915\u094b\u0936\u093f\u0936 \u0915\u0930\u0942\u0902\u0917\u093e\u0964"
+      },
+      {
+        "role": "user",
+        "content": "Today, Dec 4\n\nToday, Dec 4"
+      },
+      {
+        "role": "assistant",
+        "content": "It looks like you might be checking the current date. As of today, it is December 4th. If you need information or assistance related to this date, such as planning, events, or due dates, please let me know how I can help!"
       }
     ]
   },
