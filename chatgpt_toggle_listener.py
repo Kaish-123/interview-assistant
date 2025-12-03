@@ -1904,14 +1904,15 @@ class Application(tk.Tk):
             if self.is_processing_audio:
                 # Instead of blocking, we now force a reset if the user explicitly tries to record
                 print("⚡️ Interrupting ongoing processing for new recording.")
-                self.stop_output()                # Trigger stop
-                self.is_processing_audio = False  # Reset
-                self.assistant.streaming = False
+                self.assistant.cancel_streaming()  # Properly cancel any ongoing GPT streaming
+                self.stop_output()                 # Trigger stop
+                self.is_processing_audio = False   # Reset
                 self.assistant.current_response = ""
 
             if not self.assistant.recorder.is_recording:
                 # === STARTING RECORDING ===
-                self.assistant.streaming = False
+                # Cancel any ongoing GPT streaming to prevent concurrent response_box access
+                self.assistant.cancel_streaming()
                 self.latest_live_question = ""
                 self._last_live_update_time = 0
                 
@@ -2053,7 +2054,7 @@ class Application(tk.Tk):
                 print(f"📝 Background transcription complete: {len(final_text)} chars")
                 # Could optionally compare with live and log differences
         except Exception as e:
-            print(f"❌ Background transcription error: {e}")  # Reset the flag after processing is complete
+            print(f"❌ Background transcription error: {e}")
 
 
 
