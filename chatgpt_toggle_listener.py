@@ -974,8 +974,8 @@ class Application(tk.Tk):
             snapshot_copy = snapshot.copy()
             threading.Thread(target=do_call, args=(snapshot_copy,), daemon=True).start()
 
-            # FASTER polling: ~1.5 seconds for more real-time feel
-            for _ in range(8):  # 8 * 0.2 = 1.6 seconds
+            # FAST polling: ~1 second for near real-time
+            for _ in range(5):  # 5 * 0.2 = 1 second
                 if not self.live_transcription_running or not self.assistant.recorder.is_recording:
                     break
                 time.sleep(0.2)
@@ -1960,47 +1960,48 @@ class Application(tk.Tk):
 
     def process_recording(self):
         """
-        Waits for COMPLETE final transcription before sending to GPT.
+        INSTANT MODE: Sends to GPT immediately using live transcription.
+        No waiting for file processing - maximum speed!
         
         Strategy:
-        1. Stop recording and save the FULL audio
-        2. Show live preview as "processing" indicator
-        3. Do FINAL Whisper transcription on complete audio
-        4. Send complete question to GPT
+        1. Grab live transcription INSTANTLY (already in memory)
+        2. Send to GPT IMMEDIATELY 
+        3. Stop recording in background (doesn't block)
         
-        This ensures NO words are cut off - you get the FULL question!
+        This gives you answers in <0.5 seconds after pressing `!
         """
         # Stop live preview loop
         self.live_transcription_running = False
         
-        # Grab live transcription for display while processing
-        live_preview = ""
+        # Grab live transcription INSTANTLY (no processing needed - it's already in memory!)
+        live_question = ""
         try:
-            live_preview = (self.latest_live_question or "").strip()
+            live_question = (self.latest_live_question or "").strip()
         except Exception:
             pass
         self.latest_live_question = ""
 
         try:
-            # Stop recording and save the COMPLETE audio file
+            # INSTANT MODE: If we have live transcription, send IMMEDIATELY!
+            if live_question and len(live_question) > 5:
+                print(f"⚡ INSTANT: Sending immediately ({len(live_question)} chars)")
+                
+                # Show question and send to GPT INSTANTLY - no waiting!
+                self.update_live_question_in_ui(live_question, is_final=True)
+                self._send_question_to_gpt(live_question)
+                
+                # Stop recording in BACKGROUND (doesn't block the response)
+                threading.Thread(
+                    target=self._stop_recording_background,
+                    daemon=True
+                ).start()
+                return
+            
+            # FALLBACK: No live transcription - must wait for final
+            print("📝 No live text, doing full transcription...")
+            self.status.config(text="💭 Processing audio...")
+            
             filename = self.assistant.recorder.stop_recording()
-            
-            # Show live preview while doing final transcription
-            if live_preview:
-                self.response_box.config(state=tk.NORMAL)
-                start_index = self.response_box.search("🎙 Listening", "1.0", tk.END)
-                if start_index:
-                    self.response_box.delete(start_index, tk.END)
-                self.response_box.insert(tk.END, f"\n💭 Processing complete audio...\n")
-                self.response_box.insert(tk.END, f"Preview: {live_preview[:100]}{'...' if len(live_preview) > 100 else ''}\n")
-                self.response_box.config(state=tk.DISABLED)
-                self.response_box.see(tk.END)
-            
-            self.status.config(text="💭 Transcribing complete audio...")
-            
-            # ALWAYS do final transcription on COMPLETE audio
-            # This ensures we capture the FULL question, not just the live preview
-            print("📝 Transcribing complete audio file...")
             final_text = self.assistant.transcribe_audio(filename)
             
             if isinstance(final_text, str) and final_text.startswith("❌"):
@@ -2009,23 +2010,22 @@ class Application(tk.Tk):
             
             question = (final_text or "").strip()
             
-            # Fallback to live preview only if final transcription completely failed
-            if not question and live_preview:
-                print("⚠️ Final transcription empty, using live preview as fallback")
-                question = live_preview
-            
             if not question:
-                self.status.config(text="⚠️ No speech detected in the recording.")
+                self.status.config(text="⚠️ No speech detected.")
                 return
             
-            print(f"✅ Complete transcription: {len(question)} chars")
-            
-            # Show complete question and send to GPT
             self.update_live_question_in_ui(question, is_final=True)
             self._send_question_to_gpt(question)
 
         finally:
             self.is_processing_audio = False
+
+    def _stop_recording_background(self):
+        """Stop recording in background - doesn't block GPT response."""
+        try:
+            self.assistant.recorder.stop_recording()
+        except Exception as e:
+            print(f"Background stop error: {e}")
 
     def _send_question_to_gpt(self, question: str):
         """
