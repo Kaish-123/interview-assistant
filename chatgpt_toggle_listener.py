@@ -1132,16 +1132,23 @@ class Application(tk.Tk):
             sash = self.paned.sashpos(0)
         except Exception:
             sash = None
+        
+        # Save sidebar internal split (tabs vs chats)
+        try:
+            sidebar_sash = self.sidebar_paned.sashpos(0)
+        except Exception:
+            sidebar_sash = None
 
         prefs = {
             "geometry": self.geometry(),
             "paned_sash": sash,
+            "sidebar_sash": sidebar_sash,  # NEW: tabs/chats split position
             "response_font_size": int(self.assistant.font_size),
-            # NEW: expanded (“open”) items in the tabs/subtasks tree
+            # NEW: expanded ("open") items in the tabs/subtasks tree
             "tab_tree_open": self._get_tree_open_state(self.tab_tree),
         }
         UIPreferences.save(prefs)
-        self.status.config(text="💾 Saved UI defaults (geometry, split, font, dropdowns).")
+        self.status.config(text="💾 Saved UI defaults (geometry, splits, font, dropdowns).")
         print("Saved UI Prefs:", prefs)
 
 
@@ -1164,13 +1171,22 @@ class Application(tk.Tk):
             except Exception as e:
                 print("Font apply error:", e)
 
-        # Split
+        # Main split (sidebar vs main content)
         if "paned_sash" in prefs and prefs["paned_sash"] is not None:
             try:
                 self.paned.sashpos(0, int(prefs["paned_sash"]))
             except Exception as e:
                 print("Sash apply error, retrying...", e)
                 self.after(50, lambda: self.paned.sashpos(0, int(prefs["paned_sash"])))
+
+        # Sidebar internal split (tabs vs chats)
+        if "sidebar_sash" in prefs and prefs["sidebar_sash"] is not None:
+            def apply_sidebar_sash():
+                try:
+                    self.sidebar_paned.sashpos(0, int(prefs["sidebar_sash"]))
+                except Exception as e:
+                    print("Sidebar sash apply error:", e)
+            self.after(100, apply_sidebar_sash)  # Delay to ensure widget is ready
 
         # NEW: tabs/subtabs expanded state
         if "tab_tree_open" in prefs:
@@ -1270,32 +1286,52 @@ class Application(tk.Tk):
         self.sidebar = ttk.Frame(self.paned, width=200)
         self.paned.add(self.sidebar, weight=0)
         
-        
-        
-
-        # Create toggle button
+        # Create toggle button at top
         self.toggle_btn = ttk.Button(self.sidebar, text="☰", width=2, command=self.toggle_sidebar)
         self.toggle_btn.pack(pady=5, fill="x")
 
-        # Create tab management area
-        self.tab_frame = ttk.Frame(self.sidebar)
-        self.tab_frame.pack(fill="both", expand=True, padx=5, pady=5)
-
-        # Create tab treeview
+        # ====== RESIZABLE SIDEBAR SECTIONS ======
+        # Create a vertical PanedWindow inside sidebar for resizable sections
+        self.sidebar_paned = ttk.PanedWindow(self.sidebar, orient=tk.VERTICAL)
+        self.sidebar_paned.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        # ----- TOP SECTION: Tabs/Subtabs -----
+        self.tab_section = ttk.Frame(self.sidebar_paned)
+        self.sidebar_paned.add(self.tab_section, weight=2)  # Gets more space by default
+        
+        ttk.Label(self.tab_section, text="📋 Prompts & Subtabs").pack(anchor="w")
+        
+        # Create tab treeview with scrollbar
+        self.tab_frame = ttk.Frame(self.tab_section)
+        self.tab_frame.pack(fill="both", expand=True)
+        
         self.tab_tree = ttk.Treeview(self.tab_frame, show="tree", selectmode="browse")
         self.tab_tree.pack(fill="both", expand=True, side="left")
         self.tab_tree.bind("<<TreeviewSelect>>", self.on_tab_select)
+        
+        # Add scrollbar to tab_tree
+        tab_scrollbar = ttk.Scrollbar(self.tab_frame, orient="vertical", command=self.tab_tree.yview)
+        tab_scrollbar.pack(side="right", fill="y")
+        self.tab_tree.configure(yscrollcommand=tab_scrollbar.set)
 
-        # Chat History Treeview (below prompt tabs)
-        ttk.Label(self.sidebar, text="💬 Past Chats").pack(anchor="w", padx=5)
-        self.chat_tabs = ttk.Treeview(self.sidebar, show="tree", selectmode="browse")
-        self.chat_tabs.pack(fill="both", expand=True, padx=5, pady=(0, 10))
+        # ----- BOTTOM SECTION: Chat History -----
+        self.chat_section = ttk.Frame(self.sidebar_paned)
+        self.sidebar_paned.add(self.chat_section, weight=1)  # Gets less space by default
+        
+        ttk.Label(self.chat_section, text="💬 Past Chats").pack(anchor="w")
+        
+        # Create chat history treeview with scrollbar
+        self.chat_frame = ttk.Frame(self.chat_section)
+        self.chat_frame.pack(fill="both", expand=True)
+        
+        self.chat_tabs = ttk.Treeview(self.chat_frame, show="tree", selectmode="browse")
+        self.chat_tabs.pack(fill="both", expand=True, side="left")
         self.chat_tabs.bind("<<TreeviewSelect>>", self.on_chat_tab_select)
-
-        # Add a scrollbar to the tab_frame
-        scrollbar = ttk.Scrollbar(self.tab_frame, orient="vertical", command=self.tab_tree.yview)
-        scrollbar.pack(side="right", fill="y")
-        self.tab_tree.configure(yscrollcommand=scrollbar.set)
+        
+        # Add scrollbar to chat_tabs
+        chat_scrollbar = ttk.Scrollbar(self.chat_frame, orient="vertical", command=self.chat_tabs.yview)
+        chat_scrollbar.pack(side="right", fill="y")
+        self.chat_tabs.configure(yscrollcommand=chat_scrollbar.set)
 
         # Create buttons frame
         btn_frame = ttk.Frame(self.sidebar)
