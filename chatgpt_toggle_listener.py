@@ -2400,21 +2400,18 @@ class Application(tk.Tk):
         if item:
             tree._drag_data["item"] = item
             tree._drag_data["start_y"] = event.y
-            tree.selection_set(item)
+            tree._drag_data["is_dragging"] = False  # Will be set to True if actually dragged
     
     def _on_drag_motion(self, event, tree: ttk.Treeview):
         """Show visual feedback while dragging."""
         if not tree._drag_data["item"]:
             return
         
-        # Change cursor to indicate dragging
-        tree.config(cursor="hand2")
-        
-        # Highlight the target position
-        target = tree.identify_row(event.y)
-        if target and target != tree._drag_data["item"]:
-            # Visual feedback - could add more sophisticated highlighting here
-            pass
+        # Check if mouse has moved enough to be considered a drag (not just a click)
+        start_y = tree._drag_data.get("start_y", event.y)
+        if abs(event.y - start_y) > 5:  # 5 pixel threshold
+            tree._drag_data["is_dragging"] = True
+            tree.config(cursor="hand2")
     
     def _on_drag_release(self, event, tree: ttk.Treeview):
         """Drop the item at new position."""
@@ -2425,9 +2422,15 @@ class Application(tk.Tk):
         
         dragged_item = tree._drag_data["item"]
         target_item = tree.identify_row(event.y)
+        was_dragging = tree._drag_data.get("is_dragging", False)
         
         # Reset drag data
         tree._drag_data["item"] = None
+        tree._drag_data["is_dragging"] = False
+        
+        # Only reorder if actually dragged (not just clicked)
+        if not was_dragging:
+            return
         
         if not target_item or target_item == dragged_item:
             return
