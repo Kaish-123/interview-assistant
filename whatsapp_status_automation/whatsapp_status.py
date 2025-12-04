@@ -33,18 +33,31 @@ def get_caption(config):
     return captions[idx]
 
 def open_whatsapp():
-    """Open WhatsApp and bring to front."""
+    """Open WhatsApp, bring to front, and MAXIMIZE to full screen."""
     print("📱 Opening WhatsApp...")
     subprocess.run(["open", "-a", "WhatsApp"])
-    time.sleep(4)
+    time.sleep(3)
     
-    # Activate WhatsApp
+    # Activate WhatsApp and MAXIMIZE window
     script = '''
     tell application "WhatsApp" to activate
-    delay 2
+    delay 1
+    tell application "System Events"
+        tell process "WhatsApp"
+            set frontmost to true
+            -- Maximize the window to full screen size
+            try
+                set theWindow to window 1
+                set position of theWindow to {0, 25}
+                set size of theWindow to {1440, 875}
+            end try
+        end tell
+    end tell
+    delay 1
     '''
     subprocess.run(["osascript", "-e", script], capture_output=True)
-    print("   ✅ WhatsApp ready")
+    time.sleep(1)
+    print("   ✅ WhatsApp maximized and ready")
 
 def set_status(caption=None):
     """Set WhatsApp status using simple clicks."""
@@ -97,9 +110,12 @@ def set_status(caption=None):
     pyautogui.hotkey('command', 'v')
     time.sleep(1)
     
-    # Send
-    print("   Sending...")
-    pyautogui.press('enter')
+    # Send - Click the send button at YOUR CALIBRATED POSITION
+    print("   Clicking Send button...")
+    send_x = 1402
+    send_y = 874
+    print(f"   Clicking Send at ({send_x}, {send_y})")
+    pyautogui.click(send_x, send_y)
     time.sleep(1)
     
     # Update caption index
