@@ -22,24 +22,20 @@ def unlock_sequence():
     subprocess.Popen(["caffeinate", "-u", "-t", "120"])
     time.sleep(3)
     
-    # Now run unlock AppleScript
+    # FAST unlock AppleScript with optimized timing
     script = f'''
     tell application "System Events"
-        -- Wake the screen
+        -- Wake screen
         key code 49 -- Space
-        delay 2
+        delay 1.5 -- Wait 1.5 sec after wake
         
-        -- First Enter - dismiss wake screen
+        -- Enter to show password field
         key code 36
-        delay 2
-        
-        -- Second Enter - focus password field  
-        key code 36
-        delay 5 -- Wait 5 seconds for password field to be ready
+        delay 1 -- Wait 1 sec for password field
         
         -- Type password
         keystroke "{PASSWORD}"
-        delay 1
+        delay 0.5
         
         -- Submit
         key code 36 -- Enter
