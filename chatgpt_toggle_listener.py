@@ -593,6 +593,10 @@ class ChatGPTAssistant:
         self.font_size = 12
         self.stream_thread = None 
         
+        # ====== MODEL SETTINGS ======
+        self.current_model = "gpt-4o"          # Default model (can be changed via UI)
+        self.max_retries = 3                   # Number of retries for failed API calls
+        
         # ====== OPTIMIZATION SETTINGS ======
         # These control how we send context to GPT while keeping FULL history locally
         self.optimization_mode = True          # Toggle for speed optimization
@@ -926,17 +930,29 @@ class ChatGPTAssistant:
 
 
     def transcribe_audio(self, filename, prompt: str | None = None):
-        try:
-            with open(filename, "rb") as audio_file:
-                transcription = client.audio.transcriptions.create(
-                    model="whisper-1",
-                    file=audio_file,
-                    # ✅ use live preview as a hint, not as the final text
-                    prompt=prompt or ""
-                )
-            return transcription.text
-        except Exception as e:
-            return f"❌ Transcription error: {str(e)}"
+        """Transcribe audio with retry logic."""
+        last_error = None
+        
+        for retry in range(self.max_retries):
+            try:
+                with open(filename, "rb") as audio_file:
+                    transcription = client.audio.transcriptions.create(
+                        model="whisper-1",
+                        file=audio_file,
+                        # ✅ use live preview as a hint, not as the final text
+                        prompt=prompt or ""
+                    )
+                return transcription.text
+            except Exception as e:
+                last_error = e
+                if retry < self.max_retries - 1:
+                    wait_time = (retry + 1) * 2  # Exponential backoff
+                    print(f"⚠️ Transcription failed (attempt {retry+1}/{self.max_retries}): {e}")
+                    time.sleep(wait_time)
+                else:
+                    return f"❌ Transcription error after {self.max_retries} retries: {str(last_error)}"
+        
+        return f"❌ Transcription error: {str(last_error)}"
 
     def diagnose_performance(self) -> dict:
         """
@@ -1111,17 +1127,34 @@ class ChatGPTAssistant:
                                     elif item.get("type") == "image_url":
                                         estimated_tokens += 85 if self.optimization_mode else 765
                     
-                    print(f"📊 Performance: {sent_msgs}/{total_msgs} msgs, ~{estimated_tokens:,} tokens, build: {build_time*1000:.0f}ms")
+                    print(f"📊 Performance: {sent_msgs}/{total_msgs} msgs, ~{estimated_tokens:,} tokens, model: {self.current_model}, build: {build_time*1000:.0f}ms")
                     
-                    # ⏱️ Time API call
+                    # ⏱️ Time API call with retry logic
                     api_start = time.time()
-
-                    stream = client.chat.completions.create(
-                        model="gpt-4o",
-                        messages=model_messages,
-                        stream=True,
-                        max_tokens=1600
-                    )
+                    stream = None
+                    last_error = None
+                    
+                    for retry in range(self.max_retries):
+                        try:
+                            stream = client.chat.completions.create(
+                                model=self.current_model,
+                                messages=model_messages,
+                                stream=True,
+                                max_tokens=1600
+                            )
+                            break  # Success, exit retry loop
+                        except Exception as e:
+                            last_error = e
+                            if retry < self.max_retries - 1:
+                                wait_time = (retry + 1) * 2  # Exponential backoff: 2s, 4s, 6s
+                                print(f"⚠️ API call failed (attempt {retry+1}/{self.max_retries}): {e}")
+                                status_label.config(text=f"⚠️ Retrying in {wait_time}s... ({retry+1}/{self.max_retries})")
+                                time.sleep(wait_time)
+                            else:
+                                raise last_error
+                    
+                    if stream is None:
+                        raise Exception(f"Failed after {self.max_retries} retries: {last_error}")
                     
                     first_token_time = None
 
@@ -1246,6 +1279,20 @@ class Application(tk.Tk):
         
         # Answer Quality Mode: "default", "quick", "detailed", "code"
         self.answer_mode = "default"  # Default mode - normal GPT behavior
+        
+        # Multi-Model Support: Available models with descriptions
+        self.available_models = {
+            "gpt-4o": "🧠 GPT-4o (Best quality, slower, higher cost)",
+            "gpt-4o-mini": "⚡ GPT-4o-mini (Fast, cheaper, good for simple Q&A)",
+            "gpt-4-turbo": "🚀 GPT-4-Turbo (Balance of speed & quality)"
+        }
+        self.current_model = "gpt-4o"  # Default model
+        
+        # Connection status
+        self.api_connected = False
+        
+        # Audio level tracking
+        self.current_audio_level = 0
 
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
@@ -1651,6 +1698,68 @@ class Application(tk.Tk):
             self.toggle_input_btn.config(text="🔈 Internal Audio (BlackHole)")
             self.status.config(text="🔈 Switched to Internal Audio (BlackHole)")
 
+    # ========== CONNECTION STATUS ==========
+    def check_api_connection(self):
+        """Check if OpenAI API is reachable."""
+        def _check():
+            try:
+                # Quick test call to check connectivity
+                response = client.models.list()
+                self.api_connected = True
+                self.after(0, lambda: self.connection_label.config(text="🟢 Connected"))
+            except Exception as e:
+                self.api_connected = False
+                self.after(0, lambda: self.connection_label.config(text="🔴 Offline"))
+                print(f"API Connection check failed: {e}")
+        
+        threading.Thread(target=_check, daemon=True).start()
+        # Re-check every 60 seconds
+        self.after(60000, self.check_api_connection)
+
+    # ========== MULTI-MODEL SUPPORT ==========
+    def toggle_model(self):
+        """Cycle through available models with description."""
+        models = list(self.available_models.keys())
+        model_labels = {
+            "gpt-4o": "🧠 4o",
+            "gpt-4o-mini": "⚡ Mini",
+            "gpt-4-turbo": "🚀 Turbo"
+        }
+        
+        current_idx = models.index(self.current_model)
+        next_idx = (current_idx + 1) % len(models)
+        self.current_model = models[next_idx]
+        
+        # Update button and show description
+        self.model_btn.config(text=model_labels[self.current_model])
+        self.status.config(text=f"🔄 Model: {self.available_models[self.current_model]}")
+        
+        # Update the assistant's model
+        self.assistant.current_model = self.current_model
+
+    # ========== AUDIO LEVEL INDICATOR ==========
+    def update_audio_level(self):
+        """Update the audio level indicator during recording."""
+        if not self.assistant.recorder.is_recording:
+            self.audio_level_bar['value'] = 0
+            self.audio_level_label.config(text="--")
+            return
+        
+        # Get current audio level from recorder
+        snapshot = self.assistant.recorder.get_snapshot()
+        if snapshot is not None and len(snapshot) > 0:
+            # Calculate RMS level
+            rms = np.sqrt(np.mean(snapshot[-1600:]**2))  # Last 0.1 sec
+            # Convert to percentage (normalize to reasonable range)
+            level = min(100, int(rms / 300 * 100))
+            self.current_audio_level = level
+            self.audio_level_bar['value'] = level
+            self.audio_level_label.config(text=f"{level}%")
+        
+        # Continue updating while recording
+        if self.assistant.recorder.is_recording:
+            self.after(100, self.update_audio_level)
+
     def toggle_answer_mode(self):
         """Cycle through answer quality modes: Default → Quick → Detailed → Code → Default"""
         modes = ["default", "quick", "detailed", "code"]
@@ -1887,9 +1996,29 @@ class Application(tk.Tk):
         self.after(1500, self.refresh_balance)  # Initial refresh after 1.5 sec
         self.after(300000, self._auto_refresh_balance)  # Then every 5 min
         
-        # Move existing UI to main_frame
-        self.status = ttk.Label(self.main_frame, text="🔊 Ready", style='TLabel')
-        self.status.pack(pady=5, anchor="w", padx=10)
+        # Status bar with connection indicator and audio level
+        status_frame = ttk.Frame(self.main_frame)
+        status_frame.pack(fill="x", padx=10, pady=2)
+        
+        # Connection status indicator
+        self.connection_label = ttk.Label(status_frame, text="🔴 Checking...", font=('Arial', 9))
+        self.connection_label.pack(side="left", padx=(0, 10))
+        
+        # Main status label
+        self.status = ttk.Label(status_frame, text="🔊 Ready", style='TLabel')
+        self.status.pack(side="left", padx=5)
+        
+        # Audio level indicator (shows when recording)
+        self.audio_level_frame = ttk.Frame(status_frame)
+        self.audio_level_frame.pack(side="right", padx=10)
+        ttk.Label(self.audio_level_frame, text="🎙", font=('Arial', 9)).pack(side="left")
+        self.audio_level_bar = ttk.Progressbar(self.audio_level_frame, length=80, mode='determinate', maximum=100)
+        self.audio_level_bar.pack(side="left", padx=2)
+        self.audio_level_label = ttk.Label(self.audio_level_frame, text="--", font=('Arial', 8), width=4)
+        self.audio_level_label.pack(side="left")
+        
+        # Check API connection on startup
+        self.after(500, self.check_api_connection)
 
         text_frame = ttk.Frame(self.main_frame)
         text_frame.pack(fill="both", expand=True, padx=10)
@@ -1975,6 +2104,10 @@ class Application(tk.Tk):
         # Optimization Mode Toggle - ON by default for speed
         self.optimize_btn = ttk.Button(control_frame, text="⚡ Fast Mode ON", command=self.toggle_optimization_mode)
         self.optimize_btn.pack(side="left", padx=4)
+        
+        # Model selector button
+        self.model_btn = ttk.Button(control_frame, text="🧠 4o", command=self.toggle_model, width=6)
+        self.model_btn.pack(side="left", padx=4)
 
         font_controls = ttk.Frame(control_frame)
         font_controls.pack(side="left", padx=10)
@@ -2744,6 +2877,9 @@ class Application(tk.Tk):
                 # 🔴 Start live / incremental transcription
                 self.live_transcription_running = True
                 threading.Thread(target=self.live_transcription_loop, daemon=True).start()
+                
+                # 🎙 Start audio level indicator
+                self.after(100, self.update_audio_level)
 
             else:
                 self.is_processing_audio = True  # Set flag to True when processing audio
