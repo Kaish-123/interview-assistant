@@ -35,6 +35,54 @@ import os
 
 
 # ============================================================================
+# OPENAI BILLING/BALANCE HELPERS
+# ============================================================================
+
+import webbrowser
+import urllib.request
+import ssl
+
+def fetch_openai_balance(api_key: str) -> dict:
+    """
+    Try to fetch OpenAI account balance.
+    Note: OpenAI removed direct billing API, so this uses a workaround.
+    Returns: {"balance": float or None, "error": str or None}
+    """
+    try:
+        # Try the subscription endpoint (may work for some accounts)
+        url = "https://api.openai.com/v1/dashboard/billing/subscription"
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {api_key}")
+        req.add_header("Content-Type", "application/json")
+        
+        context = ssl.create_default_context()
+        with urllib.request.urlopen(req, timeout=5, context=context) as response:
+            data = json.loads(response.read().decode())
+            # Extract relevant info
+            if "hard_limit_usd" in data:
+                return {"balance": data.get("hard_limit_usd"), "error": None}
+    except Exception as e:
+        pass
+    
+    try:
+        # Try credit grants endpoint
+        url = "https://api.openai.com/v1/dashboard/billing/credit_grants"
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {api_key}")
+        req.add_header("Content-Type", "application/json")
+        
+        context = ssl.create_default_context()
+        with urllib.request.urlopen(req, timeout=5, context=context) as response:
+            data = json.loads(response.read().decode())
+            total = data.get("total_available", 0)
+            return {"balance": total, "error": None}
+    except Exception as e:
+        pass
+    
+    return {"balance": None, "error": "API not available - set balance manually"}
+
+
+# ============================================================================
 # IMAGE OPTIMIZATION HELPERS (Safe - doesn't delete anything, just compresses)
 # ============================================================================
 
@@ -730,12 +778,14 @@ class ChatGPTAssistant:
                     text_widget.config(state=tk.DISABLED)
                     text_widget.see(tk.END)
 
+                    output_chars = 0
                     for chunk in stream:
                         if not self.streaming:
                             break
                         delta = chunk.choices[0].delta.content if chunk.choices[0].delta else ""
                         if delta:
                             buffer += delta
+                            output_chars += len(delta)
                             self.current_response += delta
                             placeholder["content"] = self.current_response
 
@@ -746,6 +796,19 @@ class ChatGPTAssistant:
 
                     if buffer:
                         self.update_text_widget(text_widget, buffer)
+                    
+                    # Estimate token usage and update session cost
+                    # Rough estimate: ~4 chars per token
+                    input_chars = sum(len(str(m.get("content", ""))) for m in model_messages)
+                    estimated_input_tokens = input_chars // 4
+                    estimated_output_tokens = output_chars // 4
+                    
+                    if self.app:
+                        self.app.after(0, lambda: self.app.add_session_cost(
+                            estimated_input_tokens, 
+                            estimated_output_tokens,
+                            "gpt-4o"
+                        ))
 
                 except Exception as e:
                     placeholder["content"] = f"❌ GPT Error: {str(e)}"
@@ -1385,6 +1448,62 @@ class Application(tk.Tk):
         self.main_frame = ttk.Frame(self.paned)
         self.paned.add(self.main_frame, weight=1)
 
+        # ====== BALANCE DISPLAY AT TOP ======
+        self.balance_frame = ttk.Frame(self.main_frame)
+        self.balance_frame.pack(fill="x", padx=10, pady=(5, 0))
+        
+        # Balance label
+        self.balance_label = ttk.Label(
+            self.balance_frame, 
+            text="💰 Balance: Loading...", 
+            font=('Arial', 10, 'bold')
+        )
+        self.balance_label.pack(side="left")
+        
+        # Session cost label
+        self.session_cost_label = ttk.Label(
+            self.balance_frame, 
+            text=" | Session: $0.00",
+            font=('Arial', 9)
+        )
+        self.session_cost_label.pack(side="left", padx=(10, 0))
+        
+        # Refresh button
+        self.refresh_balance_btn = ttk.Button(
+            self.balance_frame, 
+            text="🔄", 
+            width=3,
+            command=self.refresh_balance
+        )
+        self.refresh_balance_btn.pack(side="left", padx=(10, 0))
+        
+        # Set balance button
+        self.set_balance_btn = ttk.Button(
+            self.balance_frame, 
+            text="✏️ Set", 
+            width=5,
+            command=self.set_balance_manually
+        )
+        self.set_balance_btn.pack(side="left", padx=(5, 0))
+        
+        # Open billing page button
+        self.billing_btn = ttk.Button(
+            self.balance_frame, 
+            text="📊 Billing", 
+            width=7,
+            command=lambda: webbrowser.open("https://platform.openai.com/usage")
+        )
+        self.billing_btn.pack(side="left", padx=(5, 0))
+        
+        # Initialize balance tracking
+        self.current_balance = self.ui_prefs.get("openai_balance", None)
+        self.session_cost = 0.0
+        self.update_balance_display()
+        
+        # Auto-refresh balance every 5 minutes
+        self.after(1000, self.refresh_balance)  # Initial refresh after 1 sec
+        self.after(300000, self._auto_refresh_balance)  # Then every 5 min
+        
         # Move existing UI to main_frame
         self.status = ttk.Label(self.main_frame, text="🔊 Ready", style='TLabel')
         self.status.pack(pady=5, anchor="w", padx=10)
@@ -2171,6 +2290,82 @@ class Application(tk.Tk):
         else:
             self.optimize_btn.config(text="🐢 Fast Mode OFF")
             self.status.config(text="🐢 Fast Mode OFF - Sending full context (may be slower with long chats)")
+
+    # ============================================================================
+    # BALANCE / BILLING MANAGEMENT
+    # ============================================================================
+    
+    def update_balance_display(self):
+        """Update the balance display in UI."""
+        if self.current_balance is not None:
+            self.balance_label.config(text=f"💰 Balance: ${self.current_balance:.2f}")
+        else:
+            self.balance_label.config(text="💰 Balance: Not set")
+        
+        self.session_cost_label.config(text=f" | Session: ${self.session_cost:.4f}")
+    
+    def refresh_balance(self):
+        """Try to fetch balance from OpenAI API."""
+        def fetch():
+            result = fetch_openai_balance(API_KEY)
+            if result["balance"] is not None:
+                self.current_balance = result["balance"]
+                self.ui_prefs["openai_balance"] = self.current_balance
+                UIPreferences.save(self.ui_prefs)
+            self.after(0, self.update_balance_display)
+        
+        threading.Thread(target=fetch, daemon=True).start()
+    
+    def _auto_refresh_balance(self):
+        """Auto-refresh balance periodically."""
+        self.refresh_balance()
+        self.after(300000, self._auto_refresh_balance)  # Every 5 minutes
+    
+    def set_balance_manually(self):
+        """Allow user to manually set their balance."""
+        current = self.current_balance if self.current_balance else 0.0
+        result = simpledialog.askfloat(
+            "Set OpenAI Balance",
+            f"Enter your current OpenAI balance in USD:\n(Check at platform.openai.com/usage)",
+            initialvalue=current,
+            minvalue=0.0
+        )
+        if result is not None:
+            self.current_balance = result
+            self.ui_prefs["openai_balance"] = self.current_balance
+            UIPreferences.save(self.ui_prefs)
+            self.update_balance_display()
+            self.status.config(text=f"💰 Balance set to ${result:.2f}")
+    
+    def add_session_cost(self, input_tokens: int, output_tokens: int, model: str = "gpt-4o"):
+        """
+        Track estimated cost for the session.
+        Pricing (approximate):
+        - GPT-4o: $2.50/1M input, $10.00/1M output
+        - GPT-4o-mini: $0.15/1M input, $0.60/1M output
+        """
+        if model == "gpt-4o":
+            input_cost = (input_tokens / 1_000_000) * 2.50
+            output_cost = (output_tokens / 1_000_000) * 10.00
+        elif model == "gpt-4o-mini":
+            input_cost = (input_tokens / 1_000_000) * 0.15
+            output_cost = (output_tokens / 1_000_000) * 0.60
+        else:
+            # Default to gpt-4o pricing
+            input_cost = (input_tokens / 1_000_000) * 2.50
+            output_cost = (output_tokens / 1_000_000) * 10.00
+        
+        cost = input_cost + output_cost
+        self.session_cost += cost
+        
+        # Deduct from balance if set
+        if self.current_balance is not None:
+            self.current_balance -= cost
+            self.ui_prefs["openai_balance"] = self.current_balance
+            UIPreferences.save(self.ui_prefs)
+        
+        self.update_balance_display()
+        return cost
 
     # ============================================================================
     # DRAG AND DROP REORDERING
