@@ -1,10 +1,11 @@
 {
-  "geometry": "636x967+-636+25",
+  "geometry": "640x967+-640+25",
   "paned_sash": 113,
   "sidebar_sash": 561,
   "response_font_size": 15,
   "tab_tree_open": [
-    "tab_0"
+    "tab_0",
+    "tab_1"
   ],
-  "last_billing_fetch": "2025-12-04T21:20:53.743586"
+  "last_billing_fetch": "2025-12-05T03:23:56.957775"
 }
