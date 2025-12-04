@@ -1216,6 +1216,7 @@ class ChatGPTAssistant:
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.title("INTERVIEW ASSISTANT")
 
         # --- Load UI prefs first
         self.ui_prefs = UIPreferences.load()
@@ -1892,6 +1893,10 @@ class Application(tk.Tk):
         control_frame = ttk.Frame(self.main_frame)
         control_frame.pack(fill="x", padx=10, pady=5)
 
+        # Performance diagnostic button - FIRST for quick access
+        self.diag_btn = ttk.Button(control_frame, text="📊 Report", command=self.show_performance_dialog)
+        self.diag_btn.pack(side="left", padx=4)
+
         self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
         self.record_btn.pack(side="left", padx=4)
         
@@ -1927,10 +1932,6 @@ class Application(tk.Tk):
         # Clear bookmarks button
         self.clear_bookmarks_btn = ttk.Button(control_frame, text="🗑 Clear", command=self.clear_all_bookmarks, width=6)
         self.clear_bookmarks_btn.pack(side="right", padx=2)
-        
-        # Performance diagnostic button
-        self.diag_btn = ttk.Button(control_frame, text="📊", command=self.show_performance_dialog, width=3)
-        self.diag_btn.pack(side="right", padx=2)
 
         # Chat input bar at bottom
         input_frame = ttk.Frame(self.main_frame)
