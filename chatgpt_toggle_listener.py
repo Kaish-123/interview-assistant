@@ -2705,17 +2705,20 @@ class Application(tk.Tk):
         self.live_transcription_running = False
         
         try:
-            # Stop recording and get the audio file
+            self.status.config(text="⏳ Getting complete question...")
+            
+            # Stop recording and get the audio file - captures ALL audio until this moment
             filename = self.assistant.recorder.stop_recording()
             
-            # Use live transcription if available, otherwise do full transcription
-            question = self.latest_live_question.strip() if self.latest_live_question else ""
-            if not question:
-                question = self.assistant.transcribe_audio(filename)
+            # ALWAYS do final transcription on the COMPLETE audio file
+            # This ensures we get every word until the ` button was pressed
+            question = self.assistant.transcribe_audio(filename)
 
             if not question or question.startswith("❌"):
                 self.status.config(text=question if question else "⚠️ No speech detected")
                 return
+            
+            question = question.strip()
 
             # Clean up the "Listening..." block from UI before showing final question
             self.response_box.config(state=tk.NORMAL)
