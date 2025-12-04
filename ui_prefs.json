@@ -1,11 +1,9 @@
 {
-  "geometry": "643x967+-643+25",
-  "paned_sash": 273,
+  "geometry": "637x967+-637+25",
+  "paned_sash": 113,
   "sidebar_sash": 561,
   "response_font_size": 15,
   "tab_tree_open": [
-    "tab_0",
-    "tab_1"
-  ],
-  "openai_balance": 75.54120750000001
+    "tab_0"
+  ]
 }

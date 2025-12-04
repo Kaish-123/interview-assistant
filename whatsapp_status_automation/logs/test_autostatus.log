@@ -1,0 +1,542 @@
+
+============================================================
+🕕 WhatsApp Auto Status - Scheduled Run
+============================================================
+
+💡 Waking display...
+   ✅ Display awake
+🔓 Checking if screen needs unlocking...
+   ✅ Screen already unlocked
+⏳ Waiting for desktop to be ready...
+🚀 Running WhatsApp status automation...
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: TechyEra COnsultancy Services.PNG
+         Caption: TechyEra COnsultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra COnsultancy Services.PNG
+   Caption: TechyEra COnsultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra COnsultancy Services.PNG
+💬 Adding caption: TechyEra COnsultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: Write Place to get selection.PNG
+         Caption: Write Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Write Place to get selection.PNG
+   Caption: Write Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Write Place to get selection.PNG
+💬 Adding caption: Write Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+
+✅ Auto status complete!
+[13:07:04] 
+[13:07:04] ============================================================
+[13:07:04] 🕕 WhatsApp Auto Status - Scheduled Run
+[13:07:04] ============================================================
+[13:07:04] 
+[13:07:04] 🔓 Starting unlock sequence...
+[13:07:04] 💡 Waking up the system...
+[13:07:19]    ✅ System wake signal sent
+[13:07:23]    Checking lock status...
+[13:07:23]    Unlock attempt 1/3...
+[13:07:23] 🖱️ Activating login screen...
+[13:07:23]    Clicking center of screen (720, 450)...
+[13:07:24]    Clicking password area (720, 500)...
+[13:07:29]    ✅ Login screen activated
+[13:07:30] 🔑 Typing password...
+[13:07:38]    Pressing Enter...
+[13:07:39]    ✅ Password entered
+[13:07:47]    ⚠️ Still locked, retrying...
+[13:07:50]    Unlock attempt 2/3...
+[13:07:50] 🖱️ Activating login screen...
+[13:07:50]    Clicking center of screen (720, 450)...
+[13:07:51]    Clicking password area (720, 500)...
+[13:07:56]    ✅ Login screen activated
+[13:07:57] 🔑 Typing password...
+[13:08:05]    Pressing Enter...
+[13:08:06]    ✅ Password entered
+[13:08:14]    ⚠️ Still locked, retrying...
+[13:08:16]    Unlock attempt 3/3...
+[13:08:16] 🖱️ Activating login screen...
+[13:08:16]    Clicking center of screen (720, 450)...
+[13:08:18]    Clicking password area (720, 500)...
+[13:08:23]    ✅ Login screen activated
+[13:08:24] 🔑 Typing password...
+[13:08:32]    Pressing Enter...
+[13:08:32]    ✅ Password entered
+[13:08:41]    ⚠️ Still locked, retrying...
+[13:08:43]    ⚠️ Could not confirm unlock, continuing anyway...
+[13:08:43] ⏳ Waiting for desktop to be ready (10 seconds)...
+[13:08:53] 🚀 Running WhatsApp status automation...
+[13:10:01] Output from status script:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: TechyEra COnsultancy Services.PNG
+         Caption: TechyEra COnsultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra COnsultancy Services.PNG
+   Caption: TechyEra COnsultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra COnsultancy Services.PNG
+💬 Adding caption: TechyEra COnsultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: Write Place to get selection.PNG
+         Caption: Write Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Write Place to get selection.PNG
+   Caption: Write Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Write Place to get selection.PNG
+💬 Adding caption: Write Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[13:10:01] 
+[13:10:01] ✅ Auto status complete!
+[13:20:05] 
+[13:20:05] ============================================================
+[13:20:05] 🕕 WhatsApp Auto Status - Scheduled Run
+[13:20:05] ============================================================
+[13:20:05] 
+[13:20:05] 🔓 Checking if unlock is needed...
+[13:20:05]    Display off: True
+[13:20:05]    Need to wake/unlock...
+[13:20:05] 💡 Waking display...
+[13:20:10]    ✅ Wake signal sent
+[13:20:13]    Front app: terminal
+[13:20:13]    ✅ Screen unlocked after wake!
+[13:20:13] ⏳ Waiting for desktop (5 seconds)...
+[13:20:18] 🚀 Running WhatsApp status automation...
+[13:21:22] Output:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: TechyEra COnsultancy Services.PNG
+         Caption: TechyEra COnsultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra COnsultancy Services.PNG
+   Caption: TechyEra COnsultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra COnsultancy Services.PNG
+💬 Adding caption: TechyEra COnsultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: Write Place to get selection.PNG
+         Caption: Write Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Write Place to get selection.PNG
+   Caption: Write Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Write Place to get selection.PNG
+💬 Adding caption: Write Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[13:21:22] 
+[13:21:22] ✅ Complete!
+[13:39:04] 
+[13:39:04] ============================================================
+[13:39:04] 🕕 WhatsApp Auto Status - Scheduled Run
+[13:39:04] ============================================================
+[13:39:04] 
+[13:39:04] 🔍 Checking if unlock needed...
+[13:39:06]    Front app: terminal
+[13:39:06]    ✅ Already unlocked!
+[13:39:06] ⏳ Waiting 5 seconds for desktop...
+[13:39:11] 🚀 Starting WhatsApp status automation...
+[13:40:15] Output:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: TechyEra COnsultancy Services.PNG
+         Caption: TechyEra COnsultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra COnsultancy Services.PNG
+   Caption: TechyEra COnsultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra COnsultancy Services.PNG
+💬 Adding caption: TechyEra COnsultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: Write Place to get selection.PNG
+         Caption: Write Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Write Place to get selection.PNG
+   Caption: Write Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Write Place to get selection.PNG
+💬 Adding caption: Write Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[13:40:15] 
+[13:40:15] ✅ Complete!
+[13:58:04] 
+[13:58:04] ============================================================
+[13:58:04] 🕕 WhatsApp Auto Status - Scheduled Run
+[13:58:04] ============================================================
+[13:58:04] 
+[13:58:04] 🔍 Checking if unlock needed...
+[13:58:04] 💡 Aggressively waking display...
+[13:58:19]    ✅ Wake signals sent
+[13:58:22]    Front app: terminal
+[13:58:22]    ✅ Already unlocked!
+[13:58:22] ⏳ Waiting 5 seconds for desktop...
+[13:58:27] 🚀 Starting WhatsApp status automation...
+[13:59:31] Output:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: Right Place to get selection.PNG
+         Caption: Right Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Right Place to get selection.PNG
+   Caption: Right Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Right Place to get selection.PNG
+💬 Adding caption: Right Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: TechyEra Consultancy Services.PNG
+         Caption: TechyEra Consultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra Consultancy Services.PNG
+   Caption: TechyEra Consultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra Consultancy Services.PNG
+💬 Adding caption: TechyEra Consultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[13:59:31] 
+[13:59:31] ✅ Complete!
+[14:10:05] 
+[14:10:05] ============================================================
+[14:10:05] 🕕 WhatsApp Auto Status - Scheduled Run
+[14:10:05] ============================================================
+[14:10:05] 
+[14:10:05] 🔍 Checking if unlock needed...
+[14:10:05] 💡 Aggressively waking display...
+[14:10:20]    ✅ Wake signals sent
+[14:10:23]    Front app: terminal
+[14:10:23]    ✅ Already unlocked!
+[14:10:23] ⏳ Waiting 5 seconds for desktop...
+[14:10:28] 🚀 Starting WhatsApp status automation...
+[14:11:36] Output:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: Right Place to get selection.PNG
+         Caption: Right Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Right Place to get selection.PNG
+   Caption: Right Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Right Place to get selection.PNG
+💬 Adding caption: Right Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: TechyEra Consultancy Services.PNG
+         Caption: TechyEra Consultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra Consultancy Services.PNG
+   Caption: TechyEra Consultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra Consultancy Services.PNG
+💬 Adding caption: TechyEra Consultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[14:11:36] 
+[14:11:36] ✅ Complete!
+[14:17:05] 
+[14:17:05] ============================================================
+[14:17:05] 🕕 WhatsApp Auto Status - Scheduled Run
+[14:17:05] ============================================================
+[14:17:05] 
+[14:17:05] 🔍 Checking if unlock needed...
+[14:17:05] 💡 Aggressively waking display...
+[14:17:20]    ✅ Wake signals sent
+[14:17:23]    Front app: terminal
+[14:17:23]    ✅ Already unlocked!
+[14:17:23] ⏳ Waiting 5 seconds for desktop...
+[14:17:28] 🚀 Starting WhatsApp status automation...
+[14:18:35] Output:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: Right Place to get selection.PNG
+         Caption: Right Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Right Place to get selection.PNG
+   Caption: Right Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Right Place to get selection.PNG
+💬 Adding caption: Right Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: TechyEra Consultancy Services.PNG
+         Caption: TechyEra Consultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra Consultancy Services.PNG
+   Caption: TechyEra Consultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra Consultancy Services.PNG
+💬 Adding caption: TechyEra Consultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[14:18:35] 
+[14:18:35] ✅ Complete!
+[14:24:05] 
+[14:24:05] ============================================================
+[14:24:05] 🕕 WhatsApp Auto Status - Scheduled Run
+[14:24:05] ============================================================
+[14:24:05] 
+[14:24:05] 🔓 Starting unlock sequence...
+[14:24:05]    Attempt 1/3...
+[14:24:05] 💡 Waking display with caffeinate...
+[14:24:08] 🔑 Sending unlock sequence...
+[14:24:27]    Front app: terminal
+[14:24:27]    ✅ Successfully unlocked!
+[14:24:27] ⏳ Waiting 5 seconds for desktop...
+[14:24:32] 🚀 Starting WhatsApp status automation...
+[14:25:34] Output:
+
+🖼️ Posting 2 image(s) to WhatsApp Status...
+==================================================
+
+[1/2] Posting: Right Place to get selection.PNG
+         Caption: Right Place to get selection
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: Right Place to get selection.PNG
+   Caption: Right Place to get selection
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: Right Place to get selection.PNG
+💬 Adding caption: Right Place to get selection
+   Clicking Send button...
+
+✅ Image status posted!
+   ⏳ Waiting 5 seconds before next image...
+
+[2/2] Posting: TechyEra Consultancy Services.PNG
+         Caption: TechyEra Consultancy Services
+
+==================================================
+🖼️ WhatsApp IMAGE Status
+   Image: TechyEra Consultancy Services.PNG
+   Caption: TechyEra Consultancy Services
+==================================================
+
+📱 Opening WhatsApp...
+   ✅ WhatsApp maximized and ready
+📍 Clicking Status icon...
+📷 Clicking camera button...
+🖼️ Clicking gallery button to select photo...
+📂 Selecting image: TechyEra Consultancy Services.PNG
+💬 Adding caption: TechyEra Consultancy Services
+   Clicking Send button...
+
+✅ Image status posted!
+
+✅ All 2 images posted!
+
+[14:25:34] 
+[14:25:34] ✅ Complete!
+[14:31:04] 
+[14:31:04] ============================================================
+[14:31:04] 🕕 WhatsApp Auto Status - Scheduled Run
+[14:31:04] ============================================================
+[14:31:04] 
+[14:31:04] 🔓 Unlock attempt 1/3...
+[14:31:04] 💡 Step 1: Waking display...
+[14:31:14] 🖱️ Step 2: Clicking to activate login window...
+[14:31:18]    Clicked at (720, 450)
+[14:31:18] ⌨️ Step 3: Pressing Enter to show password field...
+[14:31:21] 🔑 Step 4: Typing password...
+[14:31:22]    ✅ Unlock sequence sent
+[14:31:28]    Front app: google chrome
+[14:31:28]    ✅ Successfully unlocked!
+[14:31:28] ⏳ Waiting 5 seconds for desktop...
+[14:31:33] 🚀 Starting WhatsApp status automation...
+[14:31:56] Output:
+
+[14:31:56] 
+[14:31:56] ✅ Complete!
