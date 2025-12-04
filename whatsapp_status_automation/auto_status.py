@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 WhatsApp Auto Status - Full Automation
-Uses the EXACT working unlock sequence from test_2min_unlock.py
+Wake → Click to activate → Enter password → Post status
 """
 
 import subprocess
@@ -17,44 +17,63 @@ def log(msg):
     sys.stdout.flush()
 
 def unlock_sequence():
-    """EXACT COPY from working test_2min_unlock.py"""
+    """
+    Wake and unlock with CLICKS + KEY PRESSES.
+    Based on user feedback:
+    - Screen wakes but Enter doesn't work
+    - Need to CLICK to activate the login window first
+    """
     
-    # First, wake the display
-    log("💡 Waking display with caffeinate...")
+    # Step 1: Wake display aggressively
+    log("💡 Step 1: Waking display...")
     subprocess.Popen(["caffeinate", "-u", "-t", "120"])
-    time.sleep(3)
+    time.sleep(2)
+    subprocess.run(["caffeinate", "-u", "-t", "5"], capture_output=True)
+    time.sleep(2)
     
-    # THE WORKING AppleScript from test_2min_unlock.py
-    script = f'''
+    # Step 2: Use pyautogui to CLICK center of screen (activates login window)
+    log("🖱️ Step 2: Clicking to activate login window...")
+    try:
+        import pyautogui
+        screen_w, screen_h = pyautogui.size()
+        center_x, center_y = screen_w // 2, screen_h // 2
+        
+        # Click center of screen
+        pyautogui.click(center_x, center_y)
+        time.sleep(1)
+        pyautogui.click(center_x, center_y)
+        time.sleep(2)
+        
+        log(f"   Clicked at ({center_x}, {center_y})")
+    except Exception as e:
+        log(f"   Click failed: {e}, using AppleScript...")
+        # Fallback: press Space to wake
+        subprocess.run(["osascript", "-e", 'tell application "System Events" to key code 49'], capture_output=True)
+        time.sleep(2)
+    
+    # Step 3: Press Enter to show password field
+    log("⌨️ Step 3: Pressing Enter to show password field...")
+    script_enter = '''
     tell application "System Events"
-        -- Wake the screen
-        key code 49 -- Space
-        delay 2
-        
-        -- First Enter - dismiss wake screen
-        key code 36
-        delay 2
-        
-        -- Second Enter - focus password field  
-        key code 36
-        delay 5 -- Wait 5 seconds for password field to be ready
-        
-        -- Type password
-        keystroke "{PASSWORD}"
-        delay 1
-        
-        -- Submit
         key code 36 -- Enter
     end tell
     '''
+    subprocess.run(["osascript", "-e", script_enter], capture_output=True)
+    time.sleep(2)
     
-    log("🔑 Sending unlock sequence...")
-    result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    # Step 4: Type password and submit
+    log("🔑 Step 4: Typing password...")
+    script_password = f'''
+    tell application "System Events"
+        keystroke "{PASSWORD}"
+        delay 1
+        key code 36 -- Enter
+    end tell
+    '''
+    subprocess.run(["osascript", "-e", script_password], capture_output=True)
     
-    if result.stderr:
-        log(f"   Error: {result.stderr}")
-    
-    return result.returncode == 0
+    log("   ✅ Unlock sequence sent")
+    return True
 
 def is_screen_locked():
     """Check if login screen is showing."""
@@ -94,16 +113,13 @@ def main():
     log("=" * 60)
     log("")
     
-    # Step 1: Try unlock (same as test_2min_unlock.py)
-    log("🔓 Starting unlock sequence...")
-    
+    # Try unlock up to 3 times
     for attempt in range(3):
-        log(f"   Attempt {attempt + 1}/3...")
+        log(f"🔓 Unlock attempt {attempt + 1}/3...")
         
         unlock_sequence()
         time.sleep(5)
         
-        # Check if unlocked
         if not is_screen_locked():
             log("   ✅ Successfully unlocked!")
             break
@@ -111,11 +127,11 @@ def main():
         log("   ⚠️ Still locked, retrying...")
         time.sleep(2)
     
-    # Step 2: Wait for desktop
+    # Wait for desktop
     log("⏳ Waiting 5 seconds for desktop...")
     time.sleep(5)
     
-    # Step 3: Post WhatsApp status
+    # Post WhatsApp status
     run_whatsapp_status()
     
     log("")
