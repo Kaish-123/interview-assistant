@@ -963,12 +963,15 @@ class Application(tk.Tk):
                             pass
                     in_flight = False
 
-                # Update UI with new text (streaming effect)
+                # Update the transcription text (always, to capture complete question)
                 if text and text != last_text:
                     last_text = text
-                    self.latest_live_question = text
+                    self.latest_live_question = text  # Always update this for complete text
                     self._last_live_update_time = time.time()
-                    self.after(0, lambda t=text: self.update_live_question_in_ui(t, is_final=False))
+                    
+                    # Only update UI if still recording - prevents ghost display after stop
+                    if self.live_transcription_running:
+                        self.after(0, lambda t=text: self.update_live_question_in_ui(t, is_final=False))
 
             # Launch Whisper call in background
             snapshot_copy = snapshot.copy()
@@ -1960,47 +1963,55 @@ class Application(tk.Tk):
 
     def process_recording(self):
         """
-        INSTANT MODE: Sends to GPT immediately using live transcription.
-        No waiting for file processing - maximum speed!
+        Gets the COMPLETE live transcription and sends to GPT.
         
         Strategy:
-        1. Grab live transcription INSTANTLY (already in memory)
-        2. Send to GPT IMMEDIATELY 
-        3. Stop recording in background (doesn't block)
+        1. Stop live transcription loop
+        2. Wait briefly for any in-flight Whisper call to finish
+        3. Grab the LATEST (most complete) transcription
+        4. Send to GPT
         
-        This gives you answers in <0.5 seconds after pressing `!
+        This ensures you get the FULL question!
         """
-        # Stop live preview loop
+        # Stop live preview loop FIRST - prevents any new UI updates
         self.live_transcription_running = False
         
-        # Grab live transcription INSTANTLY (no processing needed - it's already in memory!)
+        # Wait briefly for any in-flight Whisper call to complete and update latest_live_question
+        # This ensures we get the MOST COMPLETE transcription
+        time.sleep(0.3)  # Short wait for in-flight call
+        
+        # Now grab the LATEST transcription (may have been updated by in-flight call)
         live_question = ""
         try:
             live_question = (self.latest_live_question or "").strip()
         except Exception:
             pass
+        
+        # Clear it to prevent duplication
         self.latest_live_question = ""
 
         try:
-            # INSTANT MODE: If we have live transcription, send IMMEDIATELY!
+            # Stop recording in background first
+            threading.Thread(
+                target=self._stop_recording_background,
+                daemon=True
+            ).start()
+            
+            # If we have live transcription, use it
             if live_question and len(live_question) > 5:
-                print(f"⚡ INSTANT: Sending immediately ({len(live_question)} chars)")
+                print(f"⚡ Sending: {len(live_question)} chars")
                 
-                # Show question and send to GPT INSTANTLY - no waiting!
+                # Show question and send to GPT
                 self.update_live_question_in_ui(live_question, is_final=True)
                 self._send_question_to_gpt(live_question)
-                
-                # Stop recording in BACKGROUND (doesn't block the response)
-                threading.Thread(
-                    target=self._stop_recording_background,
-                    daemon=True
-                ).start()
                 return
             
             # FALLBACK: No live transcription - must wait for final
             print("📝 No live text, doing full transcription...")
             self.status.config(text="💭 Processing audio...")
             
+            # Wait for recording to actually stop
+            time.sleep(0.5)
             filename = self.assistant.recorder.stop_recording()
             final_text = self.assistant.transcribe_audio(filename)
             
