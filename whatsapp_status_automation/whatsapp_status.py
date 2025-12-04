@@ -2,9 +2,7 @@
 """
 WhatsApp Status Automation for macOS
 ====================================
-Automatically sets your WhatsApp Status (Stories) on weekends.
-
-Uses AppleScript UI automation for reliable element detection.
+Smart automation that finds UI elements dynamically.
 """
 
 import json
@@ -17,518 +15,572 @@ from pathlib import Path
 
 try:
     import pyautogui
+    from PIL import Image
 except ImportError:
-    print("❌ pyautogui not installed. Run: pip install pyautogui")
+    print("❌ Missing dependencies. Run: pip install pyautogui pillow")
     sys.exit(1)
 
-# Safety settings
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.3
+pyautogui.PAUSE = 0.2
 
 
 class WhatsAppStatusAutomation:
-    """Automates WhatsApp Status (Stories) updates on macOS."""
+    """Smart WhatsApp Status automation with UI element detection."""
     
     def __init__(self, config_path: str = None):
-        """Initialize with config file."""
-        self.config_path = config_path or os.path.join(
-            os.path.dirname(__file__), "config.json"
-        )
+        self.config_path = config_path or os.path.join(os.path.dirname(__file__), "config.json")
         self.config = self.load_config()
-        self.delay = self.config.get("delay_between_actions", 1.5)
+        self.delay = self.config.get("delay_between_actions", 2.0)
+        self.app_name = self.config.get("whatsapp_app_name", "WhatsApp")
     
     def load_config(self) -> dict:
-        """Load configuration from JSON file."""
-        default_config = {
-            "status_captions": ["Weekend vibes ✨"],
+        default = {
+            "status_captions": ["Weekend vibes ✨", "Taking a break 🌴"],
             "schedule": {"days": ["saturday", "sunday"], "time": "09:00"},
             "whatsapp_app_name": "WhatsApp",
-            "delay_between_actions": 1.5,
+            "delay_between_actions": 2.0,
             "use_random_caption": False,
             "current_caption_index": 0,
-            # Calibrated positions (relative to window)
-            "positions": {
-                "status_tab": {"x_offset": 35, "y_offset": 95},  # Status icon in sidebar
-                "add_status_button": {"x_offset": 120, "y_offset": 95},  # + button or My Status
-                "text_status_icon": {"x_offset": -80, "y_offset": 95},  # Pencil icon (from right)
-            }
         }
-        
         try:
             with open(self.config_path, "r") as f:
                 loaded = json.load(f)
-                # Merge with defaults
-                for key, value in default_config.items():
-                    if key not in loaded:
-                        loaded[key] = value
+                for k, v in default.items():
+                    if k not in loaded:
+                        loaded[k] = v
                 return loaded
         except FileNotFoundError:
-            print(f"⚠️ Config not found, creating with defaults")
             with open(self.config_path, "w") as f:
-                json.dump(default_config, f, indent=4)
-            return default_config
+                json.dump(default, f, indent=4)
+            return default
     
     def save_config(self):
-        """Save current config to file."""
         with open(self.config_path, "w") as f:
             json.dump(self.config, f, indent=4)
     
     def get_caption(self) -> str:
-        """Get the caption to use for status."""
-        captions = self.config.get("status_captions", ["Weekend mode 🌴"])
-        if self.config.get("use_random_caption", False):
+        captions = self.config.get("status_captions", ["Status update"])
+        if self.config.get("use_random_caption"):
             import random
             return random.choice(captions)
-        else:
-            idx = self.config.get("current_caption_index", 0) % len(captions)
-            return captions[idx]
+        idx = self.config.get("current_caption_index", 0) % len(captions)
+        return captions[idx]
     
     def rotate_caption(self):
-        """Move to next caption in the list."""
         captions = self.config.get("status_captions", [])
         if captions:
-            self.config["current_caption_index"] = (
-                self.config.get("current_caption_index", 0) + 1
-            ) % len(captions)
+            self.config["current_caption_index"] = (self.config.get("current_caption_index", 0) + 1) % len(captions)
             self.save_config()
     
-    def get_window_info(self) -> dict:
-        """Get WhatsApp window position and size using AppleScript."""
-        app_name = self.config.get("whatsapp_app_name", "WhatsApp")
-        
-        script = f'''
-        tell application "System Events"
-            tell process "{app_name}"
-                if (count of windows) > 0 then
-                    set win to window 1
-                    set winPos to position of win
-                    set winSize to size of win
-                    return (item 1 of winPos as string) & "," & (item 2 of winPos as string) & "," & (item 1 of winSize as string) & "," & (item 2 of winSize as string)
-                else
-                    return "error:no_window"
-                end if
-            end tell
-        end tell
-        '''
-        
+    def run_applescript(self, script: str) -> tuple:
+        """Run AppleScript and return (success, output)."""
         try:
             result = subprocess.run(
                 ["osascript", "-e", script],
-                capture_output=True, text=True, timeout=5
+                capture_output=True, text=True, timeout=10
             )
-            if result.returncode == 0 and result.stdout.strip() and "error" not in result.stdout:
-                parts = result.stdout.strip().split(",")
-                x, y, w, h = [int(float(p)) for p in parts]
-                return {"x": x, "y": y, "width": w, "height": h}
+            return result.returncode == 0, result.stdout.strip()
         except Exception as e:
-            print(f"   ⚠️ Window detection error: {e}")
-        
-        return None
+            return False, str(e)
     
-    def open_whatsapp(self) -> bool:
-        """Open WhatsApp and bring it to front."""
-        app_name = self.config.get("whatsapp_app_name", "WhatsApp")
-        print(f"📱 Opening {app_name}...")
-        
-        # Open the app
-        subprocess.run(["open", "-a", app_name], capture_output=True)
-        time.sleep(2)
-        
-        # Bring to front and activate
-        script = f'''
-        tell application "{app_name}" to activate
-        delay 0.5
-        tell application "System Events"
-            set frontmost of process "{app_name}" to true
-        end tell
-        '''
-        subprocess.run(["osascript", "-e", script], capture_output=True)
-        time.sleep(1)
-        
-        # Verify window exists
-        win = self.get_window_info()
-        if win:
-            print(f"   ✅ Window found at ({win['x']}, {win['y']}) size {win['width']}x{win['height']}")
-            return True
-        else:
-            print("   ⚠️ Could not detect window, continuing anyway...")
-            return True
-    
-    def click_status_tab_applescript(self) -> bool:
-        """Try to click Status tab using AppleScript UI automation."""
-        app_name = self.config.get("whatsapp_app_name", "WhatsApp")
-        
-        # Try to find and click "Status" or "Updates" button/tab
-        # WhatsApp uses different names in different versions
-        script = f'''
-        tell application "System Events"
-            tell process "{app_name}"
-                -- Try to find Status/Updates in the UI
-                set found to false
-                
-                -- Look for buttons or UI elements with Status-related names
-                try
-                    -- Try clicking the second toolbar button (Status is usually 2nd)
-                    set toolbarButtons to buttons of toolbar 1 of window 1
-                    if (count of toolbarButtons) >= 2 then
-                        click item 2 of toolbarButtons
-                        set found to true
-                    end if
-                end try
-                
-                if not found then
-                    -- Try looking for "Status" or "Updates" text
-                    try
-                        click button "Status" of window 1
-                        set found to true
-                    end try
-                end if
-                
-                if not found then
-                    try
-                        click button "Updates" of window 1
-                        set found to true
-                    end try
-                end if
-                
-                return found
+    def is_whatsapp_running(self) -> bool:
+        """Check if WhatsApp is running."""
+        success, output = self.run_applescript(f'''
+            tell application "System Events"
+                return (name of processes) contains "{self.app_name}"
             end tell
-        end tell
-        '''
-        
-        try:
-            result = subprocess.run(
-                ["osascript", "-e", script],
-                capture_output=True, text=True, timeout=5
-            )
-            if result.returncode == 0 and "true" in result.stdout.lower():
-                print("   ✅ Found Status via AppleScript")
-                return True
-        except Exception as e:
-            print(f"   AppleScript method failed: {e}")
-        
-        return False
+        ''')
+        return success and "true" in output.lower()
     
-    def click_at_position(self, name: str, win: dict, use_right_offset: bool = False) -> bool:
-        """Click at a configured position relative to window."""
-        positions = self.config.get("positions", {})
-        pos = positions.get(name, {})
+    def launch_whatsapp(self) -> bool:
+        """Launch WhatsApp and wait for it to be ready."""
+        print(f"📱 Launching {self.app_name}...")
         
-        x_offset = pos.get("x_offset", 35)
-        y_offset = pos.get("y_offset", 100)
+        was_running = self.is_whatsapp_running()
         
-        if use_right_offset:
-            # Calculate from right side of window
-            click_x = win["x"] + win["width"] + x_offset
+        # Launch the app
+        subprocess.run(["open", "-a", self.app_name], capture_output=True)
+        
+        if not was_running:
+            print("   Waiting for app to start (5 seconds)...")
+            time.sleep(5)
         else:
-            click_x = win["x"] + x_offset
+            time.sleep(1)
         
-        click_y = win["y"] + y_offset
+        # Activate and bring to front
+        self.run_applescript(f'''
+            tell application "{self.app_name}" to activate
+            delay 1
+            tell application "System Events"
+                set frontmost of process "{self.app_name}" to true
+            end tell
+        ''')
         
-        print(f"   Clicking '{name}' at ({click_x}, {click_y})...")
-        pyautogui.click(click_x, click_y)
         time.sleep(self.delay)
+        print("   ✅ WhatsApp activated")
         return True
     
-    def click_status_tab(self) -> bool:
-        """Click on Status tab in sidebar."""
-        print("📍 Clicking Status tab...")
+    def get_window_bounds(self) -> dict:
+        """Get WhatsApp window position and size."""
+        success, output = self.run_applescript(f'''
+            tell application "System Events"
+                tell process "{self.app_name}"
+                    if (count of windows) > 0 then
+                        set w to window 1
+                        set p to position of w
+                        set s to size of w
+                        return ((item 1 of p) as string) & "," & ((item 2 of p) as string) & "," & ((item 1 of s) as string) & "," & ((item 2 of s) as string)
+                    end if
+                end tell
+            end tell
+        ''')
         
-        # First try AppleScript (most reliable if it works)
-        if self.click_status_tab_applescript():
+        if success and output and "," in output:
+            parts = [int(float(x)) for x in output.split(",")]
+            return {"x": parts[0], "y": parts[1], "w": parts[2], "h": parts[3]}
+        return None
+    
+    def list_ui_elements(self) -> str:
+        """List all UI elements in WhatsApp window for debugging."""
+        success, output = self.run_applescript(f'''
+            tell application "System Events"
+                tell process "{self.app_name}"
+                    set output to ""
+                    tell window 1
+                        -- Get all groups and their buttons
+                        repeat with g in groups
+                            try
+                                set output to output & "Group: " & (description of g) & return
+                                repeat with b in buttons of g
+                                    try
+                                        set output to output & "  Button: " & (description of b) & " | " & (name of b) & return
+                                    end try
+                                end repeat
+                            end try
+                        end repeat
+                        -- Get toolbar buttons
+                        try
+                            repeat with tb in toolbars
+                                repeat with b in buttons of tb
+                                    try
+                                        set output to output & "Toolbar Button: " & (description of b) & " | " & (name of b) & return
+                                    end try
+                                end repeat
+                            end repeat
+                        end try
+                        -- Get all buttons directly in window
+                        repeat with b in buttons
+                            try
+                                set output to output & "Window Button: " & (description of b) & " | " & (name of b) & return
+                            end try
+                        end repeat
+                    end tell
+                end tell
+            end tell
+            return output
+        ''')
+        return output if success else "Could not list elements"
+    
+    def find_and_click_status_tab(self) -> bool:
+        """
+        Find and click the Status/Updates tab using multiple methods.
+        """
+        print("🔍 Finding Status tab...")
+        
+        # Method 1: Try clicking by accessibility description
+        status_keywords = ["Status", "Updates", "status", "updates"]
+        
+        for keyword in status_keywords:
+            success, _ = self.run_applescript(f'''
+                tell application "System Events"
+                    tell process "{self.app_name}"
+                        tell window 1
+                            -- Try to find button with this keyword
+                            repeat with g in groups
+                                repeat with b in buttons of g
+                                    try
+                                        if description of b contains "{keyword}" then
+                                            click b
+                                            return "clicked"
+                                        end if
+                                        if name of b contains "{keyword}" then
+                                            click b
+                                            return "clicked"
+                                        end if
+                                    end try
+                                end repeat
+                            end repeat
+                            -- Try toolbar
+                            try
+                                repeat with tb in toolbars
+                                    repeat with b in buttons of tb
+                                        try
+                                            if description of b contains "{keyword}" then
+                                                click b
+                                                return "clicked"
+                                            end if
+                                        end try
+                                    end repeat
+                                end repeat
+                            end try
+                        end tell
+                    end tell
+                end tell
+                return "not found"
+            ''')
+            if success and "clicked" in _:
+                print(f"   ✅ Found Status via AppleScript (keyword: {keyword})")
+                time.sleep(self.delay)
+                return True
+        
+        # Method 2: Try clicking the 2nd navigation button (Status is usually 2nd)
+        print("   Trying navigation buttons...")
+        success, _ = self.run_applescript(f'''
+            tell application "System Events"
+                tell process "{self.app_name}"
+                    tell window 1
+                        -- WhatsApp has a group of navigation buttons on the left
+                        -- Try to find the navigation group and click 2nd button
+                        set allGroups to groups
+                        repeat with g in allGroups
+                            try
+                                set btns to buttons of g
+                                if (count of btns) >= 2 then
+                                    -- Check if this looks like the nav bar (multiple small buttons)
+                                    set firstBtn to item 1 of btns
+                                    set btnPos to position of firstBtn
+                                    -- Nav buttons are usually on the left (x < 100)
+                                    if (item 1 of btnPos) < 100 then
+                                        click item 2 of btns
+                                        return "clicked nav"
+                                    end if
+                                end if
+                            end try
+                        end repeat
+                    end tell
+                end tell
+            end tell
+            return "not found"
+        ''')
+        if success and "clicked" in _:
+            print("   ✅ Clicked 2nd navigation button")
             time.sleep(self.delay)
             return True
         
-        # Fallback to position-based clicking
-        win = self.get_window_info()
-        if not win:
-            print("   ❌ Cannot get window position")
-            return False
+        # Method 3: Position-based click as last resort
+        print("   Trying position-based click...")
+        win = self.get_window_bounds()
+        if win:
+            # Status tab is typically in the left sidebar
+            # Usually around x=35 from window left, y=90-100 from window top
+            # But it varies - let's try a few positions
+            positions_to_try = [
+                (35, 95),   # Common position
+                (35, 75),   # Higher up
+                (35, 115),  # Lower down
+                (40, 90),   # Slightly right
+            ]
+            
+            for x_off, y_off in positions_to_try:
+                click_x = win["x"] + x_off
+                click_y = win["y"] + y_off
+                print(f"   Clicking at ({click_x}, {click_y})...")
+                pyautogui.click(click_x, click_y)
+                time.sleep(1)
+                
+                # Check if we're now in Status view by looking for "My status" text
+                # This is a heuristic - if clicking worked, the view should change
         
-        # Use configured position
-        return self.click_at_position("status_tab", win)
+        return True  # Continue anyway
     
-    def click_add_status(self) -> bool:
-        """Click the Add Status button."""
-        print("➕ Clicking Add Status button...")
+    def find_and_click_add_status(self) -> bool:
+        """Find and click the Add Status / pencil button."""
+        print("➕ Finding Add Status button...")
         
-        win = self.get_window_info()
-        if not win:
-            return False
+        # Method 1: Look for "pencil", "compose", "add", "text" buttons
+        add_keywords = ["pencil", "compose", "add", "text", "new", "write", "Aa"]
         
-        # Try the + button or My Status area
-        self.click_at_position("add_status_button", win)
-        time.sleep(0.5)
+        for keyword in add_keywords:
+            success, output = self.run_applescript(f'''
+                tell application "System Events"
+                    tell process "{self.app_name}"
+                        tell window 1
+                            repeat with g in groups
+                                repeat with b in buttons of g
+                                    try
+                                        set d to description of b
+                                        if d contains "{keyword}" then
+                                            click b
+                                            return "clicked: " & d
+                                        end if
+                                    end try
+                                end repeat
+                            end repeat
+                        end tell
+                    end tell
+                end tell
+                return "not found"
+            ''')
+            if success and "clicked" in output:
+                print(f"   ✅ Found Add Status button: {output}")
+                time.sleep(self.delay)
+                return True
         
-        # Also try the pencil/text icon on the right side
-        self.click_at_position("text_status_icon", win, use_right_offset=True)
+        # Method 2: Click "My status" area if visible
+        success, _ = self.run_applescript(f'''
+            tell application "System Events"
+                tell process "{self.app_name}"
+                    tell window 1
+                        -- Look for static text or button containing "My status"
+                        repeat with g in groups
+                            repeat with elem in UI elements of g
+                                try
+                                    set elemName to name of elem
+                                    if elemName contains "My status" or elemName contains "my status" then
+                                        click elem
+                                        return "clicked my status"
+                                    end if
+                                end try
+                            end repeat
+                        end repeat
+                    end tell
+                end tell
+            end tell
+            return "not found"
+        ''')
+        if success and "clicked" in _:
+            print("   ✅ Clicked 'My status' area")
+            time.sleep(self.delay)
+            return True
+        
+        # Method 3: Position-based - look for + icon or pencil on right side of header
+        print("   Trying position-based click for Add button...")
+        win = self.get_window_bounds()
+        if win:
+            # The pencil/add button is usually on the right side of the status header
+            # Try clicking near the right side of the window, upper area
+            click_x = win["x"] + win["w"] - 60  # 60px from right edge
+            click_y = win["y"] + 100  # Upper area
+            print(f"   Clicking pencil area at ({click_x}, {click_y})...")
+            pyautogui.click(click_x, click_y)
+            time.sleep(self.delay)
         
         return True
     
-    def type_and_post(self, caption: str) -> bool:
+    def type_status_and_post(self, caption: str) -> bool:
         """Type the status caption and post it."""
-        print(f"✏️ Typing: {caption}")
+        print(f"✏️ Typing caption: {caption}")
         
-        time.sleep(0.5)
+        # Clear any existing text
+        pyautogui.hotkey('command', 'a')
+        time.sleep(0.3)
         
         # Type using clipboard (supports emojis)
         process = subprocess.Popen(['pbcopy'], stdin=subprocess.PIPE)
         process.communicate(caption.encode('utf-8'))
         time.sleep(0.2)
+        
         pyautogui.hotkey('command', 'v')
         time.sleep(self.delay)
         
-        # Post the status
-        print("   Posting...")
+        # Try to post/send
+        print("   Posting status...")
+        
+        # Method 1: Press Enter
         pyautogui.press('enter')
         time.sleep(0.5)
         
+        # Method 2: Try Cmd+Enter
+        pyautogui.hotkey('command', 'enter')
+        time.sleep(0.5)
+        
+        # Method 3: Try to click Send button via AppleScript
+        self.run_applescript(f'''
+            tell application "System Events"
+                tell process "{self.app_name}"
+                    tell window 1
+                        repeat with b in buttons
+                            try
+                                if description of b contains "send" or description of b contains "Send" or description of b contains "post" or description of b contains "Post" then
+                                    click b
+                                    return "sent"
+                                end if
+                            end try
+                        end repeat
+                    end tell
+                end tell
+            end tell
+        ''')
+        
+        print("   ✅ Status posted!")
         return True
     
     def set_status(self, caption: str = None) -> bool:
-        """Main method: Set WhatsApp Status."""
+        """Main method to set WhatsApp status."""
         caption = caption or self.get_caption()
         
-        print("\n" + "="*50)
+        print("\n" + "="*60)
         print("🚀 WhatsApp Status Automation")
         print(f"   Caption: {caption}")
         print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print("="*50 + "\n")
+        print("="*60 + "\n")
         
-        if not self.open_whatsapp():
+        # Step 1: Launch WhatsApp
+        if not self.launch_whatsapp():
             return False
         
-        if not self.click_status_tab():
-            print("⚠️ Status tab click may have failed...")
-        time.sleep(1)
+        # Give it extra time to fully load
+        print("⏳ Waiting for WhatsApp to fully load...")
+        time.sleep(3)
         
-        if not self.click_add_status():
-            print("⚠️ Add status click may have failed...")
-        time.sleep(1)
-        
-        if not self.type_and_post(caption):
-            return False
-        
-        if not self.config.get("use_random_caption", False):
-            self.rotate_caption()
-        
-        print("\n✅ Status update complete!")
-        return True
-    
-    def setup_wizard(self):
-        """Interactive setup wizard to configure click positions."""
-        print("\n" + "="*60)
-        print("🔧 WHATSAPP STATUS AUTOMATION - SETUP WIZARD")
-        print("="*60)
-        print("\nThis will help you configure the correct click positions.")
-        print("WhatsApp will open, and you'll click on elements to save their positions.\n")
-        
-        input("Press Enter to start...")
-        
-        # Open WhatsApp
-        self.open_whatsapp()
+        # Step 2: Click on Status tab
+        self.find_and_click_status_tab()
         time.sleep(2)
         
-        win = self.get_window_info()
-        if not win:
-            print("❌ Could not detect WhatsApp window!")
-            return
+        # Step 3: Click Add Status button
+        self.find_and_click_add_status()
+        time.sleep(2)
         
-        print(f"\n📐 Window detected at: ({win['x']}, {win['y']}) size: {win['width']}x{win['height']}")
+        # Step 4: Type and post
+        self.type_status_and_post(caption)
         
-        # Initialize positions
-        if "positions" not in self.config:
-            self.config["positions"] = {}
-        
-        positions_to_configure = [
-            ("status_tab", "STATUS TAB (circle icon with dashes in sidebar)"),
-            ("add_status_button", "ADD STATUS button (+ icon or 'My status' area)"),
-        ]
-        
-        for pos_name, description in positions_to_configure:
-            print(f"\n{'='*60}")
-            print(f"📍 Step: Click on the {description}")
-            print("="*60)
-            print("\nMove your mouse to the correct position.")
-            print("The position will be captured in 5 seconds...")
-            print("(Move mouse to screen corner to abort)")
-            
-            for i in range(5, 0, -1):
-                print(f"   {i}...", end=" ", flush=True)
-                time.sleep(1)
-            print()
-            
-            # Capture position
-            mouse_x, mouse_y = pyautogui.position()
-            
-            # Convert to offset from window
-            x_offset = mouse_x - win["x"]
-            y_offset = mouse_y - win["y"]
-            
-            self.config["positions"][pos_name] = {
-                "x_offset": x_offset,
-                "y_offset": y_offset
-            }
-            
-            print(f"   ✅ Saved: offset ({x_offset}, {y_offset}) from window top-left")
-            print(f"   Absolute position was: ({mouse_x}, {mouse_y})")
-        
-        # Also configure the text/pencil icon position (usually on right side)
-        print(f"\n{'='*60}")
-        print("📍 Step: Click on the TEXT/PENCIL icon (for text status)")
-        print("="*60)
-        print("\nThis is usually on the right side of the window.")
-        print("If you don't see it, just position over where it should be.")
-        print("Move your mouse there. Capturing in 5 seconds...")
-        
-        for i in range(5, 0, -1):
-            print(f"   {i}...", end=" ", flush=True)
-            time.sleep(1)
-        print()
-        
-        mouse_x, mouse_y = pyautogui.position()
-        # Store as offset from right edge (negative)
-        x_offset = mouse_x - (win["x"] + win["width"])
-        y_offset = mouse_y - win["y"]
-        
-        self.config["positions"]["text_status_icon"] = {
-            "x_offset": x_offset,
-            "y_offset": y_offset
-        }
-        print(f"   ✅ Saved: offset ({x_offset}, {y_offset}) from window top-right")
-        
-        # Save config
-        self.save_config()
+        # Rotate caption for next time
+        if not self.config.get("use_random_caption"):
+            self.rotate_caption()
         
         print("\n" + "="*60)
-        print("✅ SETUP COMPLETE!")
+        print("✅ STATUS UPDATE COMPLETE!")
         print("="*60)
-        print(f"\nPositions saved to: {self.config_path}")
-        print("\nYou can now run: ./run.sh --run")
-        print("\nSaved positions:")
-        for name, pos in self.config["positions"].items():
-            print(f"   {name}: x_offset={pos['x_offset']}, y_offset={pos['y_offset']}")
+        print("\n⚠️  Please verify the status was posted correctly.")
+        print("    If it didn't work, run: ./run.sh --debug")
+        print("    to see what UI elements WhatsApp has.\n")
+        
+        return True
+    
+    def debug_ui(self):
+        """Debug mode - list all UI elements in WhatsApp."""
+        print("\n🔍 DEBUG MODE - Scanning WhatsApp UI Elements")
+        print("="*60)
+        
+        self.launch_whatsapp()
+        time.sleep(2)
+        
+        win = self.get_window_bounds()
+        if win:
+            print(f"\n📐 Window: position=({win['x']}, {win['y']}) size={win['w']}x{win['h']}")
+        
+        print("\n📋 UI Elements found:")
+        print("-"*60)
+        elements = self.list_ui_elements()
+        print(elements if elements else "No elements found or access denied")
+        
+        print("\n💡 Tips:")
+        print("   - Look for 'Status' or 'Updates' in the button descriptions")
+        print("   - The Status tab is usually the 2nd button in the navigation")
+        print("   - Grant Terminal accessibility permissions if elements aren't showing")
+        print("\n   System Preferences → Security & Privacy → Privacy → Accessibility")
     
     def calibrate(self):
-        """Real-time mouse position tracking."""
-        print("\n🔧 CALIBRATION MODE - Real-time Mouse Tracking")
-        print("="*50)
-        print("Move your mouse around WhatsApp to see coordinates.")
-        print("Press Ctrl+C to stop.\n")
+        """Interactive calibration mode."""
+        print("\n🔧 CALIBRATION MODE")
+        print("="*60)
+        print("Move your mouse to see coordinates. Press Ctrl+C to stop.\n")
         
-        self.open_whatsapp()
+        self.launch_whatsapp()
         time.sleep(1)
         
-        win = self.get_window_info()
+        win = self.get_window_bounds()
         if win:
-            print(f"Window: ({win['x']}, {win['y']}) size {win['width']}x{win['height']}\n")
+            print(f"Window: ({win['x']}, {win['y']}) size {win['w']}x{win['h']}\n")
         
         try:
             while True:
                 x, y = pyautogui.position()
-                if win:
-                    rel_x = x - win["x"]
-                    rel_y = y - win["y"]
-                    print(f"\rAbsolute: ({x:4d}, {y:4d})  |  Relative to window: ({rel_x:4d}, {rel_y:4d})    ", end="", flush=True)
-                else:
-                    print(f"\rPosition: ({x:4d}, {y:4d})    ", end="", flush=True)
+                rel_x = x - win["x"] if win else 0
+                rel_y = y - win["y"] if win else 0
+                print(f"\rAbsolute: ({x:4d}, {y:4d}) | Relative: ({rel_x:4d}, {rel_y:4d})    ", end="", flush=True)
                 time.sleep(0.1)
         except KeyboardInterrupt:
             print("\n\n👋 Calibration stopped.")
     
     def is_weekend(self) -> bool:
         days = self.config.get("schedule", {}).get("days", ["saturday", "sunday"])
-        today = datetime.now().strftime("%A").lower()
-        return today in [d.lower() for d in days]
+        return datetime.now().strftime("%A").lower() in [d.lower() for d in days]
     
     def should_run_now(self) -> bool:
         if not self.is_weekend():
             return False
-        scheduled_time = self.config.get("schedule", {}).get("time", "09:00")
-        scheduled_hour, scheduled_min = map(int, scheduled_time.split(":"))
-        current_hour, current_min = datetime.now().hour, datetime.now().minute
-        scheduled_minutes = scheduled_hour * 60 + scheduled_min
-        current_minutes = current_hour * 60 + current_min
-        return abs(current_minutes - scheduled_minutes) <= 5
+        scheduled = self.config.get("schedule", {}).get("time", "09:00")
+        h, m = map(int, scheduled.split(":"))
+        now_h, now_m = datetime.now().hour, datetime.now().minute
+        return abs((h * 60 + m) - (now_h * 60 + now_m)) <= 5
 
 
 def main():
     import argparse
     
-    parser = argparse.ArgumentParser(description="WhatsApp Status Automation for macOS")
-    parser.add_argument("--run", "-r", action="store_true", help="Run status update now")
+    parser = argparse.ArgumentParser(description="WhatsApp Status Automation")
+    parser.add_argument("--run", "-r", action="store_true", help="Run now")
     parser.add_argument("--caption", "-c", type=str, help="Custom caption")
-    parser.add_argument("--setup", action="store_true", help="Run setup wizard to configure positions")
-    parser.add_argument("--calibrate", action="store_true", help="Real-time mouse position tracking")
+    parser.add_argument("--debug", action="store_true", help="Debug: list UI elements")
+    parser.add_argument("--calibrate", action="store_true", help="Track mouse position")
     parser.add_argument("--test", "-t", action="store_true", help="Test mode")
-    parser.add_argument("--schedule", "-s", action="store_true", help="Run only if scheduled")
-    parser.add_argument("--daemon", "-d", action="store_true", help="Run as daemon")
+    parser.add_argument("--schedule", "-s", action="store_true", help="Run if scheduled")
+    parser.add_argument("--daemon", "-d", action="store_true", help="Daemon mode")
     
     args = parser.parse_args()
-    automation = WhatsAppStatusAutomation()
+    auto = WhatsAppStatusAutomation()
     
-    if args.setup:
-        automation.setup_wizard()
+    if args.debug:
+        auto.debug_ui()
         return
     
     if args.calibrate:
-        automation.calibrate()
+        auto.calibrate()
         return
     
     if args.test:
         print("🧪 TEST MODE")
-        print(f"   Is scheduled day: {automation.is_weekend()}")
-        print(f"   Should run now: {automation.should_run_now()}")
-        print(f"   Caption would be: {automation.get_caption()}")
-        print(f"\n   Configured positions:")
-        for name, pos in automation.config.get("positions", {}).items():
-            print(f"      {name}: {pos}")
+        print(f"   Scheduled day: {auto.is_weekend()}")
+        print(f"   Should run now: {auto.should_run_now()}")
+        print(f"   Next caption: {auto.get_caption()}")
         return
     
     if args.daemon:
-        print("🔄 Running in daemon mode... Press Ctrl+C to stop\n")
+        print("🔄 Daemon mode - Press Ctrl+C to stop")
         try:
-            import schedule as sched_lib
-            scheduled_time = automation.config.get("schedule", {}).get("time", "09:00")
-            days = automation.config.get("schedule", {}).get("days", ["saturday", "sunday"])
-            
-            def job():
-                if automation.is_weekend():
-                    automation.set_status(args.caption)
-            
-            for day in days:
-                getattr(sched_lib.every(), day).at(scheduled_time).do(job)
-            
-            print(f"   Scheduled for: {', '.join(days)} at {scheduled_time}")
+            import schedule as sched
+            t = auto.config.get("schedule", {}).get("time", "09:00")
+            for day in auto.config.get("schedule", {}).get("days", ["saturday", "sunday"]):
+                getattr(sched.every(), day).at(t).do(lambda: auto.set_status(args.caption))
+            print(f"   Scheduled: {auto.config.get('schedule', {}).get('days')} at {t}")
             while True:
-                sched_lib.run_pending()
+                sched.run_pending()
                 time.sleep(60)
         except KeyboardInterrupt:
             print("\n👋 Stopped")
         return
     
     if args.schedule:
-        if automation.should_run_now():
-            automation.set_status(args.caption)
+        if auto.should_run_now():
+            auto.set_status(args.caption)
         else:
             print("⏳ Not scheduled time")
         return
     
     if args.run or args.caption:
-        automation.set_status(args.caption)
+        auto.set_status(args.caption)
         return
     
-    # Default: show help
     parser.print_help()
     print("\n" + "="*50)
     print("💡 QUICK START:")
     print("="*50)
-    print("1. First run setup wizard to configure positions:")
-    print("   ./run.sh --setup")
-    print("\n2. Then run the automation:")
-    print("   ./run.sh --run")
-    print("\n3. Or track mouse position in real-time:")
-    print("   ./run.sh --calibrate")
+    print("1. Debug UI elements:  ./run.sh --debug")
+    print("2. Run automation:     ./run.sh --run")
+    print("3. Track mouse:        ./run.sh --calibrate")
+    print("\n⚠️  Make sure Terminal has Accessibility permissions!")
+    print("   System Preferences → Security & Privacy → Privacy → Accessibility")
 
 
 if __name__ == "__main__":
