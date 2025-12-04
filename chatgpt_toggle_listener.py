@@ -2695,34 +2695,33 @@ class Application(tk.Tk):
 
 
     def process_recording(self):
+        # Stop live transcription loop immediately
         self.live_transcription_running = False
         try:
             self.live_question_index = None
         except Exception:
             pass
+        
         try:
+            # Show immediate feedback while processing
+            self.status.config(text="⏳ Getting complete question...")
+            
+            # STOP RECORDING FIRST - captures ALL audio until this moment
             filename = self.assistant.recorder.stop_recording()
-            question = self.latest_live_question.strip() if self.latest_live_question else ""
-
-            # Optional: fallback to full file transcription if live text is empty
-            if not question:
-                question = self.assistant.transcribe_audio(filename)
-
-            if question.startswith("❌"):
-                self.status.config(text=question)
+            
+            # ALWAYS do final transcription on the COMPLETE audio file
+            # This ensures we get every word until the ` button was pressed
+            question = self.assistant.transcribe_audio(filename)
+            
+            if not question or question.startswith("❌"):
+                self.status.config(text=question if question else "⚠️ No speech detected")
                 return
+
+            question = question.strip()
+            print(f"✅ Complete transcription: {len(question)} chars")
 
             # === Maintain consistent format with typed input ===
             content = [{"type": "text", "text": question}]
-            # Explicitly show all attachments in chat history preview too
-            preview_lines = []
-            for c in content:
-                if c["type"] == "text":
-                    preview_lines.append(c["text"])
-                elif c["type"] == "image_url":
-                    preview_lines.append("[Image attached]")
-
-            flat_text = "\n".join(preview_lines)
 
             # Flatten input for GPT model
             flat_text = "\n".join(
@@ -2731,7 +2730,7 @@ class Application(tk.Tk):
 
             # Show question in UI
             self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\nQuestion: {flat_text.strip()}\n")
+            self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
 
