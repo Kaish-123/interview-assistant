@@ -914,6 +914,10 @@ class Application(tk.Tk):
         # 💾 New: F2 save, F3 apply
         self.bind("<F2>", lambda e: self.save_ui_prefs())
         self.bind("<F3>", lambda e: self.apply_ui_prefs())
+        
+        # 🚀 Quick Setup shortcut: Cmd+Shift+S (or Ctrl+Shift+S on Windows)
+        self.bind("<Command-Shift-s>", lambda e: self.open_quick_setup())
+        self.bind("<Control-Shift-s>", lambda e: self.open_quick_setup())
 
         # Apply sash (split) after widgets exist
         self.after(0, self.apply_ui_prefs)
@@ -1437,6 +1441,10 @@ class Application(tk.Tk):
         self.add_subtab_btn = ttk.Button(btn_frame, text="+ Sub", command=self.add_new_subtab, state=tk.DISABLED)
         self.add_subtab_btn.pack(side="left", fill="x", expand=True, padx=2)
         
+        # Quick Setup button for multi-select subtabs
+        self.quick_setup_btn = ttk.Button(btn_frame, text="🚀", command=self.open_quick_setup, width=3)
+        self.quick_setup_btn.pack(side="left", padx=2)
+        
         self.delete_chat_btn = ttk.Button(self.sidebar, text="🗑 Delete Chat", command=self.delete_chat)
         self.delete_chat_btn.pack(side="left", padx=4)
 
@@ -1721,6 +1729,254 @@ class Application(tk.Tk):
 
                 subtab_index = self.prompt_manager.add_subtab(tab_index, name, prompt or "", text_input or "")
                 self.tab_tree.insert(tab_id, "end", text=name, iid=f"sub_{tab_index}_{subtab_index}")
+
+    # ============================================================================
+    # QUICK SETUP - Multi-select subtabs and send in ONE message
+    # ============================================================================
+    
+    def open_quick_setup(self):
+        """Open Quick Setup dialog with multi-select subtabs and profiles."""
+        dialog = tk.Toplevel(self)
+        dialog.title("🚀 Quick Setup - Interview Initialization")
+        dialog.geometry("500x600")
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        # Center on parent
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (500 // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (600 // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        # ---- PROFILES SECTION ----
+        profile_frame = ttk.LabelFrame(dialog, text="📋 Saved Profiles (One-Click Apply)")
+        profile_frame.pack(fill="x", padx=10, pady=5)
+        
+        profiles = self._load_setup_profiles()
+        self._profile_vars = {}
+        
+        profile_btn_frame = ttk.Frame(profile_frame)
+        profile_btn_frame.pack(fill="x", padx=5, pady=5)
+        
+        if profiles:
+            for i, (name, subtab_ids) in enumerate(profiles.items()):
+                btn = ttk.Button(
+                    profile_btn_frame, 
+                    text=f"▶ {name}", 
+                    command=lambda n=name, s=subtab_ids, d=dialog: self._apply_profile(n, s, d)
+                )
+                btn.pack(side="left", padx=2, pady=2)
+                if i >= 4:  # Limit visible profiles
+                    break
+        else:
+            ttk.Label(profile_btn_frame, text="No saved profiles yet", foreground="gray").pack()
+        
+        # ---- SUBTABS SELECTION ----
+        select_frame = ttk.LabelFrame(dialog, text="☑️ Select Prompts to Apply (multi-select)")
+        select_frame.pack(fill="both", expand=True, padx=10, pady=5)
+        
+        # Scrollable canvas for checkboxes
+        canvas = tk.Canvas(select_frame)
+        scrollbar = ttk.Scrollbar(select_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Create checkboxes for each tab/subtab
+        self._setup_checkboxes = {}  # {subtab_id: (var, text)}
+        
+        for tab_idx in range(self.prompt_manager.get_tab_count()):
+            tab_name = self.prompt_manager.get_tab_name(tab_idx)
+            
+            # Tab header
+            tab_label = ttk.Label(scrollable_frame, text=f"📁 {tab_name}", font=('Arial', 11, 'bold'))
+            tab_label.pack(anchor="w", pady=(10, 2), padx=5)
+            
+            # Subtabs
+            for sub_idx in range(self.prompt_manager.get_subtab_count(tab_idx)):
+                sub_name = self.prompt_manager.get_subtab_name(tab_idx, sub_idx)
+                sub_text = self.prompt_manager.get_subtab_text_input(tab_idx, sub_idx) or \
+                           self.prompt_manager.get_subtab_prompt(tab_idx, sub_idx) or sub_name
+                
+                var = tk.BooleanVar(value=False)
+                subtab_id = f"sub_{tab_idx}_{sub_idx}"
+                self._setup_checkboxes[subtab_id] = (var, sub_text, sub_name)
+                
+                cb = ttk.Checkbutton(
+                    scrollable_frame, 
+                    text=f"  {sub_name}", 
+                    variable=var
+                )
+                cb.pack(anchor="w", padx=20)
+        
+        # ---- ACTION BUTTONS ----
+        action_frame = ttk.Frame(dialog)
+        action_frame.pack(fill="x", padx=10, pady=10)
+        
+        # Select/Deselect All
+        ttk.Button(
+            action_frame, 
+            text="☑ Select All", 
+            command=lambda: self._toggle_all_checkboxes(True)
+        ).pack(side="left", padx=2)
+        
+        ttk.Button(
+            action_frame, 
+            text="☐ Deselect All", 
+            command=lambda: self._toggle_all_checkboxes(False)
+        ).pack(side="left", padx=2)
+        
+        ttk.Separator(action_frame, orient="vertical").pack(side="left", fill="y", padx=10)
+        
+        # Save as Profile
+        ttk.Button(
+            action_frame, 
+            text="💾 Save Profile", 
+            command=lambda: self._save_current_as_profile(dialog)
+        ).pack(side="left", padx=2)
+        
+        # Apply button (main action)
+        apply_btn = ttk.Button(
+            action_frame, 
+            text="🚀 APPLY SELECTED", 
+            command=lambda: self._apply_quick_setup(dialog),
+            style="Accent.TButton"
+        )
+        apply_btn.pack(side="right", padx=2)
+        
+        # Status label
+        self._setup_status = ttk.Label(dialog, text="Select prompts and click Apply to send in ONE message")
+        self._setup_status.pack(pady=5)
+        
+        # Keyboard shortcut
+        dialog.bind("<Return>", lambda e: self._apply_quick_setup(dialog))
+        dialog.bind("<Escape>", lambda e: dialog.destroy())
+    
+    def _toggle_all_checkboxes(self, select: bool):
+        """Select or deselect all checkboxes."""
+        for subtab_id, (var, _, _) in self._setup_checkboxes.items():
+            var.set(select)
+    
+    def _load_setup_profiles(self) -> dict:
+        """Load saved setup profiles from file."""
+        profile_path = os.path.join(os.path.dirname(__file__), "setup_profiles.json")
+        try:
+            if os.path.exists(profile_path):
+                with open(profile_path, "r") as f:
+                    return json.load(f)
+        except Exception as e:
+            print(f"Error loading profiles: {e}")
+        return {}
+    
+    def _save_setup_profiles(self, profiles: dict):
+        """Save setup profiles to file."""
+        profile_path = os.path.join(os.path.dirname(__file__), "setup_profiles.json")
+        try:
+            with open(profile_path, "w") as f:
+                json.dump(profiles, f, indent=2)
+        except Exception as e:
+            print(f"Error saving profiles: {e}")
+    
+    def _save_current_as_profile(self, dialog):
+        """Save currently selected subtabs as a profile."""
+        selected = [sid for sid, (var, _, _) in self._setup_checkboxes.items() if var.get()]
+        
+        if not selected:
+            messagebox.showwarning("No Selection", "Please select at least one prompt to save as profile")
+            return
+        
+        name = simpledialog.askstring("Save Profile", "Enter profile name:", parent=dialog)
+        if name:
+            profiles = self._load_setup_profiles()
+            profiles[name] = selected
+            self._save_setup_profiles(profiles)
+            self._setup_status.config(text=f"✅ Profile '{name}' saved with {len(selected)} prompts!")
+            messagebox.showinfo("Saved", f"Profile '{name}' saved!\nReopen Quick Setup to use it.")
+    
+    def _apply_profile(self, profile_name: str, subtab_ids: list, dialog):
+        """Apply a saved profile - select checkboxes and apply."""
+        # First, deselect all
+        self._toggle_all_checkboxes(False)
+        
+        # Select the ones in the profile
+        for subtab_id in subtab_ids:
+            if subtab_id in self._setup_checkboxes:
+                self._setup_checkboxes[subtab_id][0].set(True)
+        
+        # Auto-apply
+        self._apply_quick_setup(dialog)
+    
+    def _apply_quick_setup(self, dialog):
+        """Combine selected prompts and send in ONE message."""
+        selected_texts = []
+        selected_names = []
+        
+        for subtab_id, (var, text, name) in self._setup_checkboxes.items():
+            if var.get():
+                selected_texts.append(text)
+                selected_names.append(name)
+        
+        if not selected_texts:
+            messagebox.showwarning("No Selection", "Please select at least one prompt")
+            return
+        
+        # Combine all prompts into ONE message
+        combined_prompt = "\n\n---\n\n".join(selected_texts)
+        
+        # Close dialog
+        dialog.destroy()
+        
+        # Show confirmation in status
+        self.status.config(text=f"🚀 Applying {len(selected_texts)} prompts in ONE message...")
+        
+        # Add to input entry (in case user wants to add more)
+        current = self.input_entry.get().strip()
+        if current:
+            combined_prompt = f"{current}\n\n{combined_prompt}"
+        
+        self.input_entry.delete(0, tk.END)
+        
+        # Build content array
+        content = [{"type": "text", "text": combined_prompt}]
+        
+        # Include any pending attachments (images)
+        if hasattr(self, 'pending_attachments'):
+            content.extend(self.pending_attachments)
+            del self.pending_attachments
+        
+        # Display in response box
+        display_text = f"[Quick Setup: {', '.join(selected_names[:3])}{'...' if len(selected_names) > 3 else ''}]"
+        self.response_box.config(state=tk.NORMAL)
+        self.response_box.insert(
+            tk.END,
+            f"\n\n---------------------------------------------------------------------\n"
+            f"🚀 QUICK SETUP: {display_text}\n"
+            f"Applying {len(selected_texts)} prompts...\n"
+        )
+        self.response_box.config(state=tk.DISABLED)
+        self.response_box.see(tk.END)
+        
+        # Send to GPT
+        if any(c["type"] == "image_url" for c in content):
+            self.assistant.messages.append({"role": "user", "content": content})
+        else:
+            self.assistant.messages.append({"role": "user", "content": combined_prompt})
+        
+        # Save and stream
+        self.chat_manager.save_current_session(self.assistant.messages)
+        self.assistant.cancel_streaming()
+        self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
+        
+        self.status.config(text=f"✅ Applied {len(selected_texts)} prompts!")
 
     def on_tab_select(self, event):
         # Reentrancy guard (TreeviewSelect can fire more than once)
