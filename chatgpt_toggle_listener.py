@@ -1677,8 +1677,8 @@ class Application(tk.Tk):
     def get_answer_mode_instruction(self):
         """Return instruction text based on current answer mode"""
         instructions = {
-            "quick": "\n\n[INSTRUCTION: Provide SHORT, CONCISE answers. Be brief and to the point. Maximum 2-3 sentences unless absolutely necessary.]",
-            "detailed": "\n\n[INSTRUCTION: Provide COMPREHENSIVE, DETAILED explanations. Include context, examples, and thorough explanations.]",
+            "quick": "\n\n[INSTRUCTION: Provide SHORT, CONCISE answers like a real human expert would in a conversation. Be brief and natural. IMPORTANT: Sound like a real person - avoid AI phrases like 'Certainly!', 'I'd be happy to', 'As an AI'. Don't be overly formal or structured. Just answer naturally like a knowledgeable colleague would. Maximum 2-3 sentences.]",
+            "detailed": "\n\n[INSTRUCTION: Provide COMPREHENSIVE explanations like a senior developer explaining to a teammate. IMPORTANT: Sound completely HUMAN - avoid typical AI patterns like 'Certainly!', 'Great question!', 'I'd be happy to help', 'As an AI'. Don't use excessive bullet points or overly structured formats. Speak naturally, use casual professional tone, include real-world context. Explain like you're a human expert having a conversation, not a chatbot giving a formal response.]",
             "code": "\n\n[INSTRUCTION: Focus on CODE EXAMPLES. Provide working code snippets with brief explanations. Prioritize practical, copy-paste ready code.]"
         }
         return instructions.get(self.answer_mode, "")
