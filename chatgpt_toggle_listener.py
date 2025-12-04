@@ -2713,45 +2713,60 @@ class Application(tk.Tk):
         # Stop live transcription loop immediately
         self.live_transcription_running = False
         
+        # Grab the live preview to show immediately
+        live_preview = (self.latest_live_question or "").strip()
+        
         try:
-            # Show immediate feedback while processing
-            self.status.config(text="⏳ Getting complete question...")
-            
-            # Clean up the "Listening..." and "Live Question:" lines from UI
+            # IMMEDIATELY show the question (from live preview) so user sees it
             self.response_box.config(state=tk.NORMAL)
             content = self.response_box.get("1.0", tk.END)
+            
             # Find and remove the listening block
             listening_idx = content.rfind("🎙 Listening to your question...")
             if listening_idx != -1:
-                # Delete from that point to end
                 self.response_box.delete(f"1.0+{listening_idx}c", tk.END)
-            self.response_box.config(state=tk.DISABLED)
             
-            # STOP RECORDING FIRST - captures ALL audio until this moment
+            # Show question IMMEDIATELY with live preview (so it's always visible)
+            if live_preview:
+                self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {live_preview}\n")
+                self.response_box.insert(tk.END, "⏳ Finalizing & getting answer...\n")
+            else:
+                self.response_box.insert(tk.END, "\n\n⏳ Processing question...\n")
+            
+            self.response_box.config(state=tk.DISABLED)
+            self.response_box.see(tk.END)
+            self.status.config(text="⏳ Getting complete question...")
+            
+            # STOP RECORDING - captures ALL audio until this moment
             filename = self.assistant.recorder.stop_recording()
             
             # ALWAYS do final transcription on the COMPLETE audio file
-            # This ensures we get every word until the ` button was pressed
             question = self.assistant.transcribe_audio(filename)
             
             if not question or question.startswith("❌"):
+                # Clean up the processing message
+                self.response_box.config(state=tk.NORMAL)
+                self.response_box.delete("end-2l", tk.END)
+                self.response_box.config(state=tk.DISABLED)
                 self.status.config(text=question if question else "⚠️ No speech detected")
                 return
 
             question = question.strip()
             print(f"✅ Complete transcription: {len(question)} chars")
 
-            # === Maintain consistent format with typed input ===
-            content = [{"type": "text", "text": question}]
-
-            # Flatten input for GPT model
-            flat_text = "\n".join(
-                c["text"] if c["type"] == "text" else "[Image]" for c in content
-            )
-
-            # Show question in UI
+            # Update UI: Replace preview with final complete question
             self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
+            
+            # Find and remove the preview question + "Finalizing" line
+            content = self.response_box.get("1.0", tk.END)
+            if "⏳ Finalizing" in content or "⏳ Processing" in content:
+                # Find the last "-----" separator before the preview
+                last_sep = content.rfind("---------------------------------------------------------------------")
+                if last_sep != -1:
+                    self.response_box.delete(f"1.0+{last_sep}c", tk.END)
+            
+            # Insert the FINAL complete question
+            self.response_box.insert(tk.END, f"\n---------------------------------------------------------------------\nQUESTION: {question}\n")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
 
