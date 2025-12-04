@@ -1292,16 +1292,21 @@ class Application(tk.Tk):
         Safely update the 'Live Question: ...' line in the response_box.
         This is called from a background thread via .after().
         """
-        if not self.live_question_index:
+        if not self.live_transcription_running:
             return
 
         try:
             self.response_box.config(state=tk.NORMAL)
-            # Delete current line contents from live_question_index to end-of-line
-            line_start = self.live_question_index
-            line_end = f"{line_start.split('.')[0]}.end"
-            self.response_box.delete(line_start, line_end)
-            self.response_box.insert(line_start, f"Live Question: {text}")
+            
+            # Find "Live Question:" and replace everything after it on that line
+            pos = self.response_box.search("Live Question:", "1.0", tk.END)
+            if pos:
+                # Get line number and delete from "Live Question:" to end of line
+                line_num = pos.split('.')[0]
+                self.response_box.delete(pos, f"{line_num}.end")
+                # Insert the updated text
+                self.response_box.insert(pos, f"Live Question: {text}")
+            
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
         except Exception as e:
@@ -2696,43 +2701,39 @@ class Application(tk.Tk):
 
 
     def process_recording(self):
+        # Stop live transcription immediately
         self.live_transcription_running = False
+        
         try:
-            self.live_question_index = None
-        except Exception:
-            pass
-        try:
+            # Stop recording and get the audio file
             filename = self.assistant.recorder.stop_recording()
+            
+            # Use live transcription if available, otherwise do full transcription
             question = self.latest_live_question.strip() if self.latest_live_question else ""
-
-            # Optional: fallback to full file transcription if live text is empty
             if not question:
                 question = self.assistant.transcribe_audio(filename)
 
-            if question.startswith("❌"):
-                self.status.config(text=question)
+            if not question or question.startswith("❌"):
+                self.status.config(text=question if question else "⚠️ No speech detected")
                 return
 
-            # === Maintain consistent format with typed input ===
-            content = [{"type": "text", "text": question}]
-
-            # Flatten input for GPT model
-            flat_text = "\n".join(
-                c["text"] if c["type"] == "text" else "[Image]" for c in content
-            )
-
-            # Show question in UI
+            # Clean up the "Listening..." block from UI before showing final question
             self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
+            content = self.response_box.get("1.0", tk.END)
+            listening_idx = content.rfind("🎙 Listening to your question...")
+            if listening_idx != -1:
+                self.response_box.delete(f"1.0+{listening_idx}c", tk.END)
+            self.response_box.config(state=tk.DISABLED)
+
+            # Show the final question in UI (only once)
+            self.response_box.config(state=tk.NORMAL)
+            self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {question}\n")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
 
-            # Append flat question for GPT context
-            self.assistant.messages.append({"role": "user", "content": flat_text})
-            # Show updated history before streaming
+            # Send to GPT (only once)
+            self.assistant.messages.append({"role": "user", "content": question})
             self.chat_manager.save_current_session(self.assistant.messages)
-
-            self.display_chat_history()
 
             self.status.config(text="💡 Generating answer...")
             self.assistant.cancel_streaming()
