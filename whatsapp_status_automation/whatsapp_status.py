@@ -2,13 +2,10 @@
 """
 WhatsApp Status Automation for macOS
 ====================================
-Automatically sets your WhatsApp status on weekends (Saturday & Sunday).
+Automatically sets your WhatsApp Status (Stories) on weekends.
 
-Features:
-- Opens WhatsApp app on Mac
-- Navigates to status settings
-- Sets your custom caption
-- Runs on schedule (weekends)
+This sets the WhatsApp STATUS feature (like Instagram Stories),
+NOT a chat message.
 
 Author: Auto-generated
 """
@@ -27,13 +24,13 @@ except ImportError:
     print("❌ pyautogui not installed. Run: pip install pyautogui")
     sys.exit(1)
 
-# Disable pyautogui fail-safe for smoother automation (move mouse to corner to abort)
-pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.5  # Add small pause between actions
+# Safety settings
+pyautogui.FAILSAFE = True  # Move mouse to corner to abort
+pyautogui.PAUSE = 0.3
 
 
 class WhatsAppStatusAutomation:
-    """Automates WhatsApp status updates on macOS."""
+    """Automates WhatsApp Status (Stories) updates on macOS."""
     
     def __init__(self, config_path: str = None):
         """Initialize with config file."""
@@ -41,7 +38,7 @@ class WhatsAppStatusAutomation:
             os.path.dirname(__file__), "config.json"
         )
         self.config = self.load_config()
-        self.delay = self.config.get("delay_between_actions", 1.0)
+        self.delay = self.config.get("delay_between_actions", 1.5)
     
     def load_config(self) -> dict:
         """Load configuration from JSON file."""
@@ -54,7 +51,7 @@ class WhatsAppStatusAutomation:
                 "status_captions": ["Weekend vibes ✨"],
                 "schedule": {"days": ["saturday", "sunday"], "time": "09:00"},
                 "whatsapp_app_name": "WhatsApp",
-                "delay_between_actions": 1.0,
+                "delay_between_actions": 1.5,
                 "use_random_caption": False,
                 "current_caption_index": 0
             }
@@ -84,212 +81,224 @@ class WhatsAppStatusAutomation:
             ) % len(captions)
             self.save_config()
     
+    def is_whatsapp_running(self) -> bool:
+        """Check if WhatsApp is currently running."""
+        try:
+            result = subprocess.run(
+                ["pgrep", "-x", "WhatsApp"],
+                capture_output=True
+            )
+            return result.returncode == 0
+        except Exception:
+            return False
+    
     def open_whatsapp(self) -> bool:
-        """Open WhatsApp application on macOS."""
+        """Open WhatsApp application and ensure it's ready."""
         app_name = self.config.get("whatsapp_app_name", "WhatsApp")
         
-        print(f"📱 Opening {app_name}...")
+        was_running = self.is_whatsapp_running()
+        print(f"📱 Opening {app_name}... (was {'running' if was_running else 'closed'})")
         
-        # Use AppleScript to open and activate WhatsApp
+        # Use 'open' command which is more reliable for launching apps
+        try:
+            subprocess.run(["open", "-a", app_name], check=True)
+        except subprocess.CalledProcessError:
+            print(f"❌ Failed to open {app_name}")
+            return False
+        
+        # Wait for app to fully open
+        if not was_running:
+            print("   Waiting for app to start...")
+            time.sleep(3)  # Give it more time if it wasn't running
+        else:
+            time.sleep(1)
+        
+        # Activate and bring to front
         script = f'''
         tell application "{app_name}"
             activate
+        end tell
+        delay 1
+        tell application "System Events"
+            set frontmost of process "{app_name}" to true
         end tell
         '''
         
         try:
             subprocess.run(["osascript", "-e", script], check=True, capture_output=True)
-            time.sleep(self.delay * 2)  # Wait for app to open
+            time.sleep(self.delay)
+            print("   ✅ WhatsApp is now active")
             return True
         except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to open {app_name}: {e}")
-            return False
+            print(f"   ⚠️ Activation warning: {e}")
+            time.sleep(2)
+            return True  # Continue anyway
     
-    def click_at_image(self, image_name: str, confidence: float = 0.8) -> bool:
-        """Click at a location found by image matching."""
-        try:
-            location = pyautogui.locateOnScreen(
-                os.path.join(os.path.dirname(__file__), "images", image_name),
-                confidence=confidence
-            )
-            if location:
-                center = pyautogui.center(location)
-                pyautogui.click(center)
-                return True
-        except Exception as e:
-            print(f"⚠️ Image not found: {image_name} - {e}")
-        return False
-    
-    def navigate_to_status(self) -> bool:
+    def click_status_tab(self) -> bool:
         """
-        Navigate to WhatsApp status section.
+        Click on the Status tab in WhatsApp sidebar.
         
-        WhatsApp Desktop for Mac navigation:
-        1. Click on profile/status area (usually top-left)
-        2. Or use keyboard shortcut if available
+        WhatsApp Desktop layout:
+        - Left sidebar has icons: Chats, Status, Channels, Communities
+        - Status is typically the 2nd icon (circle with dashed outline)
         """
-        print("📍 Navigating to Status section...")
+        print("📍 Clicking Status tab in sidebar...")
         
-        time.sleep(self.delay)
+        # First, let's make sure we're on WhatsApp
+        pyautogui.hotkey('command', '1')  # Try keyboard shortcut
+        time.sleep(0.5)
         
-        # Method 1: Use keyboard shortcut to open settings/status
-        # WhatsApp Mac: Cmd+, opens settings, but status is different
-        
-        # Method 2: Click on the Status tab/icon
-        # WhatsApp desktop has "Status" in the sidebar
-        
-        # Try clicking on "Status" text or icon in sidebar
-        # The sidebar is usually on the left side of the window
-        
-        # Get screen size for relative positioning
-        screen_width, screen_height = pyautogui.size()
-        
-        # WhatsApp window is typically in center or left
-        # Status icon is usually in the left sidebar
-        
-        # First, let's try to find and click the Status tab
-        # In WhatsApp Desktop, it's usually:
-        # - A circle icon with a dashed border
-        # - Located in the left sidebar, second or third from top
-        
-        # Try keyboard navigation first (more reliable)
-        # Cmd+2 might switch to Status in some versions
-        
-        print("   Trying keyboard navigation...")
-        
-        # Focus on WhatsApp window
-        pyautogui.hotkey('command', 'tab')
-        time.sleep(0.3)
-        
-        # Try to click on Status in the sidebar
-        # Approximate position: left side of screen, upper portion
-        # This will need calibration based on your WhatsApp window position
-        
-        try:
-            # Look for "Status" text
-            status_location = pyautogui.locateOnScreen(
-                os.path.join(os.path.dirname(__file__), "images", "status_tab.png"),
-                confidence=0.7
-            )
-            if status_location:
-                pyautogui.click(pyautogui.center(status_location))
-                time.sleep(self.delay)
-                return True
-        except Exception:
-            pass
-        
-        # Fallback: Use relative click positions
-        # This assumes WhatsApp is open and visible
-        print("   Using position-based navigation...")
-        
-        # Click approximately where Status tab would be
-        # Adjust these coordinates based on your screen and WhatsApp position
-        
-        # Get active window position
-        try:
-            window_info = self.get_whatsapp_window_position()
-            if window_info:
-                x, y, width, height = window_info
-                # Status is usually in left sidebar, about 70px from left, 150px from top
-                status_x = x + 70
-                status_y = y + 150
-                pyautogui.click(status_x, status_y)
-                time.sleep(self.delay)
-                return True
-        except Exception as e:
-            print(f"   ⚠️ Window detection failed: {e}")
-        
-        return False
-    
-    def get_whatsapp_window_position(self) -> tuple:
-        """Get WhatsApp window position using AppleScript."""
+        # Get WhatsApp window bounds using AppleScript
         app_name = self.config.get("whatsapp_app_name", "WhatsApp")
-        
         script = f'''
         tell application "System Events"
             tell process "{app_name}"
-                set frontWindow to front window
-                set windowPosition to position of frontWindow
-                set windowSize to size of frontWindow
-                return (item 1 of windowPosition) & "," & (item 2 of windowPosition) & "," & (item 1 of windowSize) & "," & (item 2 of windowSize)
+                if exists window 1 then
+                    set win to window 1
+                    set winPos to position of win
+                    set winSize to size of win
+                    return (item 1 of winPos as string) & "," & (item 2 of winPos as string) & "," & (item 1 of winSize as string) & "," & (item 2 of winSize as string)
+                end if
             end tell
         end tell
         '''
+        
+        window_x, window_y, window_w, window_h = 0, 0, 800, 600
         
         try:
             result = subprocess.run(
                 ["osascript", "-e", script],
                 capture_output=True,
                 text=True,
-                check=True
+                timeout=5
             )
-            parts = result.stdout.strip().split(",")
-            return tuple(int(p) for p in parts)
+            if result.returncode == 0 and result.stdout.strip():
+                parts = result.stdout.strip().split(",")
+                window_x, window_y, window_w, window_h = [int(float(p)) for p in parts]
+                print(f"   Window at: ({window_x}, {window_y}) size: {window_w}x{window_h}")
         except Exception as e:
-            print(f"   Could not get window position: {e}")
-            return None
-    
-    def set_status_text(self, caption: str) -> bool:
-        """
-        Set the status text/caption.
+            print(f"   ⚠️ Could not get window position: {e}")
+            # Use default screen position
+            screen_w, screen_h = pyautogui.size()
+            window_x, window_y = 100, 50
+            window_w, window_h = screen_w // 2, screen_h - 100
         
-        After navigating to status:
-        1. Click on "My Status" or the text input area
-        2. Clear existing text
-        3. Type new caption
-        4. Save/confirm
-        """
-        print(f"✏️ Setting status caption: {caption}")
+        # WhatsApp sidebar is on the left
+        # Status icon is typically the 2nd icon from top in the sidebar
+        # Sidebar is about 70px wide, icons are spaced ~50px apart vertically
         
+        # Click on Status tab (2nd icon in sidebar)
+        # Position: about 35px from left edge, 120-150px from top
+        status_x = window_x + 35
+        status_y = window_y + 140  # Adjust this if needed
+        
+        print(f"   Clicking Status tab at ({status_x}, {status_y})...")
+        pyautogui.click(status_x, status_y)
         time.sleep(self.delay)
         
-        # In WhatsApp Desktop:
-        # - Click on "My status" or the status update area
-        # - This might open a text input or camera
-        # - For text status: type the caption
+        return True
+    
+    def click_add_status(self) -> bool:
+        """
+        Click the button to add a new text status.
         
-        # Try to find and click "My status" or "Add status" button
+        In WhatsApp Status view:
+        - There's a "+" or pencil icon to add new status
+        - Or "My status" area to click
+        """
+        print("➕ Looking for 'Add Status' button...")
+        
+        # After clicking Status tab, we need to find the "add" button
+        # This is usually a "+" icon or pencil icon
+        
+        # Try keyboard shortcut first (if any)
+        # Or click in the status area
+        
+        # Get window position again
+        app_name = self.config.get("whatsapp_app_name", "WhatsApp")
+        script = f'''
+        tell application "System Events"
+            tell process "{app_name}"
+                if exists window 1 then
+                    set win to window 1
+                    set winPos to position of win
+                    set winSize to size of win
+                    return (item 1 of winPos as string) & "," & (item 2 of winPos as string) & "," & (item 1 of winSize as string) & "," & (item 2 of winSize as string)
+                end if
+            end tell
+        end tell
+        '''
+        
+        window_x, window_y, window_w, window_h = 100, 50, 800, 600
+        
         try:
-            # Look for the status input area
-            for img in ["my_status.png", "add_status.png", "status_input.png"]:
-                try:
-                    location = pyautogui.locateOnScreen(
-                        os.path.join(os.path.dirname(__file__), "images", img),
-                        confidence=0.7
-                    )
-                    if location:
-                        pyautogui.click(pyautogui.center(location))
-                        time.sleep(self.delay)
-                        break
-                except Exception:
-                    continue
+            result = subprocess.run(
+                ["osascript", "-e", script],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                parts = result.stdout.strip().split(",")
+                window_x, window_y, window_w, window_h = [int(float(p)) for p in parts]
         except Exception:
             pass
         
-        # Click in the text input area (center of screen, slightly below middle)
-        screen_width, screen_height = pyautogui.size()
-        pyautogui.click(screen_width // 2, screen_height // 2)
+        # The "Add status" or "My status" button is usually:
+        # - In the main content area (right of sidebar)
+        # - Near the top, around 100-150px from top
+        # - About 150-250px from left (past the sidebar)
+        
+        # Click on "My status" or the text status button
+        # Try clicking the pencil/text icon for text status
+        add_x = window_x + 200  # Past the sidebar
+        add_y = window_y + 130  # Near top of content area
+        
+        print(f"   Clicking 'Add Status' area at ({add_x}, {add_y})...")
+        pyautogui.click(add_x, add_y)
+        time.sleep(self.delay)
+        
+        # Also try clicking a bit more to the right where the pencil icon might be
+        # The text status (pencil) icon is often on the right side
+        pencil_x = window_x + window_w - 100  # Near right side
+        pencil_y = window_y + 130
+        
+        print(f"   Also trying pencil icon area at ({pencil_x}, {pencil_y})...")
+        time.sleep(0.5)
+        pyautogui.click(pencil_x, pencil_y)
+        time.sleep(self.delay)
+        
+        return True
+    
+    def type_status_text(self, caption: str) -> bool:
+        """Type the status text and post it."""
+        print(f"✏️ Typing status: {caption}")
+        
         time.sleep(0.5)
         
-        # Clear any existing text
-        pyautogui.hotkey('command', 'a')
-        time.sleep(0.2)
-        
-        # Type the new caption
-        pyautogui.typewrite(caption, interval=0.05) if caption.isascii() else self._type_unicode(caption)
+        # The text input should now be focused
+        # Type the caption using clipboard (for emoji support)
+        self._type_unicode(caption)
         
         time.sleep(self.delay)
         
-        # Press Enter or click Send/Save button
-        pyautogui.press('enter')
+        # Send/Post the status
+        # Usually Enter or clicking a send button
+        print("   Posting status...")
         
-        print("✅ Status caption entered!")
+        # Try pressing Enter to send
+        pyautogui.press('enter')
+        time.sleep(1)
+        
+        # Or try Cmd+Enter
+        pyautogui.hotkey('command', 'enter')
+        time.sleep(0.5)
+        
+        print("   ✅ Status text entered!")
         return True
     
     def _type_unicode(self, text: str):
-        """Type unicode text using clipboard (for emojis etc)."""
-        import subprocess
-        
+        """Type unicode text using clipboard (for emojis)."""
         # Copy to clipboard
         process = subprocess.Popen(
             ['pbcopy'],
@@ -298,23 +307,26 @@ class WhatsAppStatusAutomation:
         )
         process.communicate(text.encode('utf-8'))
         
+        time.sleep(0.3)
+        
         # Paste from clipboard
-        time.sleep(0.2)
         pyautogui.hotkey('command', 'v')
+        time.sleep(0.3)
     
     def set_status(self, caption: str = None) -> bool:
         """
-        Main method: Set WhatsApp status with caption.
+        Main method: Set WhatsApp Status (Stories) with caption.
         
         Steps:
         1. Open WhatsApp
-        2. Navigate to Status
-        3. Set the caption
+        2. Click Status tab
+        3. Click Add Status / Text Status
+        4. Type caption and post
         """
         caption = caption or self.get_caption()
         
         print("\n" + "="*50)
-        print(f"🚀 WhatsApp Status Automation")
+        print("🚀 WhatsApp Status Automation")
         print(f"   Caption: {caption}")
         print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("="*50 + "\n")
@@ -324,13 +336,21 @@ class WhatsAppStatusAutomation:
             print("❌ Failed to open WhatsApp")
             return False
         
-        # Step 2: Navigate to Status
-        if not self.navigate_to_status():
-            print("⚠️ Navigation might have failed, continuing anyway...")
+        # Step 2: Click Status tab
+        if not self.click_status_tab():
+            print("⚠️ Status tab click might have failed...")
         
-        # Step 3: Set status text
-        if not self.set_status_text(caption):
-            print("❌ Failed to set status text")
+        time.sleep(1)
+        
+        # Step 3: Click Add Status button
+        if not self.click_add_status():
+            print("⚠️ Add status click might have failed...")
+        
+        time.sleep(1)
+        
+        # Step 4: Type and post status
+        if not self.type_status_text(caption):
+            print("❌ Failed to type status")
             return False
         
         # Rotate to next caption for next time
@@ -338,10 +358,36 @@ class WhatsAppStatusAutomation:
             self.rotate_caption()
         
         print("\n✅ Status update complete!")
+        print("\n⚠️ NOTE: Please verify the status was posted correctly.")
+        print("   The automation clicks on approximate positions.")
+        print("   You may need to adjust coordinates for your screen.")
         return True
     
+    def interactive_calibrate(self):
+        """Interactive mode to find correct click positions."""
+        print("\n🔧 CALIBRATION MODE")
+        print("="*50)
+        print("This will help you find the correct click positions.")
+        print("Move your mouse to each position and note the coordinates.\n")
+        
+        # Open WhatsApp first
+        self.open_whatsapp()
+        time.sleep(2)
+        
+        print("Tracking mouse position for 30 seconds...")
+        print("Move mouse to: Status tab, Add Status button, etc.")
+        print("Press Ctrl+C to stop.\n")
+        
+        try:
+            for _ in range(60):
+                x, y = pyautogui.position()
+                print(f"\rMouse position: ({x}, {y})    ", end="", flush=True)
+                time.sleep(0.5)
+        except KeyboardInterrupt:
+            print("\n\n📝 Use these coordinates to adjust the click positions in the code.")
+    
     def is_weekend(self) -> bool:
-        """Check if today is a scheduled day (default: weekend)."""
+        """Check if today is a scheduled day."""
         days = self.config.get("schedule", {}).get("days", ["saturday", "sunday"])
         today = datetime.now().strftime("%A").lower()
         return today in [d.lower() for d in days]
@@ -352,11 +398,8 @@ class WhatsAppStatusAutomation:
             return False
         
         scheduled_time = self.config.get("schedule", {}).get("time", "09:00")
-        current_time = datetime.now().strftime("%H:%M")
-        
-        # Check if within 5 minutes of scheduled time
         scheduled_hour, scheduled_min = map(int, scheduled_time.split(":"))
-        current_hour, current_min = map(int, current_time.split(":"))
+        current_hour, current_min = datetime.now().hour, datetime.now().minute
         
         scheduled_minutes = scheduled_hour * 60 + scheduled_min
         current_minutes = current_hour * 60 + current_min
@@ -369,7 +412,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(
-        description="WhatsApp Status Automation for macOS"
+        description="WhatsApp Status (Stories) Automation for macOS"
     )
     parser.add_argument(
         "--run", "-r",
@@ -379,38 +422,48 @@ def main():
     parser.add_argument(
         "--caption", "-c",
         type=str,
-        help="Custom caption to use (overrides config)"
+        help="Custom caption to use"
     )
     parser.add_argument(
         "--schedule", "-s",
         action="store_true",
-        help="Run in scheduled mode (checks if it's the right day/time)"
+        help="Run only if it's the scheduled day/time"
     )
     parser.add_argument(
         "--daemon", "-d",
         action="store_true",
-        help="Run as daemon (keeps running and checks schedule)"
+        help="Run as daemon (keeps checking schedule)"
     )
     parser.add_argument(
         "--test", "-t",
         action="store_true",
-        help="Test mode - just print what would happen"
+        help="Test mode - print what would happen"
+    )
+    parser.add_argument(
+        "--calibrate",
+        action="store_true",
+        help="Calibration mode - track mouse position to find correct coordinates"
     )
     
     args = parser.parse_args()
     
     automation = WhatsAppStatusAutomation()
     
+    if args.calibrate:
+        automation.interactive_calibrate()
+        return
+    
     if args.test:
         print("🧪 TEST MODE")
-        print(f"   Is weekend: {automation.is_weekend()}")
+        print(f"   Is scheduled day: {automation.is_weekend()}")
         print(f"   Should run now: {automation.should_run_now()}")
         print(f"   Caption would be: {automation.get_caption()}")
+        print(f"\n   Scheduled days: {automation.config.get('schedule', {}).get('days', [])}")
+        print(f"   Scheduled time: {automation.config.get('schedule', {}).get('time', '09:00')}")
         return
     
     if args.daemon:
         print("🔄 Running in daemon mode...")
-        print("   Will check schedule every minute")
         print("   Press Ctrl+C to stop\n")
         
         try:
@@ -423,7 +476,6 @@ def main():
                 if automation.is_weekend():
                     automation.set_status(args.caption)
             
-            # Schedule for configured time on configured days
             for day in days:
                 getattr(sched_lib.every(), day).at(scheduled_time).do(job)
             
@@ -444,7 +496,7 @@ def main():
         else:
             print("⏳ Not scheduled time, skipping")
             print(f"   Today: {datetime.now().strftime('%A')}")
-            print(f"   Scheduled days: {automation.config.get('schedule', {}).get('days', [])}")
+            print(f"   Scheduled: {automation.config.get('schedule', {}).get('days', [])}")
         return
     
     if args.run or args.caption:
@@ -453,8 +505,11 @@ def main():
     
     # Default: show help
     parser.print_help()
+    print("\n💡 Quick start:")
+    print("   ./run.sh --run              # Run now")
+    print("   ./run.sh --calibrate        # Find correct click positions")
+    print("   ./run.sh --test             # Test what would happen")
 
 
 if __name__ == "__main__":
     main()
-

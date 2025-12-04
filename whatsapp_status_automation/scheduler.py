@@ -65,7 +65,11 @@ PLIST_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 
 
 def get_python_path() -> str:
-    """Get the path to the Python interpreter."""
+    """Get the path to the Python interpreter in the venv."""
+    script_dir = Path(__file__).parent.absolute()
+    venv_python = script_dir / "venv" / "bin" / "python"
+    if venv_python.exists():
+        return str(venv_python)
     return sys.executable
 
 
