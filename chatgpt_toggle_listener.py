@@ -1334,6 +1334,9 @@ class Application(tk.Tk):
         self.tab_tree.pack(fill="both", expand=True, side="left")
         self.tab_tree.bind("<<TreeviewSelect>>", self.on_tab_select)
         
+        # Add drag-and-drop for tabs/subtabs
+        self._setup_drag_drop(self.tab_tree, "tabs")
+        
         # Add scrollbar to tab_tree
         tab_scrollbar = ttk.Scrollbar(self.tab_frame, orient="vertical", command=self.tab_tree.yview)
         tab_scrollbar.pack(side="right", fill="y")
@@ -1352,6 +1355,9 @@ class Application(tk.Tk):
         self.chat_tabs = ttk.Treeview(self.chat_frame, show="tree", selectmode="browse")
         self.chat_tabs.pack(fill="both", expand=True, side="left")
         self.chat_tabs.bind("<<TreeviewSelect>>", self.on_chat_tab_select)
+        
+        # Add drag-and-drop for chats
+        self._setup_drag_drop(self.chat_tabs, "chats")
         
         # Add scrollbar to chat_tabs
         chat_scrollbar = ttk.Scrollbar(self.chat_frame, orient="vertical", command=self.chat_tabs.yview)
@@ -2165,6 +2171,159 @@ class Application(tk.Tk):
         else:
             self.optimize_btn.config(text="🐢 Fast Mode OFF")
             self.status.config(text="🐢 Fast Mode OFF - Sending full context (may be slower with long chats)")
+
+    # ============================================================================
+    # DRAG AND DROP REORDERING
+    # ============================================================================
+    
+    def _setup_drag_drop(self, tree: ttk.Treeview, tree_type: str):
+        """
+        Set up drag-and-drop reordering for a Treeview.
+        tree_type: "tabs" or "chats"
+        """
+        tree._drag_data = {"item": None, "tree_type": tree_type}
+        
+        tree.bind("<ButtonPress-1>", lambda e: self._on_drag_start(e, tree))
+        tree.bind("<B1-Motion>", lambda e: self._on_drag_motion(e, tree))
+        tree.bind("<ButtonRelease-1>", lambda e: self._on_drag_release(e, tree))
+    
+    def _on_drag_start(self, event, tree: ttk.Treeview):
+        """Start dragging an item."""
+        item = tree.identify_row(event.y)
+        if item:
+            tree._drag_data["item"] = item
+            tree._drag_data["start_y"] = event.y
+            tree.selection_set(item)
+    
+    def _on_drag_motion(self, event, tree: ttk.Treeview):
+        """Show visual feedback while dragging."""
+        if not tree._drag_data["item"]:
+            return
+        
+        # Change cursor to indicate dragging
+        tree.config(cursor="hand2")
+        
+        # Highlight the target position
+        target = tree.identify_row(event.y)
+        if target and target != tree._drag_data["item"]:
+            # Visual feedback - could add more sophisticated highlighting here
+            pass
+    
+    def _on_drag_release(self, event, tree: ttk.Treeview):
+        """Drop the item at new position."""
+        tree.config(cursor="")  # Reset cursor
+        
+        if not tree._drag_data["item"]:
+            return
+        
+        dragged_item = tree._drag_data["item"]
+        target_item = tree.identify_row(event.y)
+        
+        # Reset drag data
+        tree._drag_data["item"] = None
+        
+        if not target_item or target_item == dragged_item:
+            return
+        
+        tree_type = tree._drag_data["tree_type"]
+        
+        if tree_type == "tabs":
+            self._reorder_tabs(tree, dragged_item, target_item)
+        elif tree_type == "chats":
+            self._reorder_chats(tree, dragged_item, target_item)
+    
+    def _reorder_tabs(self, tree: ttk.Treeview, dragged: str, target: str):
+        """Reorder tabs or subtabs."""
+        try:
+            # Determine if we're moving a tab or subtab
+            dragged_is_tab = dragged.startswith("tab_")
+            target_is_tab = target.startswith("tab_")
+            
+            if dragged_is_tab and target_is_tab:
+                # Moving a tab to another tab position
+                dragged_idx = int(dragged.split("_")[1])
+                target_idx = int(target.split("_")[1])
+                
+                # Reorder in data
+                tabs = self.prompt_manager.data["tabs"]
+                if 0 <= dragged_idx < len(tabs) and 0 <= target_idx < len(tabs):
+                    item = tabs.pop(dragged_idx)
+                    tabs.insert(target_idx, item)
+                    self.prompt_manager.save_tabs()
+                    self.load_tabs()
+                    self.status.config(text=f"📋 Moved tab to position {target_idx + 1}")
+            
+            elif dragged.startswith("sub_") and target.startswith("sub_"):
+                # Moving a subtab within the same parent
+                dragged_parts = dragged.split("_")
+                target_parts = target.split("_")
+                
+                dragged_tab_idx = int(dragged_parts[1])
+                dragged_sub_idx = int(dragged_parts[2])
+                target_tab_idx = int(target_parts[1])
+                target_sub_idx = int(target_parts[2])
+                
+                # Only allow reordering within the same tab
+                if dragged_tab_idx == target_tab_idx:
+                    subtabs = self.prompt_manager.data["tabs"][dragged_tab_idx]["subTabs"]
+                    if 0 <= dragged_sub_idx < len(subtabs) and 0 <= target_sub_idx < len(subtabs):
+                        item = subtabs.pop(dragged_sub_idx)
+                        subtabs.insert(target_sub_idx, item)
+                        self.prompt_manager.save_tabs()
+                        self.load_tabs()
+                        self.status.config(text=f"📋 Moved subtab to position {target_sub_idx + 1}")
+                else:
+                    self.status.config(text="⚠️ Can only reorder subtabs within same tab")
+            
+            elif dragged.startswith("sub_") and target_is_tab:
+                # Moving subtab to a different tab
+                dragged_parts = dragged.split("_")
+                dragged_tab_idx = int(dragged_parts[1])
+                dragged_sub_idx = int(dragged_parts[2])
+                target_tab_idx = int(target.split("_")[1])
+                
+                if dragged_tab_idx != target_tab_idx:
+                    source_subtabs = self.prompt_manager.data["tabs"][dragged_tab_idx]["subTabs"]
+                    target_subtabs = self.prompt_manager.data["tabs"][target_tab_idx]["subTabs"]
+                    
+                    if 0 <= dragged_sub_idx < len(source_subtabs):
+                        item = source_subtabs.pop(dragged_sub_idx)
+                        target_subtabs.append(item)
+                        self.prompt_manager.save_tabs()
+                        self.load_tabs()
+                        self.status.config(text=f"📋 Moved subtab to tab '{self.prompt_manager.get_tab_name(target_tab_idx)}'")
+                        
+        except Exception as e:
+            print(f"Tab reorder error: {e}")
+            self.status.config(text=f"❌ Reorder failed: {e}")
+    
+    def _reorder_chats(self, tree: ttk.Treeview, dragged: str, target: str):
+        """Reorder chat sessions."""
+        try:
+            if not dragged.startswith("chat_") or not target.startswith("chat_"):
+                return
+            
+            dragged_idx = int(dragged.split("_")[1])
+            target_idx = int(target.split("_")[1])
+            
+            sessions = self.chat_manager.sessions
+            if 0 <= dragged_idx < len(sessions) and 0 <= target_idx < len(sessions):
+                item = sessions.pop(dragged_idx)
+                sessions.insert(target_idx, item)
+                self.chat_manager.save()
+                self.load_chat_tabs()
+                
+                # Re-select the moved item
+                new_id = f"chat_{target_idx}"
+                if tree.exists(new_id):
+                    tree.selection_set(new_id)
+                    tree.see(new_id)
+                
+                self.status.config(text=f"💬 Moved chat to position {target_idx + 1}")
+                
+        except Exception as e:
+            print(f"Chat reorder error: {e}")
+            self.status.config(text=f"❌ Reorder failed: {e}")
 
 if __name__ == "__main__":
     app = Application()
