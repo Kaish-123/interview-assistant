@@ -2089,6 +2089,10 @@ class Application(tk.Tk):
         self.answer_mode_btn = ttk.Button(control_frame, text="🔘 Default", command=self.toggle_answer_mode)
         self.answer_mode_btn.pack(side="left", padx=4)
 
+        # Model selector button - between Default and Listen
+        self.model_btn = ttk.Button(control_frame, text="🧠 4o", command=self.toggle_model, width=6)
+        self.model_btn.pack(side="left", padx=4)
+
         self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
         self.record_btn.pack(side="left", padx=4)
         
@@ -2104,10 +2108,6 @@ class Application(tk.Tk):
         # Optimization Mode Toggle - ON by default for speed
         self.optimize_btn = ttk.Button(control_frame, text="⚡ Fast Mode ON", command=self.toggle_optimization_mode)
         self.optimize_btn.pack(side="left", padx=4)
-        
-        # Model selector button
-        self.model_btn = ttk.Button(control_frame, text="🧠 4o", command=self.toggle_model, width=6)
-        self.model_btn.pack(side="left", padx=4)
 
         font_controls = ttk.Frame(control_frame)
         font_controls.pack(side="left", padx=10)
