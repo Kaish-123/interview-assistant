@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 WhatsApp Auto Status - Full Automation
-Wake → Unlock → Post All Images
+Uses the EXACT working unlock sequence from test_2min_unlock.py
 """
 
 import subprocess
@@ -13,9 +13,48 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PASSWORD = "NewNew@123"
 
 def log(msg):
-    timestamp = time.strftime("%H:%M:%S")
-    print(f"[{timestamp}] {msg}")
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}")
     sys.stdout.flush()
+
+def unlock_sequence():
+    """EXACT COPY from working test_2min_unlock.py"""
+    
+    # First, wake the display
+    log("💡 Waking display with caffeinate...")
+    subprocess.Popen(["caffeinate", "-u", "-t", "120"])
+    time.sleep(3)
+    
+    # THE WORKING AppleScript from test_2min_unlock.py
+    script = f'''
+    tell application "System Events"
+        -- Wake the screen
+        key code 49 -- Space
+        delay 2
+        
+        -- First Enter - dismiss wake screen
+        key code 36
+        delay 2
+        
+        -- Second Enter - focus password field  
+        key code 36
+        delay 5 -- Wait 5 seconds for password field to be ready
+        
+        -- Type password
+        keystroke "{PASSWORD}"
+        delay 1
+        
+        -- Submit
+        key code 36 -- Enter
+    end tell
+    '''
+    
+    log("🔑 Sending unlock sequence...")
+    result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    
+    if result.stderr:
+        log(f"   Error: {result.stderr}")
+    
+    return result.returncode == 0
 
 def is_screen_locked():
     """Check if login screen is showing."""
@@ -26,94 +65,6 @@ def is_screen_locked():
     front_app = result.stdout.strip().lower()
     log(f"   Front app: {front_app}")
     return "loginwindow" in front_app
-
-def aggressive_wake():
-    """Wake the display aggressively - multiple methods."""
-    log("💡 Aggressively waking display...")
-    
-    # Method 1: caffeinate (multiple times)
-    subprocess.Popen(["caffeinate", "-u", "-t", "300"])
-    time.sleep(1)
-    subprocess.run(["caffeinate", "-u", "-t", "5"], capture_output=True)
-    time.sleep(1)
-    subprocess.run(["caffeinate", "-u", "-t", "5"], capture_output=True)
-    time.sleep(2)
-    
-    log("   ✅ Wake signals sent")
-
-def unlock_sequence():
-    """Fast unlock sequence with optimized timing."""
-    
-    # Wake the display
-    log("💡 Waking display...")
-    subprocess.Popen(["caffeinate", "-u", "-t", "120"])
-    time.sleep(2)
-    
-    # FAST unlock AppleScript with your timing
-    script = f'''
-    tell application "System Events"
-        -- Wake screen
-        key code 49 -- Space
-        delay 1.5 -- Wait 1.5 sec after wake
-        
-        -- Enter to show password field
-        key code 36
-        delay 1 -- Wait 1 sec for password field
-        
-        -- Type password
-        keystroke "{PASSWORD}"
-        delay 0.5
-        
-        -- Submit
-        key code 36 -- Enter
-    end tell
-    '''
-    
-    log("🔑 Entering password...")
-    result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
-    
-    if result.stderr:
-        log(f"   Error: {result.stderr}")
-    
-    # Wait 2 seconds after submit
-    time.sleep(2)
-    
-    return result.returncode == 0
-
-def unlock_if_needed():
-    """Only unlock if screen is locked."""
-    log("🔍 Checking if unlock needed...")
-    
-    # Aggressive wake first
-    aggressive_wake()
-    time.sleep(2)
-    
-    if not is_screen_locked():
-        log("   ✅ Already unlocked!")
-        return True
-    
-    log("   Screen is locked, unlocking...")
-    
-    # Try unlock 3 times
-    for attempt in range(3):
-        log(f"   Attempt {attempt + 1}/3...")
-        
-        # Extra wake before each attempt
-        subprocess.run(["caffeinate", "-u", "-t", "10"], capture_output=True)
-        time.sleep(2)
-        
-        unlock_sequence()
-        time.sleep(5)
-        
-        if not is_screen_locked():
-            log("   ✅ Successfully unlocked!")
-            return True
-        
-        log("   ⚠️ Still locked, retrying...")
-        time.sleep(2)
-    
-    log("   ❌ Could not unlock")
-    return False
 
 def run_whatsapp_status():
     """Run WhatsApp status automation."""
@@ -143,11 +94,22 @@ def main():
     log("=" * 60)
     log("")
     
-    # Step 1: Unlock if needed
-    unlocked = unlock_if_needed()
+    # Step 1: Try unlock (same as test_2min_unlock.py)
+    log("🔓 Starting unlock sequence...")
     
-    if not unlocked:
-        log("⚠️ Unlock failed, trying to continue anyway...")
+    for attempt in range(3):
+        log(f"   Attempt {attempt + 1}/3...")
+        
+        unlock_sequence()
+        time.sleep(5)
+        
+        # Check if unlocked
+        if not is_screen_locked():
+            log("   ✅ Successfully unlocked!")
+            break
+        
+        log("   ⚠️ Still locked, retrying...")
+        time.sleep(2)
     
     # Step 2: Wait for desktop
     log("⏳ Waiting 5 seconds for desktop...")
