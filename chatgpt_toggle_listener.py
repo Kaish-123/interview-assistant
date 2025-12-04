@@ -1963,68 +1963,72 @@ class Application(tk.Tk):
 
     def process_recording(self):
         """
-        Gets the COMPLETE live transcription and sends to GPT.
+        Gets the COMPLETE question by transcribing the FULL audio file.
         
         Strategy:
-        1. Stop live transcription loop
-        2. Wait briefly for any in-flight Whisper call to finish
-        3. Grab the LATEST (most complete) transcription
-        4. Send to GPT
+        1. Stop recording IMMEDIATELY (captures all audio until ` press)
+        2. Show live preview while processing
+        3. Do FINAL transcription on complete audio (gets EVERY word)
+        4. Send complete question to GPT
         
-        This ensures you get the FULL question!
+        This ensures NO words are missed - you get EVERYTHING until you press `!
         """
-        # Stop live preview loop FIRST - prevents any new UI updates
+        # Stop live preview loop
         self.live_transcription_running = False
         
-        # Wait briefly for any in-flight Whisper call to complete and update latest_live_question
-        # This ensures we get the MOST COMPLETE transcription
-        time.sleep(0.3)  # Short wait for in-flight call
-        
-        # Now grab the LATEST transcription (may have been updated by in-flight call)
-        live_question = ""
+        # Grab live preview for display while processing
+        live_preview = ""
         try:
-            live_question = (self.latest_live_question or "").strip()
+            live_preview = (self.latest_live_question or "").strip()
         except Exception:
             pass
-        
-        # Clear it to prevent duplication
         self.latest_live_question = ""
 
         try:
-            # Stop recording in background first
-            threading.Thread(
-                target=self._stop_recording_background,
-                daemon=True
-            ).start()
+            # Show processing status with preview
+            if live_preview:
+                self.response_box.config(state=tk.NORMAL)
+                start_index = self.response_box.search("🎙 Listening", "1.0", tk.END)
+                if start_index:
+                    self.response_box.delete(start_index, tk.END)
+                self.response_box.insert(tk.END, f"\n💭 Getting complete question...\n")
+                self.response_box.config(state=tk.DISABLED)
+                self.response_box.see(tk.END)
             
-            # If we have live transcription, use it
-            if live_question and len(live_question) > 5:
-                print(f"⚡ Sending: {len(live_question)} chars")
-                
-                # Show question and send to GPT
-                self.update_live_question_in_ui(live_question, is_final=True)
-                self._send_question_to_gpt(live_question)
-                return
+            self.status.config(text="💭 Capturing complete audio...")
             
-            # FALLBACK: No live transcription - must wait for final
-            print("📝 No live text, doing full transcription...")
-            self.status.config(text="💭 Processing audio...")
-            
-            # Wait for recording to actually stop
-            time.sleep(0.5)
+            # STOP RECORDING - this captures ALL audio until this exact moment
             filename = self.assistant.recorder.stop_recording()
+            
+            self.status.config(text="💭 Transcribing complete question...")
+            
+            # FINAL TRANSCRIPTION - gets EVERY word from the complete audio
+            print("📝 Final transcription for complete question...")
             final_text = self.assistant.transcribe_audio(filename)
             
             if isinstance(final_text, str) and final_text.startswith("❌"):
-                self.status.config(text=final_text)
+                # Error - try live preview as fallback
+                if live_preview:
+                    print("⚠️ Transcription failed, using live preview")
+                    self.update_live_question_in_ui(live_preview, is_final=True)
+                    self._send_question_to_gpt(live_preview)
+                else:
+                    self.status.config(text=final_text)
                 return
             
             question = (final_text or "").strip()
+            
+            # Fallback to live preview if final is empty
+            if not question and live_preview:
+                question = live_preview
             
             if not question:
                 self.status.config(text="⚠️ No speech detected.")
                 return
             
+            print(f"✅ Complete question: {len(question)} chars")
+            
+            # Show COMPLETE question and send to GPT
             self.update_live_question_in_ui(question, is_final=True)
             self._send_question_to_gpt(question)
 
