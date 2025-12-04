@@ -1292,16 +1292,32 @@ class Application(tk.Tk):
         Safely update the 'Live Question: ...' line in the response_box.
         This is called from a background thread via .after().
         """
-        if not self.live_question_index:
+        if not self.live_transcription_running:
             return
 
         try:
             self.response_box.config(state=tk.NORMAL)
-            # Delete current line contents from live_question_index to end-of-line
-            line_start = self.live_question_index
-            line_end = f"{line_start.split('.')[0]}.end"
-            self.response_box.delete(line_start, line_end)
-            self.response_box.insert(line_start, f"Live Question: {text}")
+            
+            # Find the "Live Question:" line and replace it
+            # Search from the end backwards for efficiency
+            search_start = "1.0"
+            found_index = None
+            
+            # Find the last occurrence of "Live Question:"
+            while True:
+                pos = self.response_box.search("Live Question:", search_start, tk.END)
+                if not pos:
+                    break
+                found_index = pos
+                search_start = f"{pos}+1c"
+            
+            if found_index:
+                # Delete from "Live Question:" to end of that line
+                line_num = found_index.split('.')[0]
+                line_end = f"{line_num}.end"
+                self.response_box.delete(found_index, line_end)
+                self.response_box.insert(found_index, f"Live Question: {text}")
+            
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
         except Exception as e:
@@ -2671,9 +2687,7 @@ class Application(tk.Tk):
                 # Show listening + create a Live Question line
                 self.response_box.config(state=tk.NORMAL)
                 self.response_box.insert(tk.END, "\n\n🎙 Listening to your question...\n")
-                # Remember where the live question line starts
-                self.live_question_index = self.response_box.index(tk.END)
-                self.response_box.insert(tk.END, "Live Question: ")
+                self.response_box.insert(tk.END, "Live Question: (waiting for speech...)")
                 self.response_box.config(state=tk.DISABLED)
                 self.response_box.see(tk.END)
 
@@ -2698,14 +2712,20 @@ class Application(tk.Tk):
     def process_recording(self):
         # Stop live transcription loop immediately
         self.live_transcription_running = False
-        try:
-            self.live_question_index = None
-        except Exception:
-            pass
         
         try:
             # Show immediate feedback while processing
             self.status.config(text="⏳ Getting complete question...")
+            
+            # Clean up the "Listening..." and "Live Question:" lines from UI
+            self.response_box.config(state=tk.NORMAL)
+            content = self.response_box.get("1.0", tk.END)
+            # Find and remove the listening block
+            listening_idx = content.rfind("🎙 Listening to your question...")
+            if listening_idx != -1:
+                # Delete from that point to end
+                self.response_box.delete(f"1.0+{listening_idx}c", tk.END)
+            self.response_box.config(state=tk.DISABLED)
             
             # STOP RECORDING FIRST - captures ALL audio until this moment
             filename = self.assistant.recorder.stop_recording()
