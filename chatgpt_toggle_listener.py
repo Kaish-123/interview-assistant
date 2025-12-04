@@ -580,9 +580,9 @@ class ChatGPTAssistant:
         # ====== OPTIMIZATION SETTINGS ======
         # These control how we send context to GPT while keeping FULL history locally
         self.optimization_mode = True          # Toggle for speed optimization
-        self.max_rounds_for_model = 8          # Recent Q&A pairs to send in full (was 12)
+        self.max_rounds_for_model = 6          # Recent Q&A pairs to send in full (reduced for speed)
         self.summary_message = None            # Synthetic summary of older conversation
-        self.summary_threshold_rounds = 12     # When to start summarizing (was 25)
+        self.summary_threshold_rounds = 8      # When to start summarizing (reduced from 12)
         self.image_detail_level = "low"        # "low" = 85 tokens, "high" = 765+ tokens
         self._summary_in_progress = False      # Prevent concurrent summarization
         self._pending_summary_thread = None    # Background summary thread   
@@ -696,6 +696,7 @@ class ChatGPTAssistant:
         - Include summary of older conversation if available
         - Include recent N rounds in full detail
         - Optimize images with detail:low when optimization_mode is on
+        - AGGRESSIVE mode: Remove images from older messages, keep only text
         
         This keeps your interview context complete while reducing API payload.
         """
@@ -724,13 +725,58 @@ class ChatGPTAssistant:
         if not self.optimization_mode:
             return system_msgs + other_msgs
         
+        # ========== AGGRESSIVE OPTIMIZATION FOR LONG CHATS ==========
+        # Count total estimated tokens to decide optimization level
+        total_msgs = len(other_msgs)
+        
+        # Apply different optimization levels based on chat length
+        if total_msgs > 40:
+            # AGGRESSIVE: Keep only last 4 rounds, strip images from older msgs
+            keep = 8
+            recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
+            print(f"🔥 Aggressive optimization: {total_msgs} msgs → keeping last {keep}")
+        elif total_msgs > 25:
+            # MODERATE: Keep last 6 rounds
+            keep = 12
+            recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
+            print(f"⚡ Moderate optimization: {total_msgs} msgs → keeping last {keep}")
+        
         # Apply image optimization (detail:low) to reduce token cost
         optimized_recent = []
-        for msg in recent:
+        for i, msg in enumerate(recent):
             optimized_msg = self._optimize_message_images(msg)
+            
+            # For older messages in the batch, strip images entirely (keep only text)
+            if i < len(recent) - 4 and total_msgs > 30:  # Keep images only in last 2 rounds
+                optimized_msg = self._strip_images_keep_text(optimized_msg)
+            
             optimized_recent.append(optimized_msg)
         
         return system_msgs + optimized_recent
+    
+    def _strip_images_keep_text(self, msg: dict) -> dict:
+        """
+        Remove images from a message but keep all text content.
+        Used for aggressive optimization of older messages.
+        """
+        content = msg.get("content")
+        if not isinstance(content, list):
+            return msg  # No images, return as-is
+        
+        # Extract only text items
+        text_parts = []
+        for item in content:
+            if isinstance(item, dict) and item.get("type") == "text":
+                text_parts.append(item.get("text", ""))
+            elif isinstance(item, str):
+                text_parts.append(item)
+        
+        if not text_parts:
+            # If no text, add placeholder
+            text_parts = ["[Image was here]"]
+        
+        combined_text = " ".join(text_parts)
+        return {"role": msg.get("role"), "content": combined_text}
     
     def _optimize_message_images(self, msg: dict) -> dict:
         """
@@ -806,11 +852,138 @@ class ChatGPTAssistant:
         except Exception as e:
             return f"❌ Transcription error: {str(e)}"
 
+    def diagnose_performance(self) -> dict:
+        """
+        Analyze current chat for performance issues.
+        Returns diagnostic info about token usage and latency sources.
+        """
+        diag = {
+            "total_messages": len(self.messages),
+            "system_messages": 0,
+            "user_messages": 0,
+            "assistant_messages": 0,
+            "images_count": 0,
+            "estimated_total_tokens": 0,
+            "estimated_system_tokens": 0,
+            "estimated_conversation_tokens": 0,
+            "estimated_image_tokens": 0,
+            "optimization_mode": self.optimization_mode,
+            "would_send_messages": 0,
+            "issues": [],
+            "recommendations": []
+        }
+        
+        for msg in self.messages:
+            if not isinstance(msg, dict):
+                continue
+            role = msg.get("role", "")
+            content = msg.get("content", "")
+            
+            # Count by role
+            if role == "system":
+                diag["system_messages"] += 1
+                tokens = len(str(content)) // 4
+                diag["estimated_system_tokens"] += tokens
+            elif role == "user":
+                diag["user_messages"] += 1
+            elif role == "assistant":
+                diag["assistant_messages"] += 1
+            
+            # Count images
+            if isinstance(content, list):
+                for item in content:
+                    if isinstance(item, dict) and item.get("type") == "image_url":
+                        diag["images_count"] += 1
+                        # Image tokens: 85 (low) to 765+ (high)
+                        if self.optimization_mode:
+                            diag["estimated_image_tokens"] += 85
+                        else:
+                            diag["estimated_image_tokens"] += 765
+            
+            # Estimate text tokens
+            if isinstance(content, str):
+                diag["estimated_conversation_tokens"] += len(content) // 4
+            elif isinstance(content, list):
+                for item in content:
+                    if isinstance(item, dict) and item.get("type") == "text":
+                        diag["estimated_conversation_tokens"] += len(item.get("text", "")) // 4
+        
+        # Calculate what would be sent
+        model_msgs = self._build_messages_for_model()
+        diag["would_send_messages"] = len(model_msgs)
+        
+        # Calculate total estimated tokens
+        diag["estimated_total_tokens"] = (
+            diag["estimated_system_tokens"] + 
+            diag["estimated_conversation_tokens"] + 
+            diag["estimated_image_tokens"]
+        )
+        
+        # Identify issues
+        if diag["estimated_system_tokens"] > 8000:
+            diag["issues"].append(f"⚠️ System messages are very large ({diag['estimated_system_tokens']} tokens)")
+            diag["recommendations"].append("Consider summarizing resume/JD content")
+        
+        if diag["images_count"] > 5:
+            diag["issues"].append(f"⚠️ Many images in chat ({diag['images_count']})")
+            diag["recommendations"].append("Images add significant tokens - old ones could be removed")
+        
+        if diag["total_messages"] > 30 and not self.summary_message:
+            diag["issues"].append(f"⚠️ Long conversation ({diag['total_messages']} msgs) without summary")
+            diag["recommendations"].append("Summary should be generated automatically")
+        
+        if diag["estimated_total_tokens"] > 50000:
+            diag["issues"].append(f"🔴 Very high token count ({diag['estimated_total_tokens']})")
+            diag["recommendations"].append("Enable Fast Mode or start a new chat")
+        
+        return diag
+    
+    def print_performance_report(self):
+        """Print a detailed performance report to console."""
+        diag = self.diagnose_performance()
+        
+        print("\n" + "="*60)
+        print("📊 PERFORMANCE DIAGNOSTIC REPORT")
+        print("="*60)
+        print(f"Total Messages: {diag['total_messages']}")
+        print(f"  - System: {diag['system_messages']}")
+        print(f"  - User: {diag['user_messages']}")
+        print(f"  - Assistant: {diag['assistant_messages']}")
+        print(f"  - Images: {diag['images_count']}")
+        print()
+        print(f"Estimated Tokens:")
+        print(f"  - System: ~{diag['estimated_system_tokens']:,}")
+        print(f"  - Conversation: ~{diag['estimated_conversation_tokens']:,}")
+        print(f"  - Images: ~{diag['estimated_image_tokens']:,}")
+        print(f"  - TOTAL: ~{diag['estimated_total_tokens']:,}")
+        print()
+        print(f"Optimization Mode: {'ON ⚡' if diag['optimization_mode'] else 'OFF 🐢'}")
+        print(f"Messages sent to API: {diag['would_send_messages']}/{diag['total_messages']}")
+        print(f"Has Summary: {'Yes ✅' if self.summary_message else 'No ❌'}")
+        print()
+        
+        if diag["issues"]:
+            print("⚠️ ISSUES FOUND:")
+            for issue in diag["issues"]:
+                print(f"  {issue}")
+            print()
+            print("💡 RECOMMENDATIONS:")
+            for rec in diag["recommendations"]:
+                print(f"  • {rec}")
+        else:
+            print("✅ No performance issues detected")
+        
+        print("="*60 + "\n")
+        return diag
+
     def stream_gpt_response(self, text_widget, status_label, button):
         self.cancel_streaming()  # 🔴 Cancel any ongoing output
 
         
         def run_stream():
+            # ⏱️ Start timing
+            start_time = time.time()
+            
             # Trigger background summarization (non-blocking - won't delay your response!)
             self._maybe_summarize_history()
             
@@ -821,21 +994,45 @@ class ChatGPTAssistant:
                 self.messages.append(placeholder)
 
                 try:
+                    # ⏱️ Time message building
+                    build_start = time.time()
+                    
                     # ⬇️ use optimized context (keeps all system msgs + recent Q&A)
                     model_messages = self._build_messages_for_model()
                     
-                    # Debug: show optimization stats
-                    if self.optimization_mode:
-                        total_msgs = len(self.messages)
-                        sent_msgs = len(model_messages)
-                        print(f"📊 Optimization: Sending {sent_msgs}/{total_msgs} messages to API")
+                    build_time = time.time() - build_start
+                    
+                    # Debug: show optimization stats with timing
+                    total_msgs = len(self.messages)
+                    sent_msgs = len(model_messages)
+                    
+                    # Estimate tokens in payload
+                    estimated_tokens = 0
+                    for m in model_messages:
+                        content = m.get("content", "")
+                        if isinstance(content, str):
+                            estimated_tokens += len(content) // 4
+                        elif isinstance(content, list):
+                            for item in content:
+                                if isinstance(item, dict):
+                                    if item.get("type") == "text":
+                                        estimated_tokens += len(item.get("text", "")) // 4
+                                    elif item.get("type") == "image_url":
+                                        estimated_tokens += 85 if self.optimization_mode else 765
+                    
+                    print(f"📊 Performance: {sent_msgs}/{total_msgs} msgs, ~{estimated_tokens:,} tokens, build: {build_time*1000:.0f}ms")
+                    
+                    # ⏱️ Time API call
+                    api_start = time.time()
 
                     stream = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=model_messages,
-                    stream=True,
-                    max_tokens=1600  # or whatever fits your style
-                )
+                        model="gpt-4o",
+                        messages=model_messages,
+                        stream=True,
+                        max_tokens=1600
+                    )
+                    
+                    first_token_time = None
 
                     buffer = ""
                     last_update = time.time()
@@ -851,6 +1048,12 @@ class ChatGPTAssistant:
                             break
                         delta = chunk.choices[0].delta.content if chunk.choices[0].delta else ""
                         if delta:
+                            # ⏱️ Track time to first token
+                            if first_token_time is None:
+                                first_token_time = time.time()
+                                ttft = first_token_time - api_start
+                                print(f"⏱️ Time to first token: {ttft*1000:.0f}ms")
+                            
                             buffer += delta
                             output_chars += len(delta)
                             self.current_response += delta
@@ -864,11 +1067,16 @@ class ChatGPTAssistant:
                     if buffer:
                         self.update_text_widget(text_widget, buffer)
                     
+                    # ⏱️ Total time
+                    total_time = time.time() - start_time
+                    print(f"⏱️ Total response time: {total_time:.1f}s")
+                    
                     # Estimate token usage and update session cost
-                    # Rough estimate: ~4 chars per token
-                    input_chars = sum(len(str(m.get("content", ""))) for m in model_messages)
-                    estimated_input_tokens = input_chars // 4
+                    estimated_input_tokens = estimated_tokens
                     estimated_output_tokens = output_chars // 4
+                    
+                    # Log performance summary
+                    print(f"📈 Tokens: ~{estimated_input_tokens:,} in, ~{estimated_output_tokens:,} out")
                     
                     if self.app:
                         self.app.after(0, lambda: self.app.add_session_cost(
@@ -1690,6 +1898,10 @@ class Application(tk.Tk):
         # Clear bookmarks button
         self.clear_bookmarks_btn = ttk.Button(control_frame, text="🗑 Clear", command=self.clear_all_bookmarks, width=6)
         self.clear_bookmarks_btn.pack(side="right", padx=2)
+        
+        # Performance diagnostic button
+        self.diag_btn = ttk.Button(control_frame, text="📊", command=self.show_performance_dialog, width=3)
+        self.diag_btn.pack(side="right", padx=2)
 
         # Chat input bar at bottom
         input_frame = ttk.Frame(self.main_frame)
@@ -2668,6 +2880,111 @@ class Application(tk.Tk):
         self.always_on_top = not self.always_on_top
         self.attributes("-topmost", self.always_on_top)
         self.topmost_btn.config(text="📌 Unpin Window" if self.always_on_top else "📌 Pin Window")
+    
+    def show_performance_dialog(self):
+        """Show performance diagnostic dialog."""
+        diag = self.assistant.diagnose_performance()
+        self.assistant.print_performance_report()  # Also print to console
+        
+        dialog = tk.Toplevel(self)
+        dialog.title("📊 Performance Diagnostics")
+        dialog.geometry("450x500")
+        dialog.transient(self)
+        
+        # Center on parent
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (450 // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (500 // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        # Header
+        ttk.Label(dialog, text="📊 Performance Analysis", font=('Arial', 14, 'bold')).pack(pady=10)
+        
+        # Stats frame
+        stats_frame = ttk.LabelFrame(dialog, text="Current Chat Statistics")
+        stats_frame.pack(fill="x", padx=15, pady=5)
+        
+        stats = [
+            (f"Total Messages:", f"{diag['total_messages']}"),
+            (f"  System:", f"{diag['system_messages']}"),
+            (f"  User:", f"{diag['user_messages']}"),
+            (f"  Assistant:", f"{diag['assistant_messages']}"),
+            (f"  Images:", f"{diag['images_count']}"),
+        ]
+        
+        for label, value in stats:
+            row = ttk.Frame(stats_frame)
+            row.pack(fill="x", padx=10, pady=2)
+            ttk.Label(row, text=label).pack(side="left")
+            ttk.Label(row, text=value, font=('Arial', 10, 'bold')).pack(side="right")
+        
+        # Token estimate frame
+        token_frame = ttk.LabelFrame(dialog, text="Estimated Token Usage")
+        token_frame.pack(fill="x", padx=15, pady=5)
+        
+        token_stats = [
+            ("System Tokens:", f"~{diag['estimated_system_tokens']:,}"),
+            ("Conversation Tokens:", f"~{diag['estimated_conversation_tokens']:,}"),
+            ("Image Tokens:", f"~{diag['estimated_image_tokens']:,}"),
+            ("TOTAL:", f"~{diag['estimated_total_tokens']:,}"),
+        ]
+        
+        for label, value in token_stats:
+            row = ttk.Frame(token_frame)
+            row.pack(fill="x", padx=10, pady=2)
+            ttk.Label(row, text=label).pack(side="left")
+            color = 'red' if 'TOTAL' in label and diag['estimated_total_tokens'] > 30000 else 'black'
+            ttk.Label(row, text=value, font=('Arial', 10, 'bold'), foreground=color).pack(side="right")
+        
+        # Optimization status
+        opt_frame = ttk.LabelFrame(dialog, text="Optimization Status")
+        opt_frame.pack(fill="x", padx=15, pady=5)
+        
+        opt_row = ttk.Frame(opt_frame)
+        opt_row.pack(fill="x", padx=10, pady=5)
+        opt_status = "⚡ ON (Fast Mode)" if diag['optimization_mode'] else "🐢 OFF (Full Context)"
+        ttk.Label(opt_row, text="Mode:").pack(side="left")
+        ttk.Label(opt_row, text=opt_status, font=('Arial', 10, 'bold')).pack(side="right")
+        
+        sent_row = ttk.Frame(opt_frame)
+        sent_row.pack(fill="x", padx=10, pady=2)
+        ttk.Label(sent_row, text="Messages sent to API:").pack(side="left")
+        ttk.Label(sent_row, text=f"{diag['would_send_messages']}/{diag['total_messages']}", 
+                  font=('Arial', 10, 'bold')).pack(side="right")
+        
+        has_summary = "Yes ✅" if self.assistant.summary_message else "No ❌"
+        sum_row = ttk.Frame(opt_frame)
+        sum_row.pack(fill="x", padx=10, pady=2)
+        ttk.Label(sum_row, text="Has Summary:").pack(side="left")
+        ttk.Label(sum_row, text=has_summary, font=('Arial', 10, 'bold')).pack(side="right")
+        
+        # Issues and recommendations
+        if diag["issues"]:
+            issues_frame = ttk.LabelFrame(dialog, text="⚠️ Issues Found")
+            issues_frame.pack(fill="x", padx=15, pady=5)
+            
+            for issue in diag["issues"]:
+                ttk.Label(issues_frame, text=issue, wraplength=400).pack(anchor="w", padx=10, pady=2)
+            
+            ttk.Label(issues_frame, text="\n💡 Recommendations:", font=('Arial', 10, 'bold')).pack(anchor="w", padx=10)
+            for rec in diag["recommendations"]:
+                ttk.Label(issues_frame, text=f"• {rec}", wraplength=400).pack(anchor="w", padx=20, pady=1)
+        else:
+            ttk.Label(dialog, text="✅ No performance issues detected!", 
+                      font=('Arial', 11, 'bold'), foreground='green').pack(pady=10)
+        
+        # Action buttons
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(pady=15)
+        
+        def force_summarize():
+            self.assistant._maybe_summarize_history()
+            self.status.config(text="🔄 Triggering background summarization...")
+            dialog.destroy()
+        
+        ttk.Button(btn_frame, text="🔄 Force Summarize", command=force_summarize).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="🆕 New Chat", command=lambda: [self.start_new_chat(), dialog.destroy()]).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Close", command=dialog.destroy).pack(side="left", padx=5)
     
     # ============================================================================
     # BOOKMARK/POINTER SYSTEM - Quick navigation to questions (like debug breakpoints)
