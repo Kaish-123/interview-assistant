@@ -1245,7 +1245,7 @@ class Application(tk.Tk):
         self.live_question_index = None  # index of the "Live Question" line in the Text widget
         
         # Answer Quality Mode: "quick", "detailed", "code"
-        self.answer_mode = "detailed"  # Default mode
+        self.answer_mode = "quick"  # Default mode
 
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
@@ -1954,7 +1954,7 @@ class Application(tk.Tk):
         self.new_chat_btn.pack(side="left", padx=4)
 
         # Answer Quality Mode toggle button
-        self.answer_mode_btn = ttk.Button(control_frame, text="📝 Detailed", command=self.toggle_answer_mode)
+        self.answer_mode_btn = ttk.Button(control_frame, text="⚡ Quick", command=self.toggle_answer_mode)
         self.answer_mode_btn.pack(side="left", padx=4)
 
         self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
