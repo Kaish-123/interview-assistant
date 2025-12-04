@@ -132,15 +132,31 @@ def fetch_openai_billing_data(api_key: str) -> dict:
     except Exception as e:
         print(f"Organization costs endpoint: {e}")
     
-    # Calculate balance if we have usage and limit
-    if result["balance"] is None and result["hard_limit"] and result["usage_this_month"]:
-        result["balance"] = result["hard_limit"] - result["usage_this_month"]
-    
-    # Set error if nothing worked
-    if result["balance"] is None and result["usage_this_month"] is None:
-        result["error"] = "Could not fetch billing data - set manually"
-    
-    return result
+        # Calculate balance if we have usage and limit
+        if result["balance"] is None and result["hard_limit"] and result["usage_this_month"]:
+            result["balance"] = result["hard_limit"] - result["usage_this_month"]
+        
+        # Set error if nothing worked
+        if result["balance"] is None and result["usage_this_month"] is None:
+            result["error"] = "Could not fetch billing data - set manually"
+        
+        return result
+
+def estimate_tokens_for_messages(messages: list, optimization_mode: bool = True) -> int:
+    """Estimate token count for a list of messages."""
+    tokens = 0
+    for msg in messages:
+        content = msg.get("content", "")
+        if isinstance(content, str):
+            tokens += len(content) // 4
+        elif isinstance(content, list):
+            for item in content:
+                if isinstance(item, dict):
+                    if item.get("type") == "text":
+                        tokens += len(item.get("text", "")) // 4
+                    elif item.get("type") == "image_url":
+                        tokens += 85 if optimization_mode else 765
+    return tokens
 
 # Legacy function for backwards compatibility
 def fetch_openai_balance(api_key: str) -> dict:
@@ -580,17 +596,20 @@ class ChatGPTAssistant:
         # ====== OPTIMIZATION SETTINGS ======
         # These control how we send context to GPT while keeping FULL history locally
         self.optimization_mode = True          # Toggle for speed optimization
-        self.max_rounds_for_model = 6          # Recent Q&A pairs to send in full (reduced for speed)
+        self.max_rounds_for_model = 4          # Recent Q&A pairs to send (reduced from 6)
         self.summary_message = None            # Synthetic summary of older conversation
-        self.summary_threshold_rounds = 8      # When to start summarizing (reduced from 12)
+        self.summary_threshold_rounds = 5      # When to start summarizing (reduced from 8)
         self.image_detail_level = "low"        # "low" = 85 tokens, "high" = 765+ tokens
         self._summary_in_progress = False      # Prevent concurrent summarization
-        self._pending_summary_thread = None    # Background summary thread   
+        self._pending_summary_thread = None    # Background summary thread
+        self._system_msg_truncated = False     # Track if system msgs were truncated   
     
-    def _maybe_summarize_history(self):
+    def _maybe_summarize_history(self, force_sync: bool = False):
         """
-        Check if summarization is needed and trigger it in background.
-        This is NON-BLOCKING - your response streams immediately.
+        Check if summarization is needed and trigger it.
+        
+        Args:
+            force_sync: If True and chat is very long, run synchronously (blocks but faster overall)
         """
         if not self.optimization_mode:
             return  # Skip if optimization is off
@@ -608,8 +627,23 @@ class ChatGPTAssistant:
                 user_assistant.append(m)
 
         rounds = len(user_assistant) // 2
+        
+        # Check if we already have a summary that's recent enough
+        if self.summary_message and rounds < self.summary_threshold_rounds + 10:
+            return  # Summary is still valid
+        
         if rounds < self.summary_threshold_rounds:
             return  # No need yet
+
+        # For VERY long conversations without summary, run sync to ensure we have it
+        if rounds > 20 and not self.summary_message:
+            print(f"⚡ IMMEDIATE summarization needed ({rounds} rounds, no summary yet)")
+            self._summary_in_progress = True
+            try:
+                self._run_background_summary(list(user_assistant))
+            finally:
+                self._summary_in_progress = False
+            return
 
         # Trigger background summarization (non-blocking!)
         self._summary_in_progress = True
@@ -692,11 +726,10 @@ class ChatGPTAssistant:
         Build optimized message list for API while preserving ALL context locally.
         
         Strategy:
-        - ALWAYS include ALL system messages (Resume, JD, instructions) - NEVER skip these
+        - Include system messages but TRUNCATE if very long
         - Include summary of older conversation if available
         - Include recent N rounds in full detail
-        - Optimize images with detail:low when optimization_mode is on
-        - AGGRESSIVE mode: Remove images from older messages, keep only text
+        - AGGRESSIVE mode for long chats: Fewer messages, no images in old msgs
         
         This keeps your interview context complete while reducing API payload.
         """
@@ -711,48 +744,89 @@ class ChatGPTAssistant:
                 system_msgs.append(m)
             elif role in ("user", "assistant"):
                 other_msgs.append(m)
-            # ignore anything else / malformed
 
-        # Ensure summary goes last among system messages (most recent instruction)
-        if self.summary_message and self.summary_message not in system_msgs:
-            system_msgs.append(self.summary_message)
-
-        # Determine how many recent messages to keep
-        keep = self.max_rounds_for_model * 2
+        total_msgs = len(other_msgs)
+        
+        # ========== AGGRESSIVE OPTIMIZATION FOR LONG CHATS ==========
+        # Determine optimization level
+        if total_msgs > 50:
+            keep = 6  # Only last 3 Q&A rounds
+            optimization_level = "ULTRA"
+        elif total_msgs > 35:
+            keep = 8  # Last 4 Q&A rounds
+            optimization_level = "AGGRESSIVE"
+        elif total_msgs > 20:
+            keep = 10  # Last 5 Q&A rounds
+            optimization_level = "MODERATE"
+        else:
+            keep = self.max_rounds_for_model * 2
+            optimization_level = "NORMAL"
+        
         recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
         
-        # If optimization mode is OFF, return everything (original behavior)
+        # If optimization mode is OFF, return everything
         if not self.optimization_mode:
             return system_msgs + other_msgs
         
-        # ========== AGGRESSIVE OPTIMIZATION FOR LONG CHATS ==========
-        # Count total estimated tokens to decide optimization level
-        total_msgs = len(other_msgs)
+        print(f"🔧 Optimization: {optimization_level} ({total_msgs} msgs → keeping {len(recent)})")
         
-        # Apply different optimization levels based on chat length
-        if total_msgs > 40:
-            # AGGRESSIVE: Keep only last 4 rounds, strip images from older msgs
-            keep = 8
-            recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
-            print(f"🔥 Aggressive optimization: {total_msgs} msgs → keeping last {keep}")
-        elif total_msgs > 25:
-            # MODERATE: Keep last 6 rounds
-            keep = 12
-            recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
-            print(f"⚡ Moderate optimization: {total_msgs} msgs → keeping last {keep}")
+        # ========== TRUNCATE SYSTEM MESSAGES FOR VERY LONG CHATS ==========
+        optimized_system = []
+        MAX_SYSTEM_CHARS = 6000 if total_msgs > 40 else 10000  # Truncate for long chats
         
-        # Apply image optimization (detail:low) to reduce token cost
+        for sys_msg in system_msgs:
+            content = sys_msg.get("content", "")
+            if len(content) > MAX_SYSTEM_CHARS:
+                # Truncate long system messages (resume/JD)
+                truncated = content[:MAX_SYSTEM_CHARS] + "\n... [truncated for performance]"
+                optimized_system.append({"role": "system", "content": truncated})
+                print(f"✂️ Truncated system message: {len(content)} → {MAX_SYSTEM_CHARS} chars")
+            else:
+                optimized_system.append(sys_msg)
+        
+        # Add summary message at the end of system messages
+        if self.summary_message and self.summary_message not in optimized_system:
+            optimized_system.append(self.summary_message)
+        
+        # ========== OPTIMIZE RECENT MESSAGES ==========
         optimized_recent = []
         for i, msg in enumerate(recent):
             optimized_msg = self._optimize_message_images(msg)
             
             # For older messages in the batch, strip images entirely (keep only text)
-            if i < len(recent) - 4 and total_msgs > 30:  # Keep images only in last 2 rounds
+            # Keep images only in last 2 rounds (4 messages)
+            if i < len(recent) - 4 and optimization_level in ("AGGRESSIVE", "ULTRA"):
                 optimized_msg = self._strip_images_keep_text(optimized_msg)
+            
+            # For ULTRA mode, also truncate very long text messages
+            if optimization_level == "ULTRA":
+                optimized_msg = self._truncate_long_message(optimized_msg, max_chars=2000)
             
             optimized_recent.append(optimized_msg)
         
-        return system_msgs + optimized_recent
+        return optimized_system + optimized_recent
+    
+    def _truncate_long_message(self, msg: dict, max_chars: int = 2000) -> dict:
+        """Truncate very long messages while preserving structure."""
+        content = msg.get("content")
+        
+        if isinstance(content, str) and len(content) > max_chars:
+            return {"role": msg.get("role"), "content": content[:max_chars] + "... [truncated]"}
+        
+        if isinstance(content, list):
+            truncated_content = []
+            for item in content:
+                if isinstance(item, dict) and item.get("type") == "text":
+                    text = item.get("text", "")
+                    if len(text) > max_chars:
+                        truncated_content.append({"type": "text", "text": text[:max_chars] + "... [truncated]"})
+                    else:
+                        truncated_content.append(item)
+                else:
+                    truncated_content.append(item)
+            return {"role": msg.get("role"), "content": truncated_content}
+        
+        return msg
     
     def _strip_images_keep_text(self, msg: dict) -> dict:
         """
@@ -919,22 +993,27 @@ class ChatGPTAssistant:
             diag["estimated_image_tokens"]
         )
         
+        # Calculate ACTUAL tokens that will be sent (using optimized messages)
+        optimized_msgs = self._build_messages_for_model()
+        diag["will_send_tokens"] = estimate_tokens_for_messages(optimized_msgs, self.optimization_mode)
+        diag["will_send_messages"] = len(optimized_msgs)
+        
         # Identify issues
         if diag["estimated_system_tokens"] > 8000:
             diag["issues"].append(f"⚠️ System messages are very large ({diag['estimated_system_tokens']} tokens)")
-            diag["recommendations"].append("Consider summarizing resume/JD content")
+            diag["recommendations"].append("System messages will be auto-truncated")
         
         if diag["images_count"] > 5:
             diag["issues"].append(f"⚠️ Many images in chat ({diag['images_count']})")
-            diag["recommendations"].append("Images add significant tokens - old ones could be removed")
+            diag["recommendations"].append("Old images will be stripped automatically")
         
-        if diag["total_messages"] > 30 and not self.summary_message:
+        if diag["total_messages"] > 20 and not self.summary_message:
             diag["issues"].append(f"⚠️ Long conversation ({diag['total_messages']} msgs) without summary")
-            diag["recommendations"].append("Summary should be generated automatically")
+            diag["recommendations"].append("Click 'Force Summarize' to generate summary now")
         
-        if diag["estimated_total_tokens"] > 50000:
-            diag["issues"].append(f"🔴 Very high token count ({diag['estimated_total_tokens']})")
-            diag["recommendations"].append("Enable Fast Mode or start a new chat")
+        if diag["will_send_tokens"] > 15000:
+            diag["issues"].append(f"🔴 High token count ({diag['will_send_tokens']:,} tokens will be sent)")
+            diag["recommendations"].append("Consider starting a new chat for faster responses")
         
         return diag
     
@@ -2919,22 +2998,29 @@ class Application(tk.Tk):
             ttk.Label(row, text=value, font=('Arial', 10, 'bold')).pack(side="right")
         
         # Token estimate frame
-        token_frame = ttk.LabelFrame(dialog, text="Estimated Token Usage")
+        token_frame = ttk.LabelFrame(dialog, text="Token Usage (Full Chat vs Optimized)")
         token_frame.pack(fill="x", padx=15, pady=5)
         
         token_stats = [
-            ("System Tokens:", f"~{diag['estimated_system_tokens']:,}"),
-            ("Conversation Tokens:", f"~{diag['estimated_conversation_tokens']:,}"),
-            ("Image Tokens:", f"~{diag['estimated_image_tokens']:,}"),
-            ("TOTAL:", f"~{diag['estimated_total_tokens']:,}"),
+            ("Full Chat Tokens:", f"~{diag['estimated_total_tokens']:,}", diag['estimated_total_tokens'] > 30000),
+            ("→ WILL SEND:", f"~{diag.get('will_send_tokens', 0):,} tokens", diag.get('will_send_tokens', 0) > 15000),
         ]
         
-        for label, value in token_stats:
+        for label, value, is_warning in token_stats:
             row = ttk.Frame(token_frame)
             row.pack(fill="x", padx=10, pady=2)
             ttk.Label(row, text=label).pack(side="left")
-            color = 'red' if 'TOTAL' in label and diag['estimated_total_tokens'] > 30000 else 'black'
+            color = 'red' if is_warning else 'green' if '→' in label else 'black'
             ttk.Label(row, text=value, font=('Arial', 10, 'bold'), foreground=color).pack(side="right")
+        
+        # Show reduction percentage
+        if diag['estimated_total_tokens'] > 0:
+            reduction = (1 - diag.get('will_send_tokens', 0) / diag['estimated_total_tokens']) * 100
+            reduction_row = ttk.Frame(token_frame)
+            reduction_row.pack(fill="x", padx=10, pady=2)
+            ttk.Label(reduction_row, text="Token Reduction:").pack(side="left")
+            ttk.Label(reduction_row, text=f"{reduction:.0f}% saved!", 
+                      font=('Arial', 10, 'bold'), foreground='green').pack(side="right")
         
         # Optimization status
         opt_frame = ttk.LabelFrame(dialog, text="Optimization Status")
