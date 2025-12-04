@@ -764,9 +764,14 @@ class ChatGPTAssistant:
         
         recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
         
-        # If optimization mode is OFF, return everything
+        # If optimization mode is OFF, return everything (but still add answer mode instruction)
         if not self.optimization_mode:
-            return system_msgs + other_msgs
+            all_msgs = system_msgs + other_msgs
+            if self.app and hasattr(self.app, 'get_answer_mode_instruction'):
+                mode_instruction = self.app.get_answer_mode_instruction()
+                if mode_instruction:
+                    all_msgs.append({"role": "system", "content": mode_instruction})
+            return all_msgs
         
         print(f"🔧 Optimization: {optimization_level} ({total_msgs} msgs → keeping {len(recent)})")
         
@@ -804,7 +809,14 @@ class ChatGPTAssistant:
             
             optimized_recent.append(optimized_msg)
         
-        return optimized_system + optimized_recent
+        # Add answer mode instruction if app is available
+        final_messages = optimized_system + optimized_recent
+        if self.app and hasattr(self.app, 'get_answer_mode_instruction'):
+            mode_instruction = self.app.get_answer_mode_instruction()
+            if mode_instruction:
+                final_messages.append({"role": "system", "content": mode_instruction})
+        
+        return final_messages
     
     def _truncate_long_message(self, msg: dict, max_chars: int = 2000) -> dict:
         """Truncate very long messages while preserving structure."""
@@ -1231,6 +1243,9 @@ class Application(tk.Tk):
         self.live_transcription_running = False
         self.latest_live_question = ""   # last incremental text from Whisper
         self.live_question_index = None  # index of the "Live Question" line in the Text widget
+        
+        # Answer Quality Mode: "quick", "detailed", "code"
+        self.answer_mode = "detailed"  # Default mode
 
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
@@ -1636,6 +1651,38 @@ class Application(tk.Tk):
             self.toggle_input_btn.config(text="🔈 Internal Audio (BlackHole)")
             self.status.config(text="🔈 Switched to Internal Audio (BlackHole)")
 
+    def toggle_answer_mode(self):
+        """Cycle through answer quality modes: Quick → Detailed → Code → Quick"""
+        modes = ["quick", "detailed", "code"]
+        mode_labels = {
+            "quick": "⚡ Quick",
+            "detailed": "📝 Detailed", 
+            "code": "💻 Code"
+        }
+        mode_descriptions = {
+            "quick": "Short, concise answers",
+            "detailed": "Comprehensive explanations",
+            "code": "Focus on code examples"
+        }
+        
+        # Cycle to next mode
+        current_idx = modes.index(self.answer_mode)
+        next_idx = (current_idx + 1) % len(modes)
+        self.answer_mode = modes[next_idx]
+        
+        # Update button text
+        self.answer_mode_btn.config(text=mode_labels[self.answer_mode])
+        self.status.config(text=f"🎯 Answer Mode: {mode_descriptions[self.answer_mode]}")
+
+    def get_answer_mode_instruction(self):
+        """Return instruction text based on current answer mode"""
+        instructions = {
+            "quick": "\n\n[INSTRUCTION: Provide SHORT, CONCISE answers. Be brief and to the point. Maximum 2-3 sentences unless absolutely necessary.]",
+            "detailed": "\n\n[INSTRUCTION: Provide COMPREHENSIVE, DETAILED explanations. Include context, examples, and thorough explanations.]",
+            "code": "\n\n[INSTRUCTION: Focus on CODE EXAMPLES. Provide working code snippets with brief explanations. Prioritize practical, copy-paste ready code.]"
+        }
+        return instructions.get(self.answer_mode, "")
+
     def display_chat_history(self, max_rounds=20):
         self.response_box.config(state=tk.NORMAL)
         self.response_box.delete(1.0, tk.END)
@@ -1905,6 +1952,10 @@ class Application(tk.Tk):
         # New chat button - between Report and Listen
         self.new_chat_btn = ttk.Button(control_frame, text="🆕 New", command=self.start_new_chat)
         self.new_chat_btn.pack(side="left", padx=4)
+
+        # Answer Quality Mode toggle button
+        self.answer_mode_btn = ttk.Button(control_frame, text="📝 Detailed", command=self.toggle_answer_mode)
+        self.answer_mode_btn.pack(side="left", padx=4)
 
         self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
         self.record_btn.pack(side="left", padx=4)
@@ -2737,18 +2788,6 @@ class Application(tk.Tk):
             # Send to GPT (only once)
             self.assistant.messages.append({"role": "user", "content": question})
             self.chat_manager.save_current_session(self.assistant.messages)
-
-            self.status.config(text="💡 Generating answer...")
-            self.assistant.cancel_streaming()
-            self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-            self.chat_manager.save_current_session(self.assistant.messages)
-
-            # Append flat question for GPT context
-            self.assistant.messages.append({"role": "user", "content": flat_text})
-            # Show updated history before streaming
-            self.chat_manager.save_current_session(self.assistant.messages)
-
-            self.display_chat_history()
 
             self.status.config(text="💡 Generating answer...")
             self.assistant.cancel_streaming()
