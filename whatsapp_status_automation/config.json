@@ -14,5 +14,5 @@
     "whatsapp_app_name": "WhatsApp",
     "delay_between_actions": 1.0,
     "use_random_caption": false,
-    "current_caption_index": 2
+    "current_caption_index": 1
 }
