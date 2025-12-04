@@ -7,11 +7,15 @@ PLIST_PATH="$HOME/Library/LaunchAgents/$PLIST_NAME.plist"
 VENV_PYTHON="$SCRIPT_DIR/venv/bin/python"
 AUTO_SCRIPT="$SCRIPT_DIR/auto_status.py"
 
-# Calculate time 3 minutes from now
+# Calculate time - wake 1 min before run
 WAKE_TIME=$(date -v+2M "+%H:%M:%S")
 RUN_HOUR=$(date -v+3M "+%H")
 RUN_MIN=$(date -v+3M "+%M")
 RUN_TIME=$(date -v+3M "+%H:%M")
+
+# Remove leading zeros for launchd (it needs integers)
+RUN_HOUR=$((10#$RUN_HOUR))
+RUN_MIN=$((10#$RUN_MIN))
 
 echo "=================================================="
 echo "🧪 TEST MODE - WhatsApp Status Automation"
