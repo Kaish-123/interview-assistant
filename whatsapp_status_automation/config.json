@@ -14,7 +14,7 @@
     "whatsapp_app_name": "WhatsApp",
     "delay_between_actions": 1.0,
     "use_random_caption": false,
-    "current_caption_index": 1,
+    "current_caption_index": 2,
     "positions": {
         "status_tab": {
             "x_offset": 35,
