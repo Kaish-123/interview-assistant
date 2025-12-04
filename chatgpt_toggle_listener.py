@@ -1524,28 +1524,15 @@ class Application(tk.Tk):
         text_frame = ttk.Frame(self.main_frame)
         text_frame.pack(fill="both", expand=True, padx=10)
 
-        self.response_box = tk.Text(text_frame, wrap=tk.WORD, font=('Consolas', self.assistant.font_size),
-                                    bg='#343541', fg='white', insertbackground='white', selectbackground='#4E4E4E',
-                                    highlightthickness=0)
-        self.response_box.pack(side="left", fill="both", expand=True)
-        self.response_box.insert(tk.END, "🤖 Start a new conversation or ask your first question...")
-        self.response_box.config(state=tk.DISABLED)
-        self.response_box.tag_configure('code', foreground='#4EC9B0')
-        self.response_box.tag_configure('bookmark_highlight', background='#4a4a00', foreground='#ffff00')
-        
-        # Right-click context menu for bookmarking
-        self.response_box.bind("<Button-2>", self._show_bookmark_menu)  # Middle click on Mac
-        self.response_box.bind("<Button-3>", self._show_bookmark_menu)  # Right click
-        self.response_box.bind("<Control-Button-1>", self._show_bookmark_menu)  # Ctrl+click on Mac
-
         # ====== BOOKMARK/POINTER PANEL (like debug breakpoints) ======
-        self.bookmark_frame = ttk.Frame(text_frame, width=30)
+        # Pack FIRST (side=right) so it reserves space before response_box expands
+        self.bookmark_frame = ttk.Frame(text_frame, width=28)
         self.bookmark_frame.pack(side="right", fill="y", padx=(2, 0))
         self.bookmark_frame.pack_propagate(False)
         
-        # Bookmark header
-        bookmark_header = ttk.Label(self.bookmark_frame, text="📍", font=('Arial', 10))
-        bookmark_header.pack(pady=2)
+        # Bookmark header with tooltip
+        bookmark_header = ttk.Label(self.bookmark_frame, text="📍", font=('Arial', 9))
+        bookmark_header.pack(pady=1)
         
         # Bookmark listbox (shows pointers)
         self.bookmark_listbox = tk.Listbox(
@@ -1554,8 +1541,8 @@ class Application(tk.Tk):
             fg='#ffd700',  # Gold color for pointers
             selectbackground='#4a4a00',
             selectforeground='#ffff00',
-            font=('Arial', 9),
-            width=4,
+            font=('Arial', 8),
+            width=3,
             highlightthickness=0,
             borderwidth=0
         )
@@ -1566,9 +1553,26 @@ class Application(tk.Tk):
         # Store bookmarks: [(line_index, question_preview), ...]
         self.bookmarks = []
 
-        scrollbar = ttk.Scrollbar(text_frame, command=self.response_box.yview)
+        # Scrollbar - pack second (side=right)
+        scrollbar = ttk.Scrollbar(text_frame)
         scrollbar.pack(side="right", fill="y")
-        self.response_box.config(yscrollcommand=scrollbar.set)
+
+        # Response box - pack last (side=left, expand) takes remaining space
+        self.response_box = tk.Text(text_frame, wrap=tk.WORD, font=('Consolas', self.assistant.font_size),
+                                    bg='#343541', fg='white', insertbackground='white', selectbackground='#4E4E4E',
+                                    highlightthickness=0)
+        self.response_box.pack(side="left", fill="both", expand=True)
+        self.response_box.insert(tk.END, "🤖 Start a new conversation or ask your first question...")
+        self.response_box.config(state=tk.DISABLED, yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.response_box.yview)
+        
+        self.response_box.tag_configure('code', foreground='#4EC9B0')
+        self.response_box.tag_configure('bookmark_highlight', background='#4a4a00', foreground='#ffff00')
+        
+        # Right-click context menu for bookmarking
+        self.response_box.bind("<Button-2>", self._show_bookmark_menu)  # Middle click on Mac
+        self.response_box.bind("<Button-3>", self._show_bookmark_menu)  # Right click
+        self.response_box.bind("<Control-Button-1>", self._show_bookmark_menu)  # Ctrl+click on Mac
 
         # Button bar above chat entry
         control_frame = ttk.Frame(self.main_frame)
