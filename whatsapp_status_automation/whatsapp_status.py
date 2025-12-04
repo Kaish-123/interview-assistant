@@ -176,9 +176,9 @@ def set_image_status(image_path=None, caption=None):
     pyautogui.click(camera_x, camera_y)
     time.sleep(2)
     
-    # Click gallery/photo selection icon to open Finder
+    # Click gallery/photo selection icon to open Finder (NOT the camera shutter)
     print("🖼️ Clicking gallery button to select photo...")
-    gallery_x, gallery_y = 37, 845
+    gallery_x, gallery_y = 41, 836  # Calibrated position
     pyautogui.click(gallery_x, gallery_y)
     time.sleep(2)
     
