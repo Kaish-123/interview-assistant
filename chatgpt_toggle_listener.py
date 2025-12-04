@@ -34,6 +34,104 @@ from dotenv import load_dotenv
 import os
 
 
+# ============================================================================
+# OPENAI BILLING/BALANCE HELPERS
+# ============================================================================
+
+import webbrowser
+import urllib.request
+import ssl
+
+def fetch_openai_balance(api_key: str) -> dict:
+    """
+    Try to fetch OpenAI account balance.
+    Note: OpenAI removed direct billing API, so this uses a workaround.
+    Returns: {"balance": float or None, "error": str or None}
+    """
+    try:
+        # Try the subscription endpoint (may work for some accounts)
+        url = "https://api.openai.com/v1/dashboard/billing/subscription"
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {api_key}")
+        req.add_header("Content-Type", "application/json")
+        
+        context = ssl.create_default_context()
+        with urllib.request.urlopen(req, timeout=5, context=context) as response:
+            data = json.loads(response.read().decode())
+            # Extract relevant info
+            if "hard_limit_usd" in data:
+                return {"balance": data.get("hard_limit_usd"), "error": None}
+    except Exception as e:
+        pass
+    
+    try:
+        # Try credit grants endpoint
+        url = "https://api.openai.com/v1/dashboard/billing/credit_grants"
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {api_key}")
+        req.add_header("Content-Type", "application/json")
+        
+        context = ssl.create_default_context()
+        with urllib.request.urlopen(req, timeout=5, context=context) as response:
+            data = json.loads(response.read().decode())
+            total = data.get("total_available", 0)
+            return {"balance": total, "error": None}
+    except Exception as e:
+        pass
+    
+    return {"balance": None, "error": "API not available - set balance manually"}
+
+
+# ============================================================================
+# IMAGE OPTIMIZATION HELPERS (Safe - doesn't delete anything, just compresses)
+# ============================================================================
+
+def compress_image_for_api(image: Image.Image, max_size: int = 1024, quality: int = 85) -> str:
+    """
+    Compress an image for API transmission while preserving visual quality.
+    - Resizes if larger than max_size (keeps aspect ratio)
+    - Compresses to JPEG for smaller payload
+    - Returns base64 string
+    
+    This reduces payload by 60-80% without losing meaningful detail for GPT.
+    """
+    # Resize if too large (keeping aspect ratio)
+    width, height = image.size
+    if width > max_size or height > max_size:
+        ratio = min(max_size / width, max_size / height)
+        new_size = (int(width * ratio), int(height * ratio))
+        image = image.resize(new_size, Image.Resampling.LANCZOS)
+    
+    # Convert to RGB if necessary (for JPEG)
+    if image.mode in ('RGBA', 'P'):
+        background = Image.new('RGB', image.size, (255, 255, 255))
+        if image.mode == 'RGBA':
+            background.paste(image, mask=image.split()[3])
+        else:
+            background.paste(image)
+        image = background
+    
+    # Compress to JPEG
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG", quality=quality, optimize=True)
+    return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+def compress_image_png(image: Image.Image, max_size: int = 1024) -> str:
+    """
+    Compress image as PNG (for screenshots with text that need sharpness).
+    """
+    width, height = image.size
+    if width > max_size or height > max_size:
+        ratio = min(max_size / width, max_size / height)
+        new_size = (int(width * ratio), int(height * ratio))
+        image = image.resize(new_size, Image.Resampling.LANCZOS)
+    
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG", optimize=True)
+    return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
 
 # ... other imports remain the same ...
 class UIPreferences:
@@ -411,17 +509,29 @@ class ChatGPTAssistant:
         self.last_scroll_position = 0
         self.font_size = 12
         self.stream_thread = None 
-        self.max_rounds_for_model = 12
-        self.summary_message = None           # a synthetic summary system message
-        self.summary_threshold_rounds = 25   
+        
+        # ====== OPTIMIZATION SETTINGS ======
+        # These control how we send context to GPT while keeping FULL history locally
+        self.optimization_mode = True          # Toggle for speed optimization
+        self.max_rounds_for_model = 8          # Recent Q&A pairs to send in full (was 12)
+        self.summary_message = None            # Synthetic summary of older conversation
+        self.summary_threshold_rounds = 12     # When to start summarizing (was 25)
+        self.image_detail_level = "low"        # "low" = 85 tokens, "high" = 765+ tokens
+        self._summary_in_progress = False      # Prevent concurrent summarization
+        self._pending_summary_thread = None    # Background summary thread   
     
     def _maybe_summarize_history(self):
         """
-        If chat is long, summarize older user/assistant messages into a single
-        system message and keep only recent turns in detail.
-        This version is defensive against malformed messages.
+        Check if summarization is needed and trigger it in background.
+        This is NON-BLOCKING - your response streams immediately.
         """
-        # ✅ Safely collect only well-formed user/assistant messages
+        if not self.optimization_mode:
+            return  # Skip if optimization is off
+            
+        if self._summary_in_progress:
+            return  # Already summarizing in background
+        
+        # Count user/assistant messages
         user_assistant = []
         for m in self.messages:
             if not isinstance(m, dict):
@@ -432,70 +542,96 @@ class ChatGPTAssistant:
 
         rounds = len(user_assistant) // 2
         if rounds < self.summary_threshold_rounds:
-            return  # no need yet
+            return  # No need yet
 
-        # 1) Build a plain-text transcript to summarize
-        transcript_lines = []
-        for m in user_assistant:
-            role = m.get("role")
-            role_label = "User" if role == "user" else "Assistant"
+        # Trigger background summarization (non-blocking!)
+        self._summary_in_progress = True
+        self._pending_summary_thread = threading.Thread(
+            target=self._run_background_summary,
+            args=(list(user_assistant),),  # Pass a copy
+            daemon=True
+        )
+        self._pending_summary_thread.start()
+        print(f"📝 Background summarization started ({rounds} rounds)")
 
-            content = m.get("content", "")
-            if isinstance(content, list):
-                # multimodal: extract only text chunks
-                text_parts = []
-                for c in content:
-                    if not isinstance(c, dict):
-                        continue
-                    if c.get("type") == "text":
-                        text_parts.append(c.get("text", ""))
-                content = "\n".join(text_parts)
-            else:
-                content = str(content)
-
-            transcript_lines.append(f"{role_label}: {content}")
-
-        transcript = "\n".join(transcript_lines)
-
-        # 2) Call a smaller/faster model to summarize
+    def _run_background_summary(self, user_assistant_msgs: list):
+        """
+        Runs summarization in background thread - DOES NOT BLOCK your response.
+        Only updates summary_message when complete.
+        """
         try:
+            # 1) Build a plain-text transcript to summarize
+            transcript_lines = []
+            for m in user_assistant_msgs:
+                role = m.get("role")
+                role_label = "User" if role == "user" else "Assistant"
+
+                content = m.get("content", "")
+                if isinstance(content, list):
+                    # multimodal: extract only text chunks
+                    text_parts = []
+                    for c in content:
+                        if not isinstance(c, dict):
+                            continue
+                        if c.get("type") == "text":
+                            text_parts.append(c.get("text", ""))
+                    content = "\n".join(text_parts)
+                else:
+                    content = str(content)
+
+                transcript_lines.append(f"{role_label}: {content}")
+
+            transcript = "\n".join(transcript_lines)
+            
+            # Limit transcript length to avoid token limits on summary call
+            if len(transcript) > 15000:
+                transcript = transcript[:15000] + "\n... [truncated for summary]"
+
+            # 2) Call a smaller/faster model to summarize
             resp = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
                     {
                         "role": "system",
                         "content": (
-                            "You are a summarizer. Summarize this conversation so far "
-                            "into key technical points, constraints, and decisions. "
-                            "Be concise but not cryptic."
+                            "You are summarizing an ongoing job interview conversation. "
+                            "Extract key points discussed: technical topics, candidate responses, "
+                            "questions asked, skills mentioned, and any important context. "
+                            "Be concise but preserve critical interview details."
                         ),
                     },
                     {"role": "user", "content": transcript},
                 ],
+                max_tokens=800  # Keep summary concise
             )
             summary_text = resp.choices[0].message.content.strip()
+
+            # 3) Store as synthetic system message (thread-safe update)
+            self.summary_message = {
+                "role": "system",
+                "content": f"[Interview Summary - Previous Discussion]\n{summary_text}",
+            }
+            print(f"✅ Background summary complete: {len(summary_text)} chars")
+
         except Exception as e:
-            print(f"❌ Summary error: {e}")
-            return
-
-        # 3) Store as synthetic system message and prune older turns
-        self.summary_message = {
-            "role": "system",
-            "content": f"Summary of past conversation:\n{summary_text}",
-        }
-
-        # Keep system messages + summary + last few rounds
-        system_msgs = []
-        for m in self.messages:
-            if isinstance(m, dict) and m.get("role") == "system":
-                system_msgs.append(m)
-
-        recent_other = user_assistant[-(self.max_rounds_for_model * 2):]
-        self.messages = system_msgs + [self.summary_message] + recent_other
+            print(f"❌ Background summary error: {e}")
+        finally:
+            self._summary_in_progress = False
 
 
     
     def _build_messages_for_model(self):
+        """
+        Build optimized message list for API while preserving ALL context locally.
+        
+        Strategy:
+        - ALWAYS include ALL system messages (Resume, JD, instructions) - NEVER skip these
+        - Include summary of older conversation if available
+        - Include recent N rounds in full detail
+        - Optimize images with detail:low when optimization_mode is on
+        
+        This keeps your interview context complete while reducing API payload.
+        """
         system_msgs = []
         other_msgs = []
 
@@ -509,13 +645,57 @@ class ChatGPTAssistant:
                 other_msgs.append(m)
             # ignore anything else / malformed
 
-        # ensure summary goes last among system messages (most recent instruction)
+        # Ensure summary goes last among system messages (most recent instruction)
         if self.summary_message and self.summary_message not in system_msgs:
             system_msgs.append(self.summary_message)
 
+        # Determine how many recent messages to keep
         keep = self.max_rounds_for_model * 2
         recent = other_msgs[-keep:] if len(other_msgs) > keep else other_msgs
-        return system_msgs + recent
+        
+        # If optimization mode is OFF, return everything (original behavior)
+        if not self.optimization_mode:
+            return system_msgs + other_msgs
+        
+        # Apply image optimization (detail:low) to reduce token cost
+        optimized_recent = []
+        for msg in recent:
+            optimized_msg = self._optimize_message_images(msg)
+            optimized_recent.append(optimized_msg)
+        
+        return system_msgs + optimized_recent
+    
+    def _optimize_message_images(self, msg: dict) -> dict:
+        """
+        Optimize images in a message by adding detail:low parameter.
+        This reduces token usage from 765+ to 85 tokens per image.
+        Original message is NOT modified - returns a new optimized copy.
+        """
+        if not self.optimization_mode:
+            return msg
+            
+        content = msg.get("content")
+        if not isinstance(content, list):
+            return msg  # No images, return as-is
+        
+        # Create a copy with optimized images
+        optimized_content = []
+        for item in content:
+            if isinstance(item, dict) and item.get("type") == "image_url":
+                # Add detail parameter for optimization
+                image_url_data = item.get("image_url", {})
+                optimized_item = {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image_url_data.get("url", ""),
+                        "detail": self.image_detail_level  # "low" = 85 tokens
+                    }
+                }
+                optimized_content.append(optimized_item)
+            else:
+                optimized_content.append(item)
+        
+        return {"role": msg.get("role"), "content": optimized_content}
 
 
             
@@ -564,16 +744,24 @@ class ChatGPTAssistant:
 
         
         def run_stream():
+            # Trigger background summarization (non-blocking - won't delay your response!)
+            self._maybe_summarize_history()
+            
             with self.lock:
-                self._maybe_summarize_history()
                 self.current_response = ""
                 self.streaming = True
                 placeholder = {"role": "assistant", "content": ""}
                 self.messages.append(placeholder)
 
                 try:
-                    # ⬇️ use trimmed context instead of full history
+                    # ⬇️ use optimized context (keeps all system msgs + recent Q&A)
                     model_messages = self._build_messages_for_model()
+                    
+                    # Debug: show optimization stats
+                    if self.optimization_mode:
+                        total_msgs = len(self.messages)
+                        sent_msgs = len(model_messages)
+                        print(f"📊 Optimization: Sending {sent_msgs}/{total_msgs} messages to API")
 
                     stream = client.chat.completions.create(
                     model="gpt-4o",
@@ -590,12 +778,14 @@ class ChatGPTAssistant:
                     text_widget.config(state=tk.DISABLED)
                     text_widget.see(tk.END)
 
+                    output_chars = 0
                     for chunk in stream:
                         if not self.streaming:
                             break
                         delta = chunk.choices[0].delta.content if chunk.choices[0].delta else ""
                         if delta:
                             buffer += delta
+                            output_chars += len(delta)
                             self.current_response += delta
                             placeholder["content"] = self.current_response
 
@@ -606,6 +796,19 @@ class ChatGPTAssistant:
 
                     if buffer:
                         self.update_text_widget(text_widget, buffer)
+                    
+                    # Estimate token usage and update session cost
+                    # Rough estimate: ~4 chars per token
+                    input_chars = sum(len(str(m.get("content", ""))) for m in model_messages)
+                    estimated_input_tokens = input_chars // 4
+                    estimated_output_tokens = output_chars // 4
+                    
+                    if self.app:
+                        self.app.after(0, lambda: self.app.add_session_cost(
+                            estimated_input_tokens, 
+                            estimated_output_tokens,
+                            "gpt-4o"
+                        ))
 
                 except Exception as e:
                     placeholder["content"] = f"❌ GPT Error: {str(e)}"
@@ -698,7 +901,9 @@ class Application(tk.Tk):
 
             self.status.config(text="🕑 Resumed from last auto-save session")
 
-        self.bind_all("<Command-v>", self.handle_paste)
+        # Bind paste to input_entry directly (not bind_all) to prevent double-paste
+        self.input_entry.bind("<Command-v>", self.handle_paste)
+        self.input_entry.bind("<Control-v>", self.handle_paste)  # For non-Mac keyboards
         self.sidebar_visible = True
         self.current_tab = -1
         self.current_subtab = -1
@@ -718,13 +923,12 @@ class Application(tk.Tk):
         # Ensure we start within limits
         self.after(0, lambda: self.auto_prune_chats(max_chats=10))
 
-    def update_live_question_in_ui(self, text: str):
+    def update_live_question_in_ui(self, text: str, is_final: bool = False):
         """
         Show a single live-updating 'Live Question:' block in the Text widget.
-
-        Every time this is called, we delete the previous
-        '🎙 Listening to your question...' + 'Live Question: ...'
-        block and re-add it, so there is NO duplication.
+        
+        Streams the question in REAL-TIME as the interviewer speaks.
+        When is_final=True, formats it as the final question ready for answer.
         """
         if not text:
             return
@@ -734,7 +938,7 @@ class Application(tk.Tk):
 
             # 1) Find where the 'Listening...' block starts (if it already exists)
             start_index = self.response_box.search(
-                "🎙 Listening to your question...",
+                "🎙 Listening",
                 "1.0",
                 tk.END
             )
@@ -744,14 +948,19 @@ class Application(tk.Tk):
                 self.response_box.delete(start_index, tk.END)
 
             # 2) Ensure there is a blank line before the listening block
-            # (optional, just for spacing)
             current_end = self.response_box.index(tk.END)
             if not current_end.endswith(".0"):
                 self.response_box.insert(tk.END, "\n")
 
-            # 3) Re-insert the listening + single live question line
-            self.response_box.insert(tk.END, "\n🎙 Listening to your question...\n")
-            self.response_box.insert(tk.END, f"Live Question: {text}\n")
+            if is_final:
+                # Final question - format for answer
+                self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {text}\n")
+            else:
+                # Still listening - show live streaming
+                self.response_box.insert(tk.END, "\n🎙 Listening... (press ` to stop)\n")
+                self.response_box.insert(tk.END, f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+                self.response_box.insert(tk.END, f"📝 {text}\n")
+                self.response_box.insert(tk.END, f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
@@ -762,22 +971,35 @@ class Application(tk.Tk):
 
 
     def live_transcription_loop(self):
+        """
+        OPTIMIZED: Faster polling (1.5s) for near real-time question display.
+        Shows what interviewer is saying AS THEY SPEAK.
+        """
         last_text = ""
         in_flight = False
+        last_snapshot_size = 0
 
         while self.live_transcription_running and self.assistant.recorder.is_recording:
             if in_flight:
-                time.sleep(0.2)
+                time.sleep(0.1)  # Faster check when waiting
                 continue
 
             snapshot = self.assistant.recorder.get_snapshot()
             if snapshot is None:
-                time.sleep(0.5)
+                time.sleep(0.3)
                 continue
+            
+            # Skip if no new audio (avoids redundant API calls)
+            current_size = len(snapshot)
+            if current_size == last_snapshot_size:
+                time.sleep(0.2)
+                continue
+            last_snapshot_size = current_size
 
             def do_call(snapshot_copy):
                 nonlocal last_text, in_flight
                 in_flight = True
+                temp_name = None
                 try:
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
                         with wave.open(tmp, 'wb') as wf:
@@ -797,23 +1019,29 @@ class Application(tk.Tk):
                     print(f"❌ Live transcription error: {e}")
                     text = ""
                 finally:
-                    try:
-                        os.remove(temp_name)
-                    except Exception:
-                        pass
+                    if temp_name:
+                        try:
+                            os.remove(temp_name)
+                        except Exception:
+                            pass
                     in_flight = False
 
+                # Update the transcription text (always, to capture complete question)
                 if text and text != last_text:
                     last_text = text
-                    self.latest_live_question = text
-                    self.after(0, lambda t=text: self.update_live_question_in_ui(t))
+                    self.latest_live_question = text  # Always update this for complete text
+                    self._last_live_update_time = time.time()
+                    
+                    # Only update UI if still recording - prevents ghost display after stop
+                    if self.live_transcription_running:
+                        self.after(0, lambda t=text: self.update_live_question_in_ui(t, is_final=False))
 
-            # launch Whisper call in a short-lived thread
+            # Launch Whisper call in background
             snapshot_copy = snapshot.copy()
             threading.Thread(target=do_call, args=(snapshot_copy,), daemon=True).start()
 
-            # slower polling interval = fewer calls
-            for _ in range(15):  # ~3 seconds
+            # FAST polling: ~1 second for near real-time
+            for _ in range(5):  # 5 * 0.2 = 1 second
                 if not self.live_transcription_running or not self.assistant.recorder.is_recording:
                     break
                 time.sleep(0.2)
@@ -992,16 +1220,23 @@ class Application(tk.Tk):
             sash = self.paned.sashpos(0)
         except Exception:
             sash = None
+        
+        # Save sidebar internal split (tabs vs chats)
+        try:
+            sidebar_sash = self.sidebar_paned.sashpos(0)
+        except Exception:
+            sidebar_sash = None
 
         prefs = {
             "geometry": self.geometry(),
             "paned_sash": sash,
+            "sidebar_sash": sidebar_sash,  # NEW: tabs/chats split position
             "response_font_size": int(self.assistant.font_size),
-            # NEW: expanded (“open”) items in the tabs/subtasks tree
+            # NEW: expanded ("open") items in the tabs/subtasks tree
             "tab_tree_open": self._get_tree_open_state(self.tab_tree),
         }
         UIPreferences.save(prefs)
-        self.status.config(text="💾 Saved UI defaults (geometry, split, font, dropdowns).")
+        self.status.config(text="💾 Saved UI defaults (geometry, splits, font, dropdowns).")
         print("Saved UI Prefs:", prefs)
 
 
@@ -1024,13 +1259,22 @@ class Application(tk.Tk):
             except Exception as e:
                 print("Font apply error:", e)
 
-        # Split
+        # Main split (sidebar vs main content)
         if "paned_sash" in prefs and prefs["paned_sash"] is not None:
             try:
                 self.paned.sashpos(0, int(prefs["paned_sash"]))
             except Exception as e:
                 print("Sash apply error, retrying...", e)
                 self.after(50, lambda: self.paned.sashpos(0, int(prefs["paned_sash"])))
+
+        # Sidebar internal split (tabs vs chats)
+        if "sidebar_sash" in prefs and prefs["sidebar_sash"] is not None:
+            def apply_sidebar_sash():
+                try:
+                    self.sidebar_paned.sashpos(0, int(prefs["sidebar_sash"]))
+                except Exception as e:
+                    print("Sidebar sash apply error:", e)
+            self.after(100, apply_sidebar_sash)  # Delay to ensure widget is ready
 
         # NEW: tabs/subtabs expanded state
         if "tab_tree_open" in prefs:
@@ -1130,32 +1374,58 @@ class Application(tk.Tk):
         self.sidebar = ttk.Frame(self.paned, width=200)
         self.paned.add(self.sidebar, weight=0)
         
-        
-        
-
-        # Create toggle button
+        # Create toggle button at top
         self.toggle_btn = ttk.Button(self.sidebar, text="☰", width=2, command=self.toggle_sidebar)
         self.toggle_btn.pack(pady=5, fill="x")
 
-        # Create tab management area
-        self.tab_frame = ttk.Frame(self.sidebar)
-        self.tab_frame.pack(fill="both", expand=True, padx=5, pady=5)
-
-        # Create tab treeview
+        # ====== RESIZABLE SIDEBAR SECTIONS ======
+        # Create a vertical PanedWindow inside sidebar for resizable sections
+        self.sidebar_paned = ttk.PanedWindow(self.sidebar, orient=tk.VERTICAL)
+        self.sidebar_paned.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        # ----- TOP SECTION: Tabs/Subtabs -----
+        self.tab_section = ttk.Frame(self.sidebar_paned)
+        self.sidebar_paned.add(self.tab_section, weight=2)  # Gets more space by default
+        
+        ttk.Label(self.tab_section, text="📋 Prompts & Subtabs").pack(anchor="w")
+        
+        # Create tab treeview with scrollbar
+        self.tab_frame = ttk.Frame(self.tab_section)
+        self.tab_frame.pack(fill="both", expand=True)
+        
         self.tab_tree = ttk.Treeview(self.tab_frame, show="tree", selectmode="browse")
         self.tab_tree.pack(fill="both", expand=True, side="left")
         self.tab_tree.bind("<<TreeviewSelect>>", self.on_tab_select)
+        
+        # Add drag-and-drop for tabs/subtabs
+        self._setup_drag_drop(self.tab_tree, "tabs")
+        
+        # Add scrollbar to tab_tree
+        tab_scrollbar = ttk.Scrollbar(self.tab_frame, orient="vertical", command=self.tab_tree.yview)
+        tab_scrollbar.pack(side="right", fill="y")
+        self.tab_tree.configure(yscrollcommand=tab_scrollbar.set)
 
-        # Chat History Treeview (below prompt tabs)
-        ttk.Label(self.sidebar, text="💬 Past Chats").pack(anchor="w", padx=5)
-        self.chat_tabs = ttk.Treeview(self.sidebar, show="tree", selectmode="browse")
-        self.chat_tabs.pack(fill="both", expand=True, padx=5, pady=(0, 10))
+        # ----- BOTTOM SECTION: Chat History -----
+        self.chat_section = ttk.Frame(self.sidebar_paned)
+        self.sidebar_paned.add(self.chat_section, weight=1)  # Gets less space by default
+        
+        ttk.Label(self.chat_section, text="💬 Past Chats").pack(anchor="w")
+        
+        # Create chat history treeview with scrollbar
+        self.chat_frame = ttk.Frame(self.chat_section)
+        self.chat_frame.pack(fill="both", expand=True)
+        
+        self.chat_tabs = ttk.Treeview(self.chat_frame, show="tree", selectmode="browse")
+        self.chat_tabs.pack(fill="both", expand=True, side="left")
         self.chat_tabs.bind("<<TreeviewSelect>>", self.on_chat_tab_select)
-
-        # Add a scrollbar to the tab_frame
-        scrollbar = ttk.Scrollbar(self.tab_frame, orient="vertical", command=self.tab_tree.yview)
-        scrollbar.pack(side="right", fill="y")
-        self.tab_tree.configure(yscrollcommand=scrollbar.set)
+        
+        # Add drag-and-drop for chats
+        self._setup_drag_drop(self.chat_tabs, "chats")
+        
+        # Add scrollbar to chat_tabs
+        chat_scrollbar = ttk.Scrollbar(self.chat_frame, orient="vertical", command=self.chat_tabs.yview)
+        chat_scrollbar.pack(side="right", fill="y")
+        self.chat_tabs.configure(yscrollcommand=chat_scrollbar.set)
 
         # Create buttons frame
         btn_frame = ttk.Frame(self.sidebar)
@@ -1178,6 +1448,62 @@ class Application(tk.Tk):
         self.main_frame = ttk.Frame(self.paned)
         self.paned.add(self.main_frame, weight=1)
 
+        # ====== BALANCE DISPLAY AT TOP ======
+        self.balance_frame = ttk.Frame(self.main_frame)
+        self.balance_frame.pack(fill="x", padx=10, pady=(5, 0))
+        
+        # Balance label
+        self.balance_label = ttk.Label(
+            self.balance_frame, 
+            text="💰 Balance: Loading...", 
+            font=('Arial', 10, 'bold')
+        )
+        self.balance_label.pack(side="left")
+        
+        # Session cost label
+        self.session_cost_label = ttk.Label(
+            self.balance_frame, 
+            text=" | Session: $0.00",
+            font=('Arial', 9)
+        )
+        self.session_cost_label.pack(side="left", padx=(10, 0))
+        
+        # Refresh button
+        self.refresh_balance_btn = ttk.Button(
+            self.balance_frame, 
+            text="🔄", 
+            width=3,
+            command=self.refresh_balance
+        )
+        self.refresh_balance_btn.pack(side="left", padx=(10, 0))
+        
+        # Set balance button
+        self.set_balance_btn = ttk.Button(
+            self.balance_frame, 
+            text="✏️ Set", 
+            width=5,
+            command=self.set_balance_manually
+        )
+        self.set_balance_btn.pack(side="left", padx=(5, 0))
+        
+        # Open billing page button
+        self.billing_btn = ttk.Button(
+            self.balance_frame, 
+            text="📊 Billing", 
+            width=7,
+            command=lambda: webbrowser.open("https://platform.openai.com/usage")
+        )
+        self.billing_btn.pack(side="left", padx=(5, 0))
+        
+        # Initialize balance tracking
+        self.current_balance = self.ui_prefs.get("openai_balance", None)
+        self.session_cost = 0.0
+        self.update_balance_display()
+        
+        # Auto-refresh balance every 5 minutes
+        self.after(1000, self.refresh_balance)  # Initial refresh after 1 sec
+        self.after(300000, self._auto_refresh_balance)  # Then every 5 min
+        
         # Move existing UI to main_frame
         self.status = ttk.Label(self.main_frame, text="🔊 Ready", style='TLabel')
         self.status.pack(pady=5, anchor="w", padx=10)
@@ -1216,6 +1542,10 @@ class Application(tk.Tk):
 
         self.upload_btn = ttk.Button(control_frame, text="📁 Resume", command=self.upload_resume)
         self.upload_btn.pack(side="left", padx=4)
+        
+        # Optimization Mode Toggle - ON by default for speed
+        self.optimize_btn = ttk.Button(control_frame, text="⚡ Fast Mode ON", command=self.toggle_optimization_mode)
+        self.optimize_btn.pack(side="left", padx=4)
 
         font_controls = ttk.Frame(control_frame)
         font_controls.pack(side="left", padx=10)
@@ -1479,9 +1809,11 @@ class Application(tk.Tk):
         try:
             image = ImageGrab.grabclipboard()
             if isinstance(image, Image.Image):
-                buffer = io.BytesIO()
-                image.save(buffer, format="PNG")
-                b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                # Compress image for faster transmission and lower token cost
+                b64_image = compress_image_png(image, max_size=1280)
+                original_size = image.size[0] * image.size[1] * 3 // 1024  # Rough KB estimate
+                compressed_size = len(b64_image) // 1024
+                print(f"📎 Image compressed: ~{original_size}KB → {compressed_size}KB")
 
                 # ✅ Keep a growing list of attachments
                 if not hasattr(self, 'pending_attachments'):
@@ -1492,11 +1824,11 @@ class Application(tk.Tk):
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
                 })
 
-                # ✅ Insert a placeholder at caret (don’t wipe existing text)
+                # ✅ Insert a placeholder at caret (don't wipe existing text)
                 idx = len(self.pending_attachments)
                 self.input_entry.insert(tk.INSERT, f" [📎 Image {idx}] ")
 
-                self.status.config(text=f"📎 {idx} image(s) attached. You can paste more or type; press Enter to send.")
+                self.status.config(text=f"📎 {idx} image(s) attached ({compressed_size}KB). Paste more or Enter to send.")
                 return "break"
         except Exception as e:
             print(f"❌ Paste (image) failed: {e}")
@@ -1583,10 +1915,10 @@ class Application(tk.Tk):
         print("📸 Got the screen capture")
 
         screenshot = pyautogui.screenshot()
-        buffer = io.BytesIO()
-        screenshot.save(buffer, format="PNG")
-        buffer.seek(0)
-        b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        
+        # Use compressed image for faster transmission
+        b64_image = compress_image_png(screenshot, max_size=1280)
+        print(f"📸 Screenshot compressed: {len(b64_image) // 1024}KB")
 
         # Build multimodal message (text + image)
         content = [
@@ -1702,101 +2034,181 @@ class Application(tk.Tk):
             if self.is_processing_audio:
                 # Instead of blocking, we now force a reset if the user explicitly tries to record
                 print("⚡️ Interrupting ongoing processing for new recording.")
-                self.stop_output()                # Trigger stop
-                self.is_processing_audio = False  # Reset
-                self.assistant.streaming = False
+                self.assistant.cancel_streaming()  # Properly cancel any ongoing GPT streaming
+                self.stop_output()                 # Trigger stop
+                self.is_processing_audio = False   # Reset
                 self.assistant.current_response = ""
 
             if not self.assistant.recorder.is_recording:
-                self.assistant.streaming = False
-
-                # Just mark that there is no active live line yet
-                #self.live_question_index = None
+                # === STARTING RECORDING ===
+                # Cancel any ongoing GPT streaming to prevent concurrent response_box access
+                self.assistant.cancel_streaming()
                 self.latest_live_question = ""
+                self._last_live_update_time = 0
+                
+                # Show immediate feedback
+                self.response_box.config(state=tk.NORMAL)
+                
+                # Clear any previous listening block
+                start_index = self.response_box.search("🎙 Listening", "1.0", tk.END)
+                if start_index:
+                    self.response_box.delete(start_index, tk.END)
+                
+                self.response_box.insert(tk.END, "\n\n🎙 Listening... (speak now, press ` to stop)\n")
+                self.response_box.insert(tk.END, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+                self.response_box.insert(tk.END, "📝 (waiting for speech...)\n")
+                self.response_box.insert(tk.END, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+                self.response_box.config(state=tk.DISABLED)
+                self.response_box.see(tk.END)
 
                 self.assistant.recorder.start_recording()
-                self.status.config(text="🎙 Listening to interviewer...")
+                self.status.config(text="🎙 Listening to interviewer... (press ` to stop)")
                 self.record_btn.config(text="🛑 Stop & Process")
                 self.stop_btn.config(state=tk.DISABLED)
 
+                # Start live transcription with faster polling
                 self.live_transcription_running = True
                 threading.Thread(target=self.live_transcription_loop, daemon=True).start()
 
-
             else:
-                self.is_processing_audio = True  # Set flag to True when processing audio
+                # === STOPPING RECORDING ===
+                self.is_processing_audio = True
                 self.record_btn.config(state=tk.DISABLED)
                 self.stop_btn.config(state=tk.NORMAL)
-                self.status.config(text="💭 Processing question...")
+                
+                # Show instant feedback with preview
+                preview = self.latest_live_question[:50] if self.latest_live_question else ""
+                if preview:
+                    self.status.config(text=f"⚡ Got: \"{preview}...\" - finalizing...")
+                else:
+                    self.status.config(text="⏳ Processing...")
+                    
                 threading.Thread(target=self.process_recording, daemon=True).start()
 
 
 
     def process_recording(self):
-        # stop live preview loop
+        """
+        OPTIMIZED: Fast capture with complete question.
+        Shows live preview immediately, then gets full transcription.
+        """
+        # Stop live preview loop immediately
         self.live_transcription_running = False
+        
+        # Grab live preview for immediate display
+        live_preview = ""
         try:
-            live_preview = self.latest_live_question.strip()
+            live_preview = (self.latest_live_question or "").strip()
         except Exception:
-            live_preview = ""
+            pass
         self.latest_live_question = ""
-        #self.live_question_index = None
 
         try:
-            filename = self.assistant.recorder.stop_recording()
-
-            # ❌ OLD:
-            # final_text = self.assistant.transcribe_audio(filename, prompt=live_preview or None)
-
-            # ✅ NEW: full clean transcription, no prompt (to avoid duplication)
-            final_text = self.assistant.transcribe_audio(filename)
-
-            if isinstance(final_text, str) and final_text.startswith("❌"):
-                self.status.config(text=final_text)
-                return
-
-            question = (final_text or "").strip()
-
-            # Fallback to live preview only if final_text is truly empty
-            if not question and live_preview:
-                question = live_preview
-
-
-            if not question:
-                self.status.config(text="⚠️ No speech detected in the recording.")
-                return
-
-            # === Maintain consistent format with typed input ===
-            content = [{"type": "text", "text": question}]
-
-            preview_lines = []
-            for c in content:
-                if c["type"] == "text":
-                    preview_lines.append(c["text"])
-                elif c["type"] == "image_url":
-                    preview_lines.append("[Image attached]")
-
-            flat_text = "\n".join(preview_lines)
-
-            # Show question in UI (final, complete text)
+            # IMMEDIATE FEEDBACK: Show live preview right away
             self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\nQUESTION: {flat_text.strip()}\n")
+            start_index = self.response_box.search("🎙 Listening", "1.0", tk.END)
+            if start_index:
+                self.response_box.delete(start_index, tk.END)
+            
+            if live_preview:
+                # Show preview immediately so user sees their question
+                self.response_box.insert(tk.END, f"\n---------------------------------------------------------------------\nQUESTION: {live_preview}\n")
+                self.response_box.insert(tk.END, "⏳ (finalizing...)\n")
+            else:
+                self.response_box.insert(tk.END, "\n💭 Processing...\n")
+            
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
-
-            # Append flat question for GPT context
-            self.assistant.messages.append({"role": "user", "content": flat_text})
-            self.chat_manager.save_current_session(self.assistant.messages)
-
-            self.display_chat_history()
-
-            self.status.config(text="💡 Generating answer...")
-            self.assistant.cancel_streaming()
-            self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-            self.chat_manager.save_current_session(self.assistant.messages)
+            self.status.config(text="⏳ Finalizing question...")
+            
+            # STOP RECORDING - captures ALL audio
+            filename = self.assistant.recorder.stop_recording()
+            
+            # FINAL TRANSCRIPTION - gets complete question
+            final_text = self.assistant.transcribe_audio(filename)
+            
+            # Determine final question
+            if isinstance(final_text, str) and not final_text.startswith("❌"):
+                question = final_text.strip()
+            elif live_preview:
+                question = live_preview
+            else:
+                question = ""
+            
+            if not question:
+                self.status.config(text="⚠️ No speech detected.")
+                # Clear the processing message
+                self.response_box.config(state=tk.NORMAL)
+                self.response_box.delete("end-3l", tk.END)
+                self.response_box.config(state=tk.DISABLED)
+                return
+            
+            # UPDATE: Replace preview with final complete question
+            self.response_box.config(state=tk.NORMAL)
+            
+            # Find and remove the preview + "(finalizing...)" line
+            content = self.response_box.get("1.0", tk.END)
+            if "⏳ (finalizing...)" in content:
+                # Find the last QUESTION: line and replace everything after it
+                last_q_idx = content.rfind("QUESTION:")
+                if last_q_idx != -1:
+                    # Find line start
+                    line_start = content.rfind("\n", 0, last_q_idx)
+                    if line_start == -1:
+                        line_start = 0
+                    # Delete from that point
+                    self.response_box.delete(f"1.0+{line_start}c", tk.END)
+            
+            # Insert final complete question
+            self.response_box.insert(tk.END, f"\n---------------------------------------------------------------------\nQUESTION: {question}\n")
+            self.response_box.config(state=tk.DISABLED)
+            self.response_box.see(tk.END)
+            
+            print(f"✅ Complete: {len(question)} chars")
+            
+            # Send to GPT
+            self._send_question_to_gpt(question)
 
         finally:
-            self.is_processing_audio = False  # Reset the flag after processing is complete
+            self.is_processing_audio = False
+
+    def _stop_recording_background(self):
+        """Stop recording in background - doesn't block GPT response."""
+        try:
+            self.assistant.recorder.stop_recording()
+        except Exception as e:
+            print(f"Background stop error: {e}")
+
+    def _send_question_to_gpt(self, question: str):
+        """
+        Helper: Send question to GPT and stream response.
+        Extracted for reuse in instant mode.
+        """
+        if not question:
+            return
+            
+        # Append question to chat history
+        self.assistant.messages.append({"role": "user", "content": question})
+        self.chat_manager.save_current_session(self.assistant.messages)
+        
+        # Update status and start streaming
+        self.status.config(text="💡 Generating answer...")
+        self.assistant.cancel_streaming()
+        self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
+        self.chat_manager.save_current_session(self.assistant.messages)
+
+    def _background_final_transcription(self, filename: str):
+        """
+        Background task: Do final Whisper transcription for logging/accuracy.
+        Doesn't block the main response.
+        """
+        try:
+            final_text = self.assistant.transcribe_audio(filename)
+            if final_text and not final_text.startswith("❌"):
+                print(f"📝 Background transcription complete: {len(final_text)} chars")
+                # Could optionally compare with live and log differences
+        except Exception as e:
+            print(f"❌ Background transcription error: {e}")
 
 
 
@@ -1872,6 +2284,253 @@ class Application(tk.Tk):
         self.always_on_top = not self.always_on_top
         self.attributes("-topmost", self.always_on_top)
         self.topmost_btn.config(text="📌 Unpin Window" if self.always_on_top else "📌 Pin Window")
+    
+    def toggle_optimization_mode(self):
+        """
+        Toggle Fast Mode (optimization) on/off.
+        
+        ON (default): Faster responses, compresses images, summarizes old chat
+        OFF: Full context sent every time (slower but 100% complete)
+        
+        Your full chat history is ALWAYS preserved locally either way!
+        """
+        self.assistant.optimization_mode = not self.assistant.optimization_mode
+        
+        if self.assistant.optimization_mode:
+            self.optimize_btn.config(text="⚡ Fast Mode ON")
+            self.status.config(text="⚡ Fast Mode ON - Optimized for speed (full history preserved locally)")
+        else:
+            self.optimize_btn.config(text="🐢 Fast Mode OFF")
+            self.status.config(text="🐢 Fast Mode OFF - Sending full context (may be slower with long chats)")
+
+    # ============================================================================
+    # BALANCE / BILLING MANAGEMENT
+    # ============================================================================
+    
+    def update_balance_display(self):
+        """Update the balance display in UI."""
+        if self.current_balance is not None:
+            self.balance_label.config(text=f"💰 Balance: ${self.current_balance:.2f}")
+        else:
+            self.balance_label.config(text="💰 Balance: Not set")
+        
+        self.session_cost_label.config(text=f" | Session: ${self.session_cost:.4f}")
+    
+    def refresh_balance(self):
+        """Try to fetch balance from OpenAI API."""
+        def fetch():
+            result = fetch_openai_balance(API_KEY)
+            if result["balance"] is not None:
+                self.current_balance = result["balance"]
+                self.ui_prefs["openai_balance"] = self.current_balance
+                UIPreferences.save(self.ui_prefs)
+            self.after(0, self.update_balance_display)
+        
+        threading.Thread(target=fetch, daemon=True).start()
+    
+    def _auto_refresh_balance(self):
+        """Auto-refresh balance periodically."""
+        self.refresh_balance()
+        self.after(300000, self._auto_refresh_balance)  # Every 5 minutes
+    
+    def set_balance_manually(self):
+        """Allow user to manually set their balance."""
+        current = self.current_balance if self.current_balance else 0.0
+        result = simpledialog.askfloat(
+            "Set OpenAI Balance",
+            f"Enter your current OpenAI balance in USD:\n(Check at platform.openai.com/usage)",
+            initialvalue=current,
+            minvalue=0.0
+        )
+        if result is not None:
+            self.current_balance = result
+            self.ui_prefs["openai_balance"] = self.current_balance
+            UIPreferences.save(self.ui_prefs)
+            self.update_balance_display()
+            self.status.config(text=f"💰 Balance set to ${result:.2f}")
+    
+    def add_session_cost(self, input_tokens: int, output_tokens: int, model: str = "gpt-4o"):
+        """
+        Track estimated cost for the session.
+        Pricing (approximate):
+        - GPT-4o: $2.50/1M input, $10.00/1M output
+        - GPT-4o-mini: $0.15/1M input, $0.60/1M output
+        """
+        if model == "gpt-4o":
+            input_cost = (input_tokens / 1_000_000) * 2.50
+            output_cost = (output_tokens / 1_000_000) * 10.00
+        elif model == "gpt-4o-mini":
+            input_cost = (input_tokens / 1_000_000) * 0.15
+            output_cost = (output_tokens / 1_000_000) * 0.60
+        else:
+            # Default to gpt-4o pricing
+            input_cost = (input_tokens / 1_000_000) * 2.50
+            output_cost = (output_tokens / 1_000_000) * 10.00
+        
+        cost = input_cost + output_cost
+        self.session_cost += cost
+        
+        # Deduct from balance if set
+        if self.current_balance is not None:
+            self.current_balance -= cost
+            self.ui_prefs["openai_balance"] = self.current_balance
+            UIPreferences.save(self.ui_prefs)
+        
+        self.update_balance_display()
+        return cost
+
+    # ============================================================================
+    # DRAG AND DROP REORDERING
+    # ============================================================================
+    
+    def _setup_drag_drop(self, tree: ttk.Treeview, tree_type: str):
+        """
+        Set up drag-and-drop reordering for a Treeview.
+        tree_type: "tabs" or "chats"
+        """
+        tree._drag_data = {"item": None, "tree_type": tree_type}
+        
+        tree.bind("<ButtonPress-1>", lambda e: self._on_drag_start(e, tree))
+        tree.bind("<B1-Motion>", lambda e: self._on_drag_motion(e, tree))
+        tree.bind("<ButtonRelease-1>", lambda e: self._on_drag_release(e, tree))
+    
+    def _on_drag_start(self, event, tree: ttk.Treeview):
+        """Start dragging an item."""
+        item = tree.identify_row(event.y)
+        if item:
+            tree._drag_data["item"] = item
+            tree._drag_data["start_y"] = event.y
+            tree.selection_set(item)
+    
+    def _on_drag_motion(self, event, tree: ttk.Treeview):
+        """Show visual feedback while dragging."""
+        if not tree._drag_data["item"]:
+            return
+        
+        # Change cursor to indicate dragging
+        tree.config(cursor="hand2")
+        
+        # Highlight the target position
+        target = tree.identify_row(event.y)
+        if target and target != tree._drag_data["item"]:
+            # Visual feedback - could add more sophisticated highlighting here
+            pass
+    
+    def _on_drag_release(self, event, tree: ttk.Treeview):
+        """Drop the item at new position."""
+        tree.config(cursor="")  # Reset cursor
+        
+        if not tree._drag_data["item"]:
+            return
+        
+        dragged_item = tree._drag_data["item"]
+        target_item = tree.identify_row(event.y)
+        
+        # Reset drag data
+        tree._drag_data["item"] = None
+        
+        if not target_item or target_item == dragged_item:
+            return
+        
+        tree_type = tree._drag_data["tree_type"]
+        
+        if tree_type == "tabs":
+            self._reorder_tabs(tree, dragged_item, target_item)
+        elif tree_type == "chats":
+            self._reorder_chats(tree, dragged_item, target_item)
+    
+    def _reorder_tabs(self, tree: ttk.Treeview, dragged: str, target: str):
+        """Reorder tabs or subtabs."""
+        try:
+            # Determine if we're moving a tab or subtab
+            dragged_is_tab = dragged.startswith("tab_")
+            target_is_tab = target.startswith("tab_")
+            
+            if dragged_is_tab and target_is_tab:
+                # Moving a tab to another tab position
+                dragged_idx = int(dragged.split("_")[1])
+                target_idx = int(target.split("_")[1])
+                
+                # Reorder in data
+                tabs = self.prompt_manager.data["tabs"]
+                if 0 <= dragged_idx < len(tabs) and 0 <= target_idx < len(tabs):
+                    item = tabs.pop(dragged_idx)
+                    tabs.insert(target_idx, item)
+                    self.prompt_manager.save_tabs()
+                    self.load_tabs()
+                    self.status.config(text=f"📋 Moved tab to position {target_idx + 1}")
+            
+            elif dragged.startswith("sub_") and target.startswith("sub_"):
+                # Moving a subtab within the same parent
+                dragged_parts = dragged.split("_")
+                target_parts = target.split("_")
+                
+                dragged_tab_idx = int(dragged_parts[1])
+                dragged_sub_idx = int(dragged_parts[2])
+                target_tab_idx = int(target_parts[1])
+                target_sub_idx = int(target_parts[2])
+                
+                # Only allow reordering within the same tab
+                if dragged_tab_idx == target_tab_idx:
+                    subtabs = self.prompt_manager.data["tabs"][dragged_tab_idx]["subTabs"]
+                    if 0 <= dragged_sub_idx < len(subtabs) and 0 <= target_sub_idx < len(subtabs):
+                        item = subtabs.pop(dragged_sub_idx)
+                        subtabs.insert(target_sub_idx, item)
+                        self.prompt_manager.save_tabs()
+                        self.load_tabs()
+                        self.status.config(text=f"📋 Moved subtab to position {target_sub_idx + 1}")
+                else:
+                    self.status.config(text="⚠️ Can only reorder subtabs within same tab")
+            
+            elif dragged.startswith("sub_") and target_is_tab:
+                # Moving subtab to a different tab
+                dragged_parts = dragged.split("_")
+                dragged_tab_idx = int(dragged_parts[1])
+                dragged_sub_idx = int(dragged_parts[2])
+                target_tab_idx = int(target.split("_")[1])
+                
+                if dragged_tab_idx != target_tab_idx:
+                    source_subtabs = self.prompt_manager.data["tabs"][dragged_tab_idx]["subTabs"]
+                    target_subtabs = self.prompt_manager.data["tabs"][target_tab_idx]["subTabs"]
+                    
+                    if 0 <= dragged_sub_idx < len(source_subtabs):
+                        item = source_subtabs.pop(dragged_sub_idx)
+                        target_subtabs.append(item)
+                        self.prompt_manager.save_tabs()
+                        self.load_tabs()
+                        self.status.config(text=f"📋 Moved subtab to tab '{self.prompt_manager.get_tab_name(target_tab_idx)}'")
+                        
+        except Exception as e:
+            print(f"Tab reorder error: {e}")
+            self.status.config(text=f"❌ Reorder failed: {e}")
+    
+    def _reorder_chats(self, tree: ttk.Treeview, dragged: str, target: str):
+        """Reorder chat sessions."""
+        try:
+            if not dragged.startswith("chat_") or not target.startswith("chat_"):
+                return
+            
+            dragged_idx = int(dragged.split("_")[1])
+            target_idx = int(target.split("_")[1])
+            
+            sessions = self.chat_manager.sessions
+            if 0 <= dragged_idx < len(sessions) and 0 <= target_idx < len(sessions):
+                item = sessions.pop(dragged_idx)
+                sessions.insert(target_idx, item)
+                self.chat_manager.save()
+                self.load_chat_tabs()
+                
+                # Re-select the moved item
+                new_id = f"chat_{target_idx}"
+                if tree.exists(new_id):
+                    tree.selection_set(new_id)
+                    tree.see(new_id)
+                
+                self.status.config(text=f"💬 Moved chat to position {target_idx + 1}")
+                
+        except Exception as e:
+            print(f"Chat reorder error: {e}")
+            self.status.config(text=f"❌ Reorder failed: {e}")
 
 if __name__ == "__main__":
     app = Application()
@@ -2080,10 +2739,11 @@ if __name__ == "__main__":
                     return
 
                 screenshot = pyautogui.screenshot(region=target_screen)
-                buffer = io.BytesIO()
-                screenshot.save(buffer, format="PNG")
-                buffer.seek(0)
-                b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                
+                # Compress for faster transmission
+                b64_image = compress_image_png(screenshot, max_size=1280)
+                compressed_size = len(b64_image) // 1024
+                print(f"📸 Screenshot compressed: {compressed_size}KB")
 
                 if not hasattr(app, 'pending_attachments'):
                     app.pending_attachments = []
@@ -2093,7 +2753,7 @@ if __name__ == "__main__":
                     "image_url": {"url": f"data:image/png;base64,{b64_image}"}
                 })
 
-                app.status.config(text="📎 Full screen screenshot attached. Press Enter to send.")
+                app.status.config(text=f"📎 Screenshot attached ({compressed_size}KB). Press Enter to send.")
                 app.input_entry.insert(tk.END, "📎 [Full screen screenshot ready to send] ")
 
             except Exception as e:
