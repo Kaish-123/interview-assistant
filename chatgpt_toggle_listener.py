@@ -1244,8 +1244,8 @@ class Application(tk.Tk):
         self.latest_live_question = ""   # last incremental text from Whisper
         self.live_question_index = None  # index of the "Live Question" line in the Text widget
         
-        # Answer Quality Mode: "quick", "detailed", "code"
-        self.answer_mode = "detailed"  # Default mode
+        # Answer Quality Mode: "default", "quick", "detailed", "code"
+        self.answer_mode = "default"  # Default mode - normal GPT behavior
 
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
@@ -1652,14 +1652,16 @@ class Application(tk.Tk):
             self.status.config(text="🔈 Switched to Internal Audio (BlackHole)")
 
     def toggle_answer_mode(self):
-        """Cycle through answer quality modes: Quick → Detailed → Code → Quick"""
-        modes = ["quick", "detailed", "code"]
+        """Cycle through answer quality modes: Default → Quick → Detailed → Code → Default"""
+        modes = ["default", "quick", "detailed", "code"]
         mode_labels = {
+            "default": "🔘 Default",
             "quick": "⚡ Quick",
             "detailed": "📝 Detailed", 
             "code": "💻 Code"
         }
         mode_descriptions = {
+            "default": "Normal GPT behavior",
             "quick": "Short, concise answers",
             "detailed": "Comprehensive explanations",
             "code": "Focus on code examples"
@@ -1677,6 +1679,7 @@ class Application(tk.Tk):
     def get_answer_mode_instruction(self):
         """Return instruction text based on current answer mode"""
         instructions = {
+            "default": "",  # No special instruction - normal GPT behavior
             "quick": "\n\n[INSTRUCTION: Provide SHORT, CONCISE answers like a real human expert would in a conversation. Be brief and natural. IMPORTANT: Sound like a real person - avoid AI phrases like 'Certainly!', 'I'd be happy to', 'As an AI'. Don't be overly formal or structured. Just answer naturally like a knowledgeable colleague would. Maximum 2-3 sentences.]",
             "detailed": "\n\n[INSTRUCTION: Provide COMPREHENSIVE explanations like a senior developer explaining to a teammate. IMPORTANT: Sound completely HUMAN - avoid typical AI patterns like 'Certainly!', 'Great question!', 'I'd be happy to help', 'As an AI'. Don't use excessive bullet points or overly structured formats. Speak naturally, use casual professional tone, include real-world context. Explain like you're a human expert having a conversation, not a chatbot giving a formal response.]",
             "code": "\n\n[INSTRUCTION: Focus on CODE EXAMPLES. Provide working code snippets with brief explanations. Prioritize practical, copy-paste ready code.]"
@@ -1954,7 +1957,7 @@ class Application(tk.Tk):
         self.new_chat_btn.pack(side="left", padx=4)
 
         # Answer Quality Mode toggle button
-        self.answer_mode_btn = ttk.Button(control_frame, text="📝 Detailed", command=self.toggle_answer_mode)
+        self.answer_mode_btn = ttk.Button(control_frame, text="🔘 Default", command=self.toggle_answer_mode)
         self.answer_mode_btn.pack(side="left", padx=4)
 
         self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
@@ -3307,6 +3310,20 @@ class Application(tk.Tk):
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
+        # Enable mouse wheel scrolling (macOS compatible)
+        def _on_mousewheel(event):
+            # macOS uses smaller delta values, Windows uses 120/-120
+            if event.delta:
+                # Normalize scroll direction
+                scroll_amount = -1 if event.delta > 0 else 1
+                canvas.yview_scroll(scroll_amount, "units")
+        
+        # Bind mouse wheel to canvas and dialog
+        canvas.bind("<MouseWheel>", _on_mousewheel)
+        dialog.bind("<MouseWheel>", _on_mousewheel)
+        # Also bind to scrollable_frame for when mouse is over items
+        scrollable_frame.bind("<MouseWheel>", _on_mousewheel)
+        
         canvas.pack(side="left", fill="both", expand=True, padx=10)
         scrollbar.pack(side="right", fill="y")
         
@@ -3324,6 +3341,10 @@ class Application(tk.Tk):
                 command=lambda p=pos, t=q_text[:40]: self._bookmark_and_jump(p, t, dialog)
             )
             btn.pack(fill="x")
+            
+            # Bind mousewheel to each frame and button for scrolling
+            frame.bind("<MouseWheel>", _on_mousewheel)
+            btn.bind("<MouseWheel>", _on_mousewheel)
         
         # Close button
         ttk.Button(dialog, text="Close", command=dialog.destroy).pack(pady=10)
