@@ -1897,15 +1897,15 @@ class Application(tk.Tk):
         self.diag_btn = ttk.Button(control_frame, text="📊 Report", command=self.show_performance_dialog)
         self.diag_btn.pack(side="left", padx=4)
 
+        # New chat button - between Report and Listen
+        self.new_chat_btn = ttk.Button(control_frame, text="🆕 New", command=self.start_new_chat)
+        self.new_chat_btn.pack(side="left", padx=4)
+
         self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
         self.record_btn.pack(side="left", padx=4)
         
         self.toggle_input_btn = ttk.Button(control_frame, text="🔈 Internal Audio (BlackHole)", command=self.toggle_input_mode)
         self.toggle_input_btn.pack(side="left", padx=4)
-
-
-        self.new_chat_btn = ttk.Button(control_frame, text="🆕 New", command=self.start_new_chat)
-        self.new_chat_btn.pack(side="left", padx=4)
 
         self.stop_btn = ttk.Button(control_frame, text="⏹ Stop", command=self.stop_output, state=tk.DISABLED)
         self.stop_btn.pack(side="left", padx=4)
