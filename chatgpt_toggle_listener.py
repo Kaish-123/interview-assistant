@@ -918,6 +918,11 @@ class Application(tk.Tk):
         # 🚀 Quick Setup shortcut: Cmd+Shift+S (or Ctrl+Shift+S on Windows)
         self.bind("<Command-Shift-s>", lambda e: self.open_quick_setup())
         self.bind("<Control-Shift-s>", lambda e: self.open_quick_setup())
+        
+        # 🔖 Bookmark shortcut: Cmd+B or F4
+        self.bind("<Command-b>", lambda e: self.add_bookmark_at_cursor())
+        self.bind("<Control-b>", lambda e: self.add_bookmark_at_cursor())
+        self.bind("<F4>", lambda e: self.add_bookmark_at_cursor())
 
         # Apply sash (split) after widgets exist
         self.after(0, self.apply_ui_prefs)
@@ -1526,6 +1531,40 @@ class Application(tk.Tk):
         self.response_box.insert(tk.END, "🤖 Start a new conversation or ask your first question...")
         self.response_box.config(state=tk.DISABLED)
         self.response_box.tag_configure('code', foreground='#4EC9B0')
+        self.response_box.tag_configure('bookmark_highlight', background='#4a4a00', foreground='#ffff00')
+        
+        # Right-click context menu for bookmarking
+        self.response_box.bind("<Button-2>", self._show_bookmark_menu)  # Middle click on Mac
+        self.response_box.bind("<Button-3>", self._show_bookmark_menu)  # Right click
+        self.response_box.bind("<Control-Button-1>", self._show_bookmark_menu)  # Ctrl+click on Mac
+
+        # ====== BOOKMARK/POINTER PANEL (like debug breakpoints) ======
+        self.bookmark_frame = ttk.Frame(text_frame, width=30)
+        self.bookmark_frame.pack(side="right", fill="y", padx=(2, 0))
+        self.bookmark_frame.pack_propagate(False)
+        
+        # Bookmark header
+        bookmark_header = ttk.Label(self.bookmark_frame, text="📍", font=('Arial', 10))
+        bookmark_header.pack(pady=2)
+        
+        # Bookmark listbox (shows pointers)
+        self.bookmark_listbox = tk.Listbox(
+            self.bookmark_frame, 
+            bg='#2d2d30', 
+            fg='#ffd700',  # Gold color for pointers
+            selectbackground='#4a4a00',
+            selectforeground='#ffff00',
+            font=('Arial', 9),
+            width=4,
+            highlightthickness=0,
+            borderwidth=0
+        )
+        self.bookmark_listbox.pack(fill="both", expand=True)
+        self.bookmark_listbox.bind("<<ListboxSelect>>", self._on_bookmark_click)
+        self.bookmark_listbox.bind("<Double-Button-1>", self._on_bookmark_delete)
+        
+        # Store bookmarks: [(line_index, question_preview), ...]
+        self.bookmarks = []
 
         scrollbar = ttk.Scrollbar(text_frame, command=self.response_box.yview)
         scrollbar.pack(side="right", fill="y")
@@ -1562,6 +1601,14 @@ class Application(tk.Tk):
 
         self.topmost_btn = ttk.Button(control_frame, text="📌 Pin", command=self.toggle_always_on_top)
         self.topmost_btn.pack(side="right", padx=4)
+        
+        # Bookmark/Pointer button - mark questions for quick navigation
+        self.bookmark_btn = ttk.Button(control_frame, text="🔖 Mark Q", command=self.add_bookmark_at_cursor)
+        self.bookmark_btn.pack(side="right", padx=4)
+        
+        # Clear bookmarks button
+        self.clear_bookmarks_btn = ttk.Button(control_frame, text="🗑 Clear", command=self.clear_all_bookmarks, width=6)
+        self.clear_bookmarks_btn.pack(side="right", padx=2)
 
         # Chat input bar at bottom
         input_frame = ttk.Frame(self.main_frame)
@@ -2541,6 +2588,366 @@ class Application(tk.Tk):
         self.attributes("-topmost", self.always_on_top)
         self.topmost_btn.config(text="📌 Unpin Window" if self.always_on_top else "📌 Pin Window")
     
+    # ============================================================================
+    # BOOKMARK/POINTER SYSTEM - Quick navigation to questions (like debug breakpoints)
+    # ============================================================================
+    
+    def add_bookmark_at_cursor(self):
+        """
+        Add a bookmark at the nearest QUESTION in the response box.
+        Searches backward from current view to find 'QUESTION:' line.
+        """
+        try:
+            # Get current visible position
+            visible_start = self.response_box.index("@0,0")
+            
+            # Search backward for "QUESTION:" from current view
+            question_pos = self.response_box.search(
+                "QUESTION:", 
+                visible_start, 
+                backwards=True, 
+                stopindex="1.0"
+            )
+            
+            # If not found backwards, search forward
+            if not question_pos:
+                question_pos = self.response_box.search(
+                    "QUESTION:", 
+                    visible_start, 
+                    forwards=True, 
+                    stopindex=tk.END
+                )
+            
+            if not question_pos:
+                # No question found, bookmark current visible line
+                question_pos = visible_start
+                self._add_bookmark(question_pos, "📍 Manual mark")
+            else:
+                # Get the question text (rest of that line)
+                line_end = f"{question_pos.split('.')[0]}.end"
+                question_text = self.response_box.get(question_pos, line_end).strip()
+                
+                # Truncate for display
+                if len(question_text) > 40:
+                    question_text = question_text[:37] + "..."
+                
+                self._add_bookmark(question_pos, question_text)
+                
+        except Exception as e:
+            print(f"Bookmark error: {e}")
+            self.status.config(text=f"❌ Bookmark error: {e}")
+    
+    def add_bookmark_at_position(self, line_index: str, preview: str = ""):
+        """Add a bookmark at a specific position (called programmatically)."""
+        self._add_bookmark(line_index, preview or f"Q at line {line_index.split('.')[0]}")
+    
+    def _add_bookmark(self, line_index: str, preview: str):
+        """Internal method to add a bookmark."""
+        # Check if already bookmarked (same line)
+        line_num = line_index.split('.')[0]
+        for existing_idx, _ in self.bookmarks:
+            if existing_idx.split('.')[0] == line_num:
+                self.status.config(text="⚠️ This line is already bookmarked")
+                return
+        
+        # Add to bookmarks list
+        bookmark_num = len(self.bookmarks) + 1
+        self.bookmarks.append((line_index, preview))
+        
+        # Add to listbox (show number)
+        self.bookmark_listbox.insert(tk.END, f"Q{bookmark_num}")
+        
+        # Highlight the bookmarked line in response box
+        self._highlight_bookmark(line_index)
+        
+        self.status.config(text=f"🔖 Bookmark #{bookmark_num} added: {preview[:30]}...")
+        print(f"📍 Bookmark #{bookmark_num} at {line_index}: {preview}")
+    
+    def _highlight_bookmark(self, line_index: str):
+        """Highlight a bookmarked line in the response box."""
+        try:
+            line_num = line_index.split('.')[0]
+            line_start = f"{line_num}.0"
+            line_end = f"{line_num}.end"
+            
+            self.response_box.config(state=tk.NORMAL)
+            self.response_box.tag_add('bookmark_highlight', line_start, line_end)
+            self.response_box.config(state=tk.DISABLED)
+        except Exception as e:
+            print(f"Highlight error: {e}")
+    
+    def _on_bookmark_click(self, event=None):
+        """Jump to the selected bookmark."""
+        selection = self.bookmark_listbox.curselection()
+        if not selection:
+            return
+        
+        idx = selection[0]
+        if idx < len(self.bookmarks):
+            line_index, preview = self.bookmarks[idx]
+            
+            # Jump to that line
+            self.response_box.see(line_index)
+            
+            # Flash highlight the line briefly
+            self._flash_bookmark(line_index)
+            
+            self.status.config(text=f"📍 Jumped to: {preview[:40]}...")
+    
+    def _flash_bookmark(self, line_index: str):
+        """Flash a bookmark line to draw attention."""
+        try:
+            line_num = line_index.split('.')[0]
+            line_start = f"{line_num}.0"
+            line_end = f"{line_num}.end"
+            
+            # Create flash tag
+            self.response_box.tag_configure('bookmark_flash', background='#ffff00', foreground='#000000')
+            
+            self.response_box.config(state=tk.NORMAL)
+            self.response_box.tag_add('bookmark_flash', line_start, line_end)
+            self.response_box.config(state=tk.DISABLED)
+            
+            # Remove flash after 500ms
+            self.after(500, lambda: self._remove_flash(line_start, line_end))
+        except Exception as e:
+            print(f"Flash error: {e}")
+    
+    def _remove_flash(self, start, end):
+        """Remove the flash highlight."""
+        try:
+            self.response_box.config(state=tk.NORMAL)
+            self.response_box.tag_remove('bookmark_flash', start, end)
+            self.response_box.config(state=tk.DISABLED)
+        except:
+            pass
+    
+    def _on_bookmark_delete(self, event=None):
+        """Delete a bookmark on double-click."""
+        selection = self.bookmark_listbox.curselection()
+        if not selection:
+            return
+        
+        idx = selection[0]
+        if idx < len(self.bookmarks):
+            line_index, preview = self.bookmarks[idx]
+            
+            # Remove highlight
+            try:
+                line_num = line_index.split('.')[0]
+                self.response_box.config(state=tk.NORMAL)
+                self.response_box.tag_remove('bookmark_highlight', f"{line_num}.0", f"{line_num}.end")
+                self.response_box.config(state=tk.DISABLED)
+            except:
+                pass
+            
+            # Remove from list
+            del self.bookmarks[idx]
+            self.bookmark_listbox.delete(idx)
+            
+            # Renumber remaining bookmarks
+            self._renumber_bookmarks()
+            
+            self.status.config(text=f"🗑 Bookmark removed: {preview[:30]}...")
+    
+    def _renumber_bookmarks(self):
+        """Renumber bookmarks after deletion."""
+        self.bookmark_listbox.delete(0, tk.END)
+        for i, (_, _) in enumerate(self.bookmarks):
+            self.bookmark_listbox.insert(tk.END, f"Q{i+1}")
+    
+    def clear_all_bookmarks(self):
+        """Clear all bookmarks."""
+        if not self.bookmarks:
+            self.status.config(text="ℹ️ No bookmarks to clear")
+            return
+        
+        # Remove all highlights
+        try:
+            self.response_box.config(state=tk.NORMAL)
+            self.response_box.tag_remove('bookmark_highlight', "1.0", tk.END)
+            self.response_box.config(state=tk.DISABLED)
+        except:
+            pass
+        
+        # Clear list
+        self.bookmarks.clear()
+        self.bookmark_listbox.delete(0, tk.END)
+        
+        self.status.config(text="🗑 All bookmarks cleared")
+    
+    def auto_bookmark_question(self, question_text: str):
+        """
+        Automatically add a bookmark when a new question is submitted.
+        Called from submit_text_question or process_recording.
+        """
+        try:
+            # Find the latest "QUESTION:" in the response box
+            end_pos = self.response_box.index(tk.END)
+            question_pos = self.response_box.search(
+                "QUESTION:", 
+                end_pos, 
+                backwards=True, 
+                stopindex="1.0"
+            )
+            
+            if question_pos:
+                preview = question_text[:40] + "..." if len(question_text) > 40 else question_text
+                self._add_bookmark(question_pos, f"QUESTION: {preview}")
+        except Exception as e:
+            print(f"Auto-bookmark error: {e}")
+    
+    def _show_bookmark_menu(self, event):
+        """Show context menu for bookmarking at click position."""
+        # Get click position in text widget
+        click_index = self.response_box.index(f"@{event.x},{event.y}")
+        line_num = click_index.split('.')[0]
+        
+        # Get line content
+        line_start = f"{line_num}.0"
+        line_end = f"{line_num}.end"
+        line_text = self.response_box.get(line_start, line_end).strip()
+        
+        # Create popup menu
+        menu = tk.Menu(self, tearoff=0)
+        
+        # Check if this line is already bookmarked
+        is_bookmarked = any(idx.split('.')[0] == line_num for idx, _ in self.bookmarks)
+        
+        if is_bookmarked:
+            menu.add_command(
+                label="🗑 Remove Bookmark", 
+                command=lambda: self._remove_bookmark_at_line(line_num)
+            )
+        else:
+            preview = line_text[:30] + "..." if len(line_text) > 30 else line_text
+            menu.add_command(
+                label=f"🔖 Bookmark Here", 
+                command=lambda: self._add_bookmark(line_start, preview or f"Line {line_num}")
+            )
+        
+        menu.add_separator()
+        
+        # Find nearest question
+        nearest_q = self.response_box.search("QUESTION:", click_index, backwards=True, stopindex="1.0")
+        if nearest_q:
+            q_line = nearest_q.split('.')[0]
+            q_text = self.response_box.get(nearest_q, f"{q_line}.end").strip()[:25]
+            menu.add_command(
+                label=f"🔖 Mark Question: {q_text}...", 
+                command=lambda: self._add_bookmark(nearest_q, q_text)
+            )
+        
+        menu.add_separator()
+        menu.add_command(label="📋 Show All Questions", command=self._show_all_questions_dialog)
+        
+        # Show menu at click position
+        try:
+            menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            menu.grab_release()
+    
+    def _remove_bookmark_at_line(self, line_num: str):
+        """Remove bookmark at a specific line."""
+        for i, (idx, _) in enumerate(self.bookmarks):
+            if idx.split('.')[0] == line_num:
+                # Remove highlight
+                try:
+                    self.response_box.config(state=tk.NORMAL)
+                    self.response_box.tag_remove('bookmark_highlight', f"{line_num}.0", f"{line_num}.end")
+                    self.response_box.config(state=tk.DISABLED)
+                except:
+                    pass
+                
+                del self.bookmarks[i]
+                self._renumber_bookmarks()
+                self.status.config(text=f"🗑 Bookmark removed")
+                return
+    
+    def _show_all_questions_dialog(self):
+        """Show a dialog with all questions for easy bookmarking."""
+        dialog = tk.Toplevel(self)
+        dialog.title("📋 All Questions - Click to Bookmark")
+        dialog.geometry("600x400")
+        dialog.transient(self)
+        
+        # Center on parent
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (600 // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (400 // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        # Find all questions
+        questions = []
+        search_start = "1.0"
+        while True:
+            pos = self.response_box.search("QUESTION:", search_start, stopindex=tk.END)
+            if not pos:
+                break
+            
+            line_num = pos.split('.')[0]
+            line_end = f"{line_num}.end"
+            q_text = self.response_box.get(pos, line_end).strip()
+            
+            # Check if already bookmarked
+            is_bookmarked = any(idx.split('.')[0] == line_num for idx, _ in self.bookmarks)
+            
+            questions.append((pos, q_text, is_bookmarked))
+            search_start = f"{int(line_num) + 1}.0"
+        
+        if not questions:
+            ttk.Label(dialog, text="No questions found in chat", font=('Arial', 12)).pack(pady=20)
+            return
+        
+        # Header
+        ttk.Label(dialog, text=f"Found {len(questions)} questions. Click to bookmark:", font=('Arial', 11, 'bold')).pack(pady=5)
+        
+        # Scrollable list
+        canvas = tk.Canvas(dialog)
+        scrollbar = ttk.Scrollbar(dialog, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        
+        scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        canvas.pack(side="left", fill="both", expand=True, padx=10)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Add each question
+        for i, (pos, q_text, is_bookmarked) in enumerate(questions):
+            frame = ttk.Frame(scrollable_frame)
+            frame.pack(fill="x", pady=2)
+            
+            # Bookmark indicator
+            indicator = "🔖" if is_bookmarked else "○"
+            
+            btn = ttk.Button(
+                frame, 
+                text=f"{indicator} Q{i+1}: {q_text[:60]}{'...' if len(q_text) > 60 else ''}", 
+                command=lambda p=pos, t=q_text[:40]: self._bookmark_and_jump(p, t, dialog)
+            )
+            btn.pack(fill="x")
+        
+        # Close button
+        ttk.Button(dialog, text="Close", command=dialog.destroy).pack(pady=10)
+    
+    def _bookmark_and_jump(self, pos: str, text: str, dialog=None):
+        """Bookmark a question and jump to it."""
+        # Add bookmark if not exists
+        line_num = pos.split('.')[0]
+        is_bookmarked = any(idx.split('.')[0] == line_num for idx, _ in self.bookmarks)
+        
+        if not is_bookmarked:
+            self._add_bookmark(pos, f"QUESTION: {text}")
+        
+        # Jump to it
+        self.response_box.see(pos)
+        self._flash_bookmark(pos)
+        
+        if dialog:
+            dialog.destroy()
+
     def toggle_optimization_mode(self):
         """
         Toggle Fast Mode (optimization) on/off.
