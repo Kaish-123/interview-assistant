@@ -182,19 +182,34 @@ def set_image_status(image_path=None, caption=None):
     pyautogui.click(gallery_x, gallery_y)
     time.sleep(2)
     
-    # Finder opens - navigate to image using Cmd+Shift+G
+    # Finder dialog is open - navigate to folder and select file
     print(f"📂 Selecting image: {os.path.basename(image_path)}")
     time.sleep(1)
     
-    # Use Cmd+Shift+G to go to folder path
+    # Get folder path and filename separately
+    folder_path = os.path.dirname(image_path)
+    filename = os.path.basename(image_path)
+    
+    # Use Cmd+Shift+G to open "Go to folder" dialog, then navigate
     select_file_script = f'''
     tell application "System Events"
+        -- Open "Go to folder" dialog
         keystroke "g" using {{command down, shift down}}
-        delay 1
-        keystroke "{image_path}"
+        delay 1.5
+        
+        -- Type the folder path
+        keystroke "{folder_path}"
         delay 0.5
+        
+        -- Press Go/Enter
         keystroke return
+        delay 2
+        
+        -- Now type the filename to select it
+        keystroke "{filename}"
         delay 1
+        
+        -- Press Enter to open/select the file
         keystroke return
     end tell
     '''
@@ -239,6 +254,9 @@ def set_status(caption=None, with_image=False):
 def list_images():
     """List all images available for status."""
     images = get_images()
+    config = load_config()
+    current_idx = config.get("current_image_index", 0)
+    
     print("\n📷 Available Images in status_images/")
     print("="*50)
     if not images:
@@ -247,8 +265,44 @@ def list_images():
     else:
         for i, img in enumerate(images):
             filename = os.path.basename(img)
-            print(f"   {i+1}. {filename}")
+            marker = " 👈 next" if i == (current_idx % len(images)) else ""
+            print(f"   {i+1}. {filename}{marker}")
     print()
+
+def post_all_images():
+    """Post ALL images from status_images folder as status."""
+    images = get_images()
+    if not images:
+        print("❌ No images found in status_images/ folder!")
+        print(f"   Add images to: {IMAGES_DIR}")
+        return
+    
+    config = load_config()
+    total = len(images)
+    
+    print(f"\n🖼️ Posting {total} image(s) to WhatsApp Status...")
+    print("="*50)
+    
+    for i, image_path in enumerate(images):
+        filename = os.path.basename(image_path)
+        name_without_ext = os.path.splitext(filename)[0]
+        
+        # Get caption from config or filename
+        image_captions = config.get("image_captions", {})
+        caption = image_captions.get(filename, name_without_ext.replace("_", " ").replace("-", " "))
+        
+        print(f"\n[{i+1}/{total}] Posting: {filename}")
+        print(f"         Caption: {caption}")
+        
+        # Post this image
+        set_image_status(image_path=image_path, caption=caption)
+        
+        # Wait between posts (avoid rate limiting)
+        if i < total - 1:
+            print("   ⏳ Waiting 5 seconds before next image...")
+            time.sleep(5)
+    
+    print(f"\n✅ All {total} images posted!")
 
 def setup():
     """Find correct click positions."""
@@ -277,7 +331,8 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="WhatsApp Status Automation")
     parser.add_argument("--run", "-r", action="store_true", help="Post text status")
-    parser.add_argument("--image", "-i", action="store_true", help="Post image status")
+    parser.add_argument("--image", "-i", action="store_true", help="Post next image status")
+    parser.add_argument("--all", "-a", action="store_true", help="Post ALL images as status")
     parser.add_argument("--caption", "-c", type=str, help="Custom caption")
     parser.add_argument("--setup", action="store_true", help="Setup mode")
     parser.add_argument("--list", "-l", action="store_true", help="List available images")
@@ -288,6 +343,8 @@ def main():
         setup()
     elif args.list:
         list_images()
+    elif args.all:
+        post_all_images()
     elif args.image:
         set_image_status(caption=args.caption)
     elif args.run or args.caption:
@@ -298,7 +355,8 @@ def main():
         print("💡 USAGE:")
         print("="*50)
         print("  ./run.sh --run              # Post text status")
-        print("  ./run.sh --image            # Post image status")
+        print("  ./run.sh --image            # Post NEXT image (cycles through)")
+        print("  ./run.sh --all              # Post ALL images at once")
         print("  ./run.sh --image -c 'Hi!'   # Image with custom caption")
         print("  ./run.sh --list             # List available images")
         print("  ./run.sh --setup            # Find click positions")
