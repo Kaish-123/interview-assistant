@@ -19,19 +19,21 @@ def unlock_with_applescript():
     
     script = f'''
     tell application "System Events"
-        -- Multiple key presses to ensure password field is ready
-        key code 49 -- Space (wake)
-        delay 1
-        key code 36 -- Enter (dismiss wake screen)
-        delay 1  
-        key code 36 -- Enter (focus password field)
-        delay 1
-        key code 49 -- Space (extra wake)
-        delay 0.5
+        -- Wake the screen
+        key code 49 -- Space
+        delay 2
+        
+        -- First Enter - dismiss wake screen
+        key code 36
+        delay 2
+        
+        -- Second Enter - focus password field  
+        key code 36
+        delay 5 -- IMPORTANT: Wait 5 seconds for password field to be ready
         
         -- Type password
         keystroke "{PASSWORD}"
-        delay 0.5
+        delay 1
         
         -- Submit
         key code 36 -- Enter

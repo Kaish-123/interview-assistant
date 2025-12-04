@@ -64,25 +64,21 @@ def wake_and_unlock():
     # - Press Enter
     unlock_script = f'''
     tell application "System Events"
-        -- Wake up the screen with key press
+        -- Wake up the screen
         key code 49 -- Space
-        delay 1
+        delay 2
         
-        -- Press Enter to show password field (dismisses "click to unlock")
-        key code 36 -- Return/Enter
-        delay 1
-        
-        -- Press Enter again to ensure password field is focused
+        -- First Enter - dismiss wake screen
         key code 36
-        delay 1
+        delay 2
         
-        -- Click to make sure (some Macs need this)
-        key code 49 -- Space
-        delay 0.5
+        -- Second Enter - focus password field
+        key code 36
+        delay 5 -- IMPORTANT: Wait 5 seconds for password field to be ready
         
-        -- Now type the password
+        -- Type password
         keystroke "{PASSWORD}"
-        delay 0.5
+        delay 1
         
         -- Press Enter to submit
         key code 36
