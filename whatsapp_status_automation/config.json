@@ -1,0 +1,16 @@
+{
+    "status_captions": [
+        "Weekend vibes ✨",
+        "Taking a break 🌴",
+        "Offline mode activated 🔕"
+    ],
+    "schedule": {
+        "days": ["saturday", "sunday"],
+        "time": "09:00"
+    },
+    "whatsapp_app_name": "WhatsApp",
+    "delay_between_actions": 1.0,
+    "use_random_caption": false,
+    "current_caption_index": 0
+}
+
