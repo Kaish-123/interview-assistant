@@ -1292,32 +1292,16 @@ class Application(tk.Tk):
         Safely update the 'Live Question: ...' line in the response_box.
         This is called from a background thread via .after().
         """
-        if not self.live_transcription_running:
+        if not self.live_question_index:
             return
 
         try:
             self.response_box.config(state=tk.NORMAL)
-            
-            # Find the "Live Question:" line and replace it
-            # Search from the end backwards for efficiency
-            search_start = "1.0"
-            found_index = None
-            
-            # Find the last occurrence of "Live Question:"
-            while True:
-                pos = self.response_box.search("Live Question:", search_start, tk.END)
-                if not pos:
-                    break
-                found_index = pos
-                search_start = f"{pos}+1c"
-            
-            if found_index:
-                # Delete from "Live Question:" to end of that line
-                line_num = found_index.split('.')[0]
-                line_end = f"{line_num}.end"
-                self.response_box.delete(found_index, line_end)
-                self.response_box.insert(found_index, f"Live Question: {text}")
-            
+            # Delete current line contents from live_question_index to end-of-line
+            line_start = self.live_question_index
+            line_end = f"{line_start.split('.')[0]}.end"
+            self.response_box.delete(line_start, line_end)
+            self.response_box.insert(line_start, f"Live Question: {text}")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
         except Exception as e:
@@ -2687,7 +2671,9 @@ class Application(tk.Tk):
                 # Show listening + create a Live Question line
                 self.response_box.config(state=tk.NORMAL)
                 self.response_box.insert(tk.END, "\n\n🎙 Listening to your question...\n")
-                self.response_box.insert(tk.END, "Live Question: (waiting for speech...)")
+                # Remember where the live question line starts
+                self.live_question_index = self.response_box.index(tk.END)
+                self.response_box.insert(tk.END, "Live Question: ")
                 self.response_box.config(state=tk.DISABLED)
                 self.response_box.see(tk.END)
 
@@ -2710,65 +2696,48 @@ class Application(tk.Tk):
 
 
     def process_recording(self):
-        # Stop live transcription loop immediately
         self.live_transcription_running = False
-        
-        # Grab the live preview to show immediately
-        live_preview = (self.latest_live_question or "").strip()
-        
         try:
-            # IMMEDIATELY show the question (from live preview) so user sees it
-            self.response_box.config(state=tk.NORMAL)
-            content = self.response_box.get("1.0", tk.END)
-            
-            # Find and remove the listening block
-            listening_idx = content.rfind("🎙 Listening to your question...")
-            if listening_idx != -1:
-                self.response_box.delete(f"1.0+{listening_idx}c", tk.END)
-            
-            # Show question IMMEDIATELY with live preview (so it's always visible)
-            if live_preview:
-                self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {live_preview}\n")
-                self.response_box.insert(tk.END, "⏳ Finalizing & getting answer...\n")
-            else:
-                self.response_box.insert(tk.END, "\n\n⏳ Processing question...\n")
-            
-            self.response_box.config(state=tk.DISABLED)
-            self.response_box.see(tk.END)
-            self.status.config(text="⏳ Getting complete question...")
-            
-            # STOP RECORDING - captures ALL audio until this moment
+            self.live_question_index = None
+        except Exception:
+            pass
+        try:
             filename = self.assistant.recorder.stop_recording()
-            
-            # ALWAYS do final transcription on the COMPLETE audio file
-            question = self.assistant.transcribe_audio(filename)
-            
-            if not question or question.startswith("❌"):
-                # Clean up the processing message
-                self.response_box.config(state=tk.NORMAL)
-                self.response_box.delete("end-2l", tk.END)
-                self.response_box.config(state=tk.DISABLED)
-                self.status.config(text=question if question else "⚠️ No speech detected")
+            question = self.latest_live_question.strip() if self.latest_live_question else ""
+
+            # Optional: fallback to full file transcription if live text is empty
+            if not question:
+                question = self.assistant.transcribe_audio(filename)
+
+            if question.startswith("❌"):
+                self.status.config(text=question)
                 return
 
-            question = question.strip()
-            print(f"✅ Complete transcription: {len(question)} chars")
+            # === Maintain consistent format with typed input ===
+            content = [{"type": "text", "text": question}]
 
-            # Update UI: Replace preview with final complete question
+            # Flatten input for GPT model
+            flat_text = "\n".join(
+                c["text"] if c["type"] == "text" else "[Image]" for c in content
+            )
+
+            # Show question in UI
             self.response_box.config(state=tk.NORMAL)
-            
-            # Find and remove the preview question + "Finalizing" line
-            content = self.response_box.get("1.0", tk.END)
-            if "⏳ Finalizing" in content or "⏳ Processing" in content:
-                # Find the last "-----" separator before the preview
-                last_sep = content.rfind("---------------------------------------------------------------------")
-                if last_sep != -1:
-                    self.response_box.delete(f"1.0+{last_sep}c", tk.END)
-            
-            # Insert the FINAL complete question
-            self.response_box.insert(tk.END, f"\n---------------------------------------------------------------------\nQUESTION: {question}\n")
+            self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n")
             self.response_box.config(state=tk.DISABLED)
             self.response_box.see(tk.END)
+
+            # Append flat question for GPT context
+            self.assistant.messages.append({"role": "user", "content": flat_text})
+            # Show updated history before streaming
+            self.chat_manager.save_current_session(self.assistant.messages)
+
+            self.display_chat_history()
+
+            self.status.config(text="💡 Generating answer...")
+            self.assistant.cancel_streaming()
+            self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
+            self.chat_manager.save_current_session(self.assistant.messages)
 
             # Append flat question for GPT context
             self.assistant.messages.append({"role": "user", "content": flat_text})
