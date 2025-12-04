@@ -41,45 +41,112 @@ import os
 import webbrowser
 import urllib.request
 import ssl
+from datetime import datetime, timedelta
 
-def fetch_openai_balance(api_key: str) -> dict:
+def fetch_openai_billing_data(api_key: str) -> dict:
     """
-    Try to fetch OpenAI account balance.
-    Note: OpenAI removed direct billing API, so this uses a workaround.
-    Returns: {"balance": float or None, "error": str or None}
+    Fetch OpenAI billing/usage data using multiple endpoints.
+    Returns: {
+        "balance": float or None,      # Remaining credit (if available)
+        "usage_this_month": float or None,  # Current month's usage
+        "hard_limit": float or None,   # Account spending limit
+        "error": str or None
+    }
     """
-    try:
-        # Try the subscription endpoint (may work for some accounts)
-        url = "https://api.openai.com/v1/dashboard/billing/subscription"
-        req = urllib.request.Request(url)
-        req.add_header("Authorization", f"Bearer {api_key}")
-        req.add_header("Content-Type", "application/json")
-        
-        context = ssl.create_default_context()
-        with urllib.request.urlopen(req, timeout=5, context=context) as response:
-            data = json.loads(response.read().decode())
-            # Extract relevant info
-            if "hard_limit_usd" in data:
-                return {"balance": data.get("hard_limit_usd"), "error": None}
-    except Exception as e:
-        pass
+    result = {
+        "balance": None,
+        "usage_this_month": None,
+        "hard_limit": None,
+        "total_granted": None,
+        "total_used": None,
+        "error": None
+    }
     
+    context = ssl.create_default_context()
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    # Method 1: Try credit_grants endpoint (for prepaid credits)
     try:
-        # Try credit grants endpoint
         url = "https://api.openai.com/v1/dashboard/billing/credit_grants"
-        req = urllib.request.Request(url)
-        req.add_header("Authorization", f"Bearer {api_key}")
-        req.add_header("Content-Type", "application/json")
-        
-        context = ssl.create_default_context()
-        with urllib.request.urlopen(req, timeout=5, context=context) as response:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10, context=context) as response:
             data = json.loads(response.read().decode())
-            total = data.get("total_available", 0)
-            return {"balance": total, "error": None}
+            if "total_granted" in data:
+                result["total_granted"] = data.get("total_granted", 0)
+                result["total_used"] = data.get("total_used", 0)
+                result["balance"] = data.get("total_available", 0)
+                print(f"✅ Credit grants: granted=${result['total_granted']}, used=${result['total_used']}, balance=${result['balance']}")
     except Exception as e:
-        pass
+        print(f"Credit grants endpoint: {e}")
     
-    return {"balance": None, "error": "API not available - set balance manually"}
+    # Method 2: Try subscription endpoint (for account limits)
+    try:
+        url = "https://api.openai.com/v1/dashboard/billing/subscription"
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10, context=context) as response:
+            data = json.loads(response.read().decode())
+            if "hard_limit_usd" in data:
+                result["hard_limit"] = data.get("hard_limit_usd", 0)
+            if "soft_limit_usd" in data:
+                result["soft_limit"] = data.get("soft_limit_usd", 0)
+            print(f"✅ Subscription: hard_limit=${result.get('hard_limit')}")
+    except Exception as e:
+        print(f"Subscription endpoint: {e}")
+    
+    # Method 3: Try usage endpoint for current month
+    try:
+        # Get current month's usage
+        today = datetime.now()
+        start_date = today.replace(day=1).strftime("%Y-%m-%d")
+        end_date = (today + timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        url = f"https://api.openai.com/v1/dashboard/billing/usage?start_date={start_date}&end_date={end_date}"
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10, context=context) as response:
+            data = json.loads(response.read().decode())
+            if "total_usage" in data:
+                # OpenAI returns usage in cents, convert to dollars
+                result["usage_this_month"] = data.get("total_usage", 0) / 100.0
+                print(f"✅ Usage this month: ${result['usage_this_month']:.2f}")
+    except Exception as e:
+        print(f"Usage endpoint: {e}")
+    
+    # Method 4: Try organization costs API (newer endpoint)
+    try:
+        today = datetime.now()
+        start_date = today.replace(day=1).strftime("%Y-%m-%d")
+        
+        url = f"https://api.openai.com/v1/organization/costs?start_time={start_date}T00:00:00Z"
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10, context=context) as response:
+            data = json.loads(response.read().decode())
+            if "data" in data:
+                total_cost = sum(item.get("results", {}).get("amount", {}).get("value", 0) 
+                               for item in data.get("data", []))
+                if total_cost > 0:
+                    result["usage_this_month"] = total_cost
+                    print(f"✅ Org costs: ${total_cost:.2f}")
+    except Exception as e:
+        print(f"Organization costs endpoint: {e}")
+    
+    # Calculate balance if we have usage and limit
+    if result["balance"] is None and result["hard_limit"] and result["usage_this_month"]:
+        result["balance"] = result["hard_limit"] - result["usage_this_month"]
+    
+    # Set error if nothing worked
+    if result["balance"] is None and result["usage_this_month"] is None:
+        result["error"] = "Could not fetch billing data - set manually"
+    
+    return result
+
+# Legacy function for backwards compatibility
+def fetch_openai_balance(api_key: str) -> dict:
+    """Legacy wrapper - calls new billing function."""
+    data = fetch_openai_billing_data(api_key)
+    return {"balance": data["balance"], "error": data["error"]}
 
 
 # ============================================================================
@@ -1465,13 +1532,22 @@ class Application(tk.Tk):
         self.balance_frame = ttk.Frame(self.main_frame)
         self.balance_frame.pack(fill="x", padx=10, pady=(5, 0))
         
-        # Balance label
+        # Balance/Credit label
         self.balance_label = ttk.Label(
             self.balance_frame, 
-            text="💰 Balance: Loading...", 
+            text="💰 Loading...", 
             font=('Arial', 10, 'bold')
         )
         self.balance_label.pack(side="left")
+        
+        # Monthly usage label
+        self.monthly_usage_label = ttk.Label(
+            self.balance_frame, 
+            text="",
+            font=('Arial', 9),
+            foreground='gray'
+        )
+        self.monthly_usage_label.pack(side="left", padx=(8, 0))
         
         # Session cost label
         self.session_cost_label = ttk.Label(
@@ -1479,7 +1555,7 @@ class Application(tk.Tk):
             text=" | Session: $0.00",
             font=('Arial', 9)
         )
-        self.session_cost_label.pack(side="left", padx=(10, 0))
+        self.session_cost_label.pack(side="left", padx=(8, 0))
         
         # Refresh button
         self.refresh_balance_btn = ttk.Button(
@@ -1510,11 +1586,12 @@ class Application(tk.Tk):
         
         # Initialize balance tracking
         self.current_balance = self.ui_prefs.get("openai_balance", None)
+        self.monthly_usage = self.ui_prefs.get("monthly_usage", None)
         self.session_cost = 0.0
         self.update_balance_display()
         
-        # Auto-refresh balance every 5 minutes
-        self.after(1000, self.refresh_balance)  # Initial refresh after 1 sec
+        # Auto-refresh billing data
+        self.after(1500, self.refresh_balance)  # Initial refresh after 1.5 sec
         self.after(300000, self._auto_refresh_balance)  # Then every 5 min
         
         # Move existing UI to main_frame
@@ -2976,22 +3053,56 @@ class Application(tk.Tk):
     
     def update_balance_display(self):
         """Update the balance display in UI."""
+        # Show balance/credit
         if self.current_balance is not None:
-            self.balance_label.config(text=f"💰 Balance: ${self.current_balance:.2f}")
+            self.balance_label.config(text=f"💰 ${self.current_balance:.2f}")
         else:
-            self.balance_label.config(text="💰 Balance: Not set")
+            self.balance_label.config(text="💰 Balance: --")
         
-        self.session_cost_label.config(text=f" | Session: ${self.session_cost:.4f}")
+        # Show monthly usage
+        if hasattr(self, 'monthly_usage') and self.monthly_usage is not None:
+            self.monthly_usage_label.config(text=f"| Month: ${self.monthly_usage:.2f}")
+        else:
+            self.monthly_usage_label.config(text="")
+        
+        # Show session cost
+        self.session_cost_label.config(text=f"| Session: ${self.session_cost:.4f}")
     
     def refresh_balance(self):
-        """Try to fetch balance from OpenAI API."""
+        """Fetch real billing data from OpenAI API."""
+        self.balance_label.config(text="💰 Loading...")
+        
         def fetch():
-            result = fetch_openai_balance(API_KEY)
-            if result["balance"] is not None:
-                self.current_balance = result["balance"]
-                self.ui_prefs["openai_balance"] = self.current_balance
+            try:
+                result = fetch_openai_billing_data(API_KEY)
+                
+                # Update balance
+                if result["balance"] is not None:
+                    self.current_balance = result["balance"]
+                    self.ui_prefs["openai_balance"] = self.current_balance
+                
+                # Update monthly usage
+                if result["usage_this_month"] is not None:
+                    self.monthly_usage = result["usage_this_month"]
+                    self.ui_prefs["monthly_usage"] = self.monthly_usage
+                else:
+                    self.monthly_usage = self.ui_prefs.get("monthly_usage", None)
+                
+                # Store last fetch time
+                self.ui_prefs["last_billing_fetch"] = datetime.now().isoformat()
                 UIPreferences.save(self.ui_prefs)
-            self.after(0, self.update_balance_display)
+                
+                # Update UI on main thread
+                self.after(0, self.update_balance_display)
+                
+                if result["error"]:
+                    self.after(0, lambda: self.status.config(text=f"⚠️ {result['error']}"))
+                else:
+                    self.after(0, lambda: self.status.config(text="✅ Billing data refreshed"))
+                    
+            except Exception as e:
+                print(f"Balance fetch error: {e}")
+                self.after(0, lambda: self.balance_label.config(text="💰 Error"))
         
         threading.Thread(target=fetch, daemon=True).start()
     
@@ -3001,20 +3112,65 @@ class Application(tk.Tk):
         self.after(300000, self._auto_refresh_balance)  # Every 5 minutes
     
     def set_balance_manually(self):
-        """Allow user to manually set their balance."""
-        current = self.current_balance if self.current_balance else 0.0
-        result = simpledialog.askfloat(
-            "Set OpenAI Balance",
-            f"Enter your current OpenAI balance in USD:\n(Check at platform.openai.com/usage)",
-            initialvalue=current,
-            minvalue=0.0
-        )
-        if result is not None:
-            self.current_balance = result
-            self.ui_prefs["openai_balance"] = self.current_balance
-            UIPreferences.save(self.ui_prefs)
-            self.update_balance_display()
-            self.status.config(text=f"💰 Balance set to ${result:.2f}")
+        """Allow user to manually set their balance and monthly budget."""
+        # Create a custom dialog for better UX
+        dialog = tk.Toplevel(self)
+        dialog.title("💰 Set OpenAI Billing Info")
+        dialog.geometry("350x200")
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        # Center on parent
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (350 // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (200 // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        ttk.Label(dialog, text="Set your OpenAI billing info:", font=('Arial', 11, 'bold')).pack(pady=(10, 5))
+        ttk.Label(dialog, text="(Check at platform.openai.com/usage)", foreground='gray').pack()
+        
+        # Balance input
+        balance_frame = ttk.Frame(dialog)
+        balance_frame.pack(fill="x", padx=20, pady=10)
+        ttk.Label(balance_frame, text="Available Credit ($):").pack(side="left")
+        balance_var = tk.StringVar(value=str(self.current_balance or 0.0))
+        balance_entry = ttk.Entry(balance_frame, textvariable=balance_var, width=12)
+        balance_entry.pack(side="right")
+        
+        # Monthly usage input
+        usage_frame = ttk.Frame(dialog)
+        usage_frame.pack(fill="x", padx=20, pady=5)
+        ttk.Label(usage_frame, text="This Month's Usage ($):").pack(side="left")
+        usage_var = tk.StringVar(value=str(self.monthly_usage or 0.0))
+        usage_entry = ttk.Entry(usage_frame, textvariable=usage_var, width=12)
+        usage_entry.pack(side="right")
+        
+        def save_and_close():
+            try:
+                balance = float(balance_var.get())
+                usage = float(usage_var.get())
+                
+                self.current_balance = balance
+                self.monthly_usage = usage
+                self.ui_prefs["openai_balance"] = balance
+                self.ui_prefs["monthly_usage"] = usage
+                UIPreferences.save(self.ui_prefs)
+                self.update_balance_display()
+                self.status.config(text=f"💰 Balance: ${balance:.2f}, Usage: ${usage:.2f}")
+                dialog.destroy()
+            except ValueError:
+                messagebox.showerror("Invalid Input", "Please enter valid numbers")
+        
+        # Buttons
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(pady=15)
+        ttk.Button(btn_frame, text="Save", command=save_and_close).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Cancel", command=dialog.destroy).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Open Billing Page", 
+                   command=lambda: webbrowser.open("https://platform.openai.com/usage")).pack(side="left", padx=5)
+        
+        balance_entry.focus_set()
+        dialog.bind("<Return>", lambda e: save_and_close())
     
     def add_session_cost(self, input_tokens: int, output_tokens: int, model: str = "gpt-4o"):
         """
