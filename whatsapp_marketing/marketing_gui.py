@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-WhatsApp Marketing GUI
-Beautiful interface to manage contacts, campaigns, and scheduling
+WhatsApp Marketing GUI - Optimized & Responsive
+Fast, fluid interface for managing contacts, campaigns, and scheduling
 """
 
 import tkinter as tk
@@ -12,9 +12,14 @@ import sys
 import threading
 from datetime import datetime
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
+import queue
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
+
+# Thread pool for background operations
+executor = ThreadPoolExecutor(max_workers=4)
 
 # Import our modules
 from contact_fetcher import (
@@ -35,10 +40,18 @@ class MarketingGUI:
         self.root.geometry("1200x800")
         self.root.minsize(1000, 700)
         
+        # Cache for data
+        self._contacts_cache = []
+        self._images_cache = []
+        self._stats_cache = {}
+        
+        # Queue for thread-safe UI updates
+        self.update_queue = queue.Queue()
+        
         # Configure style
         self.setup_styles()
         
-        # Load configuration
+        # Load configuration (fast, from file)
         self.config = load_config()
         
         # Create main notebook (tabs)
@@ -53,38 +66,74 @@ class MarketingGUI:
         self.create_schedule_tab()
         self.create_logs_tab()
         
-        # Refresh data
-        self.refresh_all_data()
-        
         # Status bar
         self.status_var = tk.StringVar(value="Ready")
         status_bar = ttk.Label(root, textvariable=self.status_var, relief='sunken', anchor='w')
         status_bar.pack(fill='x', side='bottom', padx=10, pady=5)
+        
+        # Process update queue
+        self.process_queue()
+        
+        # Load data in background after UI is ready
+        self.root.after(100, self.initial_load)
+    
+    def process_queue(self):
+        """Process pending UI updates from background threads."""
+        try:
+            while True:
+                func, args = self.update_queue.get_nowait()
+                func(*args)
+        except queue.Empty:
+            pass
+        # Schedule next check
+        self.root.after(50, self.process_queue)
+    
+    def queue_update(self, func, *args):
+        """Queue a UI update to run on main thread."""
+        self.update_queue.put((func, args))
+    
+    def initial_load(self):
+        """Load initial data in background."""
+        self.status_var.set("Loading...")
+        executor.submit(self._load_all_data)
+    
+    def _load_all_data(self):
+        """Background: Load all data."""
+        try:
+            # Load stats
+            self._stats_cache = get_contact_stats()
+            self.queue_update(self._update_stats_ui)
+            
+            # Load contacts
+            self._contacts_cache = get_all_contacts_with_status()
+            self.queue_update(self._update_contacts_ui)
+            
+            # Load images
+            self._images_cache = get_marketing_images()
+            self.queue_update(self._update_images_ui)
+            
+            self.queue_update(self.status_var.set, "Ready")
+        except Exception as e:
+            self.queue_update(self.status_var.set, f"Error: {e}")
     
     def setup_styles(self):
         """Configure custom styles."""
         style = ttk.Style()
         
-        # Try to use a modern theme
+        # Use native theme
         available_themes = style.theme_names()
         if 'aqua' in available_themes:
             style.theme_use('aqua')
         elif 'clam' in available_themes:
             style.theme_use('clam')
         
-        # Custom colors
+        # Custom fonts
         style.configure('Title.TLabel', font=('Helvetica', 24, 'bold'))
         style.configure('Subtitle.TLabel', font=('Helvetica', 14))
         style.configure('Stat.TLabel', font=('Helvetica', 32, 'bold'))
         style.configure('StatLabel.TLabel', font=('Helvetica', 11))
-        
-        # Button styles
         style.configure('Action.TButton', font=('Helvetica', 12), padding=10)
-        style.configure('Danger.TButton', font=('Helvetica', 11))
-        style.configure('Success.TButton', font=('Helvetica', 11))
-        
-        # Treeview style
-        style.configure('Treeview', rowheight=30, font=('Helvetica', 11))
+        style.configure('Treeview', rowheight=28, font=('Helvetica', 11))
         style.configure('Treeview.Heading', font=('Helvetica', 11, 'bold'))
     
     def create_dashboard_tab(self):
@@ -103,11 +152,11 @@ class MarketingGUI:
         # Create stat boxes
         self.stat_vars = {}
         stat_items = [
-            ('total_contacts', 'Total Contacts', '0'),
-            ('active_contacts', 'Active', '0'),
-            ('excluded_contacts', 'Excluded', '0'),
-            ('images_count', 'Images', '0'),
-            ('messaged_today', 'Sent Today', '0')
+            ('total_contacts', 'Total Contacts', '—'),
+            ('active_contacts', 'Active', '—'),
+            ('excluded_contacts', 'Excluded', '—'),
+            ('images_count', 'Images', '—'),
+            ('messaged_today', 'Sent Today', '—')
         ]
         
         for i, (key, label, default) in enumerate(stat_items):
@@ -128,41 +177,17 @@ class MarketingGUI:
         btn_frame = ttk.Frame(actions_frame)
         btn_frame.pack()
         
-        # Refresh contacts button
-        refresh_btn = ttk.Button(
-            btn_frame, text="🔄 Refresh Contacts",
-            command=self.refresh_contacts_action, style='Action.TButton'
-        )
-        refresh_btn.pack(side='left', padx=10)
-        
-        # Run campaign button
-        run_btn = ttk.Button(
-            btn_frame, text="🚀 Run Campaign",
-            command=self.run_campaign_action, style='Action.TButton'
-        )
-        run_btn.pack(side='left', padx=10)
-        
-        # Dry run button
-        test_btn = ttk.Button(
-            btn_frame, text="🧪 Test Run (Dry)",
-            command=self.dry_run_action, style='Action.TButton'
-        )
-        test_btn.pack(side='left', padx=10)
-        
-        # Open images folder
-        folder_btn = ttk.Button(
-            btn_frame, text="📁 Open Images Folder",
-            command=self.open_images_folder, style='Action.TButton'
-        )
-        folder_btn.pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="🔄 Refresh Contacts", command=self.refresh_contacts_action, style='Action.TButton').pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="🚀 Run Campaign", command=self.run_campaign_action, style='Action.TButton').pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="🧪 Test Run", command=self.dry_run_action, style='Action.TButton').pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="📁 Images Folder", command=self.open_images_folder, style='Action.TButton').pack(side='left', padx=10)
         
         # Contact breakdown
         breakdown_frame = ttk.LabelFrame(dashboard, text="📋 Contacts by Type", padding=20)
         breakdown_frame.pack(fill='both', expand=True, pady=10)
         
-        self.breakdown_text = tk.Text(breakdown_frame, height=8, font=('Helvetica', 12))
+        self.breakdown_text = tk.Text(breakdown_frame, height=8, font=('Helvetica', 12), state='disabled')
         self.breakdown_text.pack(fill='both', expand=True)
-        self.breakdown_text.config(state='disabled')
     
     def create_contacts_tab(self):
         """Create the contacts management tab."""
@@ -173,36 +198,31 @@ class MarketingGUI:
         toolbar = ttk.Frame(contacts)
         toolbar.pack(fill='x', pady=(0, 10))
         
-        # Refresh button
-        refresh_btn = ttk.Button(toolbar, text="🔄 Refresh from macOS", command=self.refresh_contacts_action)
-        refresh_btn.pack(side='left', padx=5)
+        ttk.Button(toolbar, text="🔄 Refresh", command=self.refresh_contacts_action).pack(side='left', padx=5)
         
-        # Filter dropdown
         ttk.Label(toolbar, text="Filter:").pack(side='left', padx=(20, 5))
         self.filter_var = tk.StringVar(value="All")
-        filter_combo = ttk.Combobox(toolbar, textvariable=self.filter_var, values=["All", "client", "proxy", "interview"], width=15)
+        filter_combo = ttk.Combobox(toolbar, textvariable=self.filter_var, values=["All", "client", "proxy", "interview"], width=12, state='readonly')
         filter_combo.pack(side='left')
-        filter_combo.bind('<<ComboboxSelected>>', lambda e: self.update_contacts_list())
+        filter_combo.bind('<<ComboboxSelected>>', lambda e: self._apply_filters())
         
-        # Search
         ttk.Label(toolbar, text="Search:").pack(side='left', padx=(20, 5))
         self.search_var = tk.StringVar()
-        search_entry = ttk.Entry(toolbar, textvariable=self.search_var, width=30)
+        search_entry = ttk.Entry(toolbar, textvariable=self.search_var, width=25)
         search_entry.pack(side='left')
-        search_entry.bind('<KeyRelease>', lambda e: self.update_contacts_list())
+        search_entry.bind('<KeyRelease>', lambda e: self.root.after(150, self._apply_filters))
         
-        # Bulk actions
         ttk.Label(toolbar, text="Selected:").pack(side='left', padx=(30, 5))
-        exclude_btn = ttk.Button(toolbar, text="❌ Exclude", command=self.exclude_selected)
-        exclude_btn.pack(side='left', padx=2)
-        include_btn = ttk.Button(toolbar, text="✅ Include", command=self.include_selected)
-        include_btn.pack(side='left', padx=2)
+        ttk.Button(toolbar, text="❌ Exclude", command=self.exclude_selected).pack(side='left', padx=2)
+        ttk.Button(toolbar, text="✅ Include", command=self.include_selected).pack(side='left', padx=2)
         
-        # Contacts treeview
+        # Contacts treeview with frame
+        tree_frame = ttk.Frame(contacts)
+        tree_frame.pack(fill='both', expand=True)
+        
         columns = ('name', 'phone', 'type', 'status', 'last_sent', 'count')
-        self.contacts_tree = ttk.Treeview(contacts, columns=columns, show='headings', selectmode='extended')
+        self.contacts_tree = ttk.Treeview(tree_frame, columns=columns, show='headings', selectmode='extended')
         
-        # Configure columns
         self.contacts_tree.heading('name', text='Name')
         self.contacts_tree.heading('phone', text='Phone')
         self.contacts_tree.heading('type', text='Type')
@@ -210,15 +230,14 @@ class MarketingGUI:
         self.contacts_tree.heading('last_sent', text='Last Sent')
         self.contacts_tree.heading('count', text='Count')
         
-        self.contacts_tree.column('name', width=250)
-        self.contacts_tree.column('phone', width=150)
-        self.contacts_tree.column('type', width=100)
-        self.contacts_tree.column('status', width=100)
-        self.contacts_tree.column('last_sent', width=120)
-        self.contacts_tree.column('count', width=80)
+        self.contacts_tree.column('name', width=250, minwidth=150)
+        self.contacts_tree.column('phone', width=140, minwidth=100)
+        self.contacts_tree.column('type', width=90, minwidth=70)
+        self.contacts_tree.column('status', width=100, minwidth=80)
+        self.contacts_tree.column('last_sent', width=100, minwidth=80)
+        self.contacts_tree.column('count', width=60, minwidth=50)
         
-        # Scrollbar
-        scrollbar = ttk.Scrollbar(contacts, orient='vertical', command=self.contacts_tree.yview)
+        scrollbar = ttk.Scrollbar(tree_frame, orient='vertical', command=self.contacts_tree.yview)
         self.contacts_tree.configure(yscrollcommand=scrollbar.set)
         
         self.contacts_tree.pack(side='left', fill='both', expand=True)
@@ -227,116 +246,87 @@ class MarketingGUI:
         # Double-click to toggle
         self.contacts_tree.bind('<Double-1>', self.toggle_contact_status)
         
-        # Right-click context menu
+        # Right-click menu
         self.contacts_menu = tk.Menu(self.root, tearoff=0)
         self.contacts_menu.add_command(label="✅ Include", command=self.include_selected)
         self.contacts_menu.add_command(label="❌ Exclude", command=self.exclude_selected)
         self.contacts_tree.bind('<Button-2>', self.show_context_menu)
         self.contacts_tree.bind('<Button-3>', self.show_context_menu)
+        
+        # Count label
+        self.contacts_count_var = tk.StringVar(value="0 contacts")
+        ttk.Label(contacts, textvariable=self.contacts_count_var).pack(anchor='w', pady=5)
     
     def create_message_tab(self):
         """Create the message template tab."""
         message = ttk.Frame(self.notebook, padding=20)
         self.notebook.add(message, text="💬 Message")
         
-        # Title
         ttk.Label(message, text="Message Template", style='Subtitle.TLabel').pack(anchor='w', pady=(0, 10))
         
-        # Message text area
-        self.message_text = scrolledtext.ScrolledText(message, height=10, font=('Helvetica', 13), wrap='word')
+        self.message_text = scrolledtext.ScrolledText(message, height=8, font=('Helvetica', 13), wrap='word')
         self.message_text.pack(fill='x', pady=10)
         self.message_text.insert('1.0', self.config.get('message_template', ''))
         
-        # Save button
-        save_frame = ttk.Frame(message)
-        save_frame.pack(fill='x', pady=10)
-        
-        save_btn = ttk.Button(save_frame, text="💾 Save Message", command=self.save_message)
-        save_btn.pack(side='left')
-        
-        # Preview
-        ttk.Label(message, text="Preview:", style='Subtitle.TLabel').pack(anchor='w', pady=(20, 10))
-        
-        preview_frame = ttk.LabelFrame(message, text="📱 How it will look", padding=15)
-        preview_frame.pack(fill='both', expand=True)
-        
-        self.preview_label = ttk.Label(preview_frame, wraplength=500, font=('Helvetica', 12))
-        self.preview_label.pack(anchor='w')
-        
-        # Update preview on text change
-        self.message_text.bind('<KeyRelease>', self.update_preview)
-        self.update_preview()
+        ttk.Button(message, text="💾 Save Message", command=self.save_message).pack(anchor='w', pady=10)
         
         # Settings
         settings_frame = ttk.LabelFrame(message, text="⚙️ Campaign Settings", padding=15)
         settings_frame.pack(fill='x', pady=20)
         
-        # Delay settings
-        delay_frame = ttk.Frame(settings_frame)
-        delay_frame.pack(fill='x', pady=5)
+        # Delay settings row
+        row1 = ttk.Frame(settings_frame)
+        row1.pack(fill='x', pady=8)
         
-        ttk.Label(delay_frame, text="Delay between messages (seconds):").pack(side='left')
-        
-        ttk.Label(delay_frame, text="Min:").pack(side='left', padx=(20, 5))
+        ttk.Label(row1, text="Delay between messages:").pack(side='left')
+        ttk.Label(row1, text="Min").pack(side='left', padx=(20, 5))
         self.delay_min_var = tk.StringVar(value=str(self.config.get('delay_min_seconds', 45)))
-        delay_min_entry = ttk.Entry(delay_frame, textvariable=self.delay_min_var, width=8)
-        delay_min_entry.pack(side='left')
+        ttk.Entry(row1, textvariable=self.delay_min_var, width=6).pack(side='left')
+        ttk.Label(row1, text="sec").pack(side='left', padx=(2, 15))
         
-        ttk.Label(delay_frame, text="Max:").pack(side='left', padx=(20, 5))
+        ttk.Label(row1, text="Max").pack(side='left', padx=(0, 5))
         self.delay_max_var = tk.StringVar(value=str(self.config.get('delay_max_seconds', 120)))
-        delay_max_entry = ttk.Entry(delay_frame, textvariable=self.delay_max_var, width=8)
-        delay_max_entry.pack(side='left')
+        ttk.Entry(row1, textvariable=self.delay_max_var, width=6).pack(side='left')
+        ttk.Label(row1, text="sec").pack(side='left', padx=2)
         
-        # Batch settings
-        batch_frame = ttk.Frame(settings_frame)
-        batch_frame.pack(fill='x', pady=5)
+        # Batch settings row
+        row2 = ttk.Frame(settings_frame)
+        row2.pack(fill='x', pady=8)
         
-        ttk.Label(batch_frame, text="Batch size:").pack(side='left')
+        ttk.Label(row2, text="Batch size:").pack(side='left')
         self.batch_var = tk.StringVar(value=str(self.config.get('batch_size', 50)))
-        batch_entry = ttk.Entry(batch_frame, textvariable=self.batch_var, width=8)
-        batch_entry.pack(side='left', padx=10)
+        ttk.Entry(row2, textvariable=self.batch_var, width=6).pack(side='left', padx=(10, 20))
         
-        ttk.Label(batch_frame, text="Pause between batches (minutes):").pack(side='left', padx=(20, 0))
+        ttk.Label(row2, text="Pause between batches:").pack(side='left')
         self.pause_var = tk.StringVar(value=str(self.config.get('pause_between_batches_minutes', 30)))
-        pause_entry = ttk.Entry(batch_frame, textvariable=self.pause_var, width=8)
-        pause_entry.pack(side='left', padx=10)
+        ttk.Entry(row2, textvariable=self.pause_var, width=6).pack(side='left', padx=(10, 5))
+        ttk.Label(row2, text="min").pack(side='left')
         
-        # Save settings button
-        save_settings_btn = ttk.Button(settings_frame, text="💾 Save Settings", command=self.save_settings)
-        save_settings_btn.pack(pady=10)
+        ttk.Button(settings_frame, text="💾 Save Settings", command=self.save_settings).pack(pady=15)
     
     def create_images_tab(self):
         """Create the images management tab."""
         images = ttk.Frame(self.notebook, padding=20)
         self.notebook.add(images, text="🖼️ Images")
         
-        # Title and folder path
-        header_frame = ttk.Frame(images)
-        header_frame.pack(fill='x', pady=(0, 10))
+        header = ttk.Frame(images)
+        header.pack(fill='x', pady=(0, 10))
         
-        ttk.Label(header_frame, text="Marketing Images", style='Subtitle.TLabel').pack(side='left')
+        ttk.Label(header, text="Marketing Images", style='Subtitle.TLabel').pack(side='left')
+        ttk.Button(header, text="📁 Open Folder", command=self.open_images_folder).pack(side='right')
+        ttk.Button(header, text="➕ Add Images", command=self.add_images).pack(side='right', padx=10)
+        ttk.Button(header, text="🔄 Refresh", command=self.refresh_images).pack(side='right')
         
-        open_folder_btn = ttk.Button(header_frame, text="📁 Open Folder", command=self.open_images_folder)
-        open_folder_btn.pack(side='right')
-        
-        add_images_btn = ttk.Button(header_frame, text="➕ Add Images", command=self.add_images)
-        add_images_btn.pack(side='right', padx=10)
-        
-        # Folder path
-        path_label = ttk.Label(images, text=f"📂 {IMAGES_DIR}", font=('Helvetica', 10))
-        path_label.pack(anchor='w', pady=(0, 10))
+        ttk.Label(images, text=f"📂 {IMAGES_DIR}", font=('Helvetica', 10)).pack(anchor='w', pady=(0, 10))
         
         # Images list
         list_frame = ttk.Frame(images)
         list_frame.pack(fill='both', expand=True)
         
-        # Treeview for images
         columns = ('filename', 'size')
         self.images_tree = ttk.Treeview(list_frame, columns=columns, show='headings')
-        
         self.images_tree.heading('filename', text='Filename')
         self.images_tree.heading('size', text='Size')
-        
         self.images_tree.column('filename', width=400)
         self.images_tree.column('size', width=100)
         
@@ -346,13 +336,11 @@ class MarketingGUI:
         self.images_tree.pack(side='left', fill='both', expand=True)
         scrollbar.pack(side='right', fill='y')
         
-        # Info
         info_frame = ttk.Frame(images)
         info_frame.pack(fill='x', pady=10)
         
         self.images_count_label = ttk.Label(info_frame, text="0 images")
         self.images_count_label.pack(side='left')
-        
         ttk.Label(info_frame, text="(WhatsApp allows max 30 images per message)", font=('Helvetica', 10)).pack(side='left', padx=20)
     
     def create_schedule_tab(self):
@@ -360,269 +348,289 @@ class MarketingGUI:
         schedule = ttk.Frame(self.notebook, padding=20)
         self.notebook.add(schedule, text="📅 Schedule")
         
-        # Title
         ttk.Label(schedule, text="Campaign Schedule", style='Subtitle.TLabel').pack(anchor='w', pady=(0, 20))
         
-        # Current schedule status
-        status_frame = ttk.LabelFrame(schedule, text="Current Status", padding=20)
+        # Status
+        status_frame = ttk.LabelFrame(schedule, text="Current Status", padding=15)
         status_frame.pack(fill='x', pady=10)
         
-        self.schedule_status_text = tk.Text(status_frame, height=6, font=('Courier', 11))
+        self.schedule_status_text = tk.Text(status_frame, height=5, font=('Courier', 11), state='disabled')
         self.schedule_status_text.pack(fill='x')
-        self.schedule_status_text.config(state='disabled')
         
-        # Schedule settings
+        # Configure
         settings_frame = ttk.LabelFrame(schedule, text="⚙️ Configure Schedule", padding=20)
         settings_frame.pack(fill='x', pady=20)
         
-        # Day selection
-        day_frame = ttk.Frame(settings_frame)
-        day_frame.pack(fill='x', pady=10)
+        config_row = ttk.Frame(settings_frame)
+        config_row.pack(fill='x', pady=10)
         
-        ttk.Label(day_frame, text="Day:").pack(side='left')
+        ttk.Label(config_row, text="Day:").pack(side='left')
         self.schedule_day_var = tk.StringVar(value="saturday")
-        day_combo = ttk.Combobox(day_frame, textvariable=self.schedule_day_var, 
-                                  values=["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
-                                  width=15)
-        day_combo.pack(side='left', padx=10)
+        ttk.Combobox(config_row, textvariable=self.schedule_day_var, 
+                     values=["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
+                     width=12, state='readonly').pack(side='left', padx=10)
         
-        ttk.Label(day_frame, text="Time (24hr):").pack(side='left', padx=(30, 0))
+        ttk.Label(config_row, text="Time (24hr):").pack(side='left', padx=(30, 5))
         self.schedule_time_var = tk.StringVar(value="02:00")
-        time_entry = ttk.Entry(day_frame, textvariable=self.schedule_time_var, width=10)
-        time_entry.pack(side='left', padx=10)
+        ttk.Entry(config_row, textvariable=self.schedule_time_var, width=8).pack(side='left')
+        ttk.Label(config_row, text="IST").pack(side='left', padx=5)
         
-        ttk.Label(day_frame, text="IST", font=('Helvetica', 10)).pack(side='left')
-        
-        # Buttons
         btn_frame = ttk.Frame(settings_frame)
         btn_frame.pack(pady=20)
         
-        setup_btn = ttk.Button(btn_frame, text="✅ Set Up Schedule", command=self.setup_schedule_action, style='Action.TButton')
-        setup_btn.pack(side='left', padx=10)
-        
-        remove_btn = ttk.Button(btn_frame, text="❌ Remove Schedule", command=self.remove_schedule_action)
-        remove_btn.pack(side='left', padx=10)
-        
-        refresh_btn = ttk.Button(btn_frame, text="🔄 Refresh Status", command=self.refresh_schedule_status)
-        refresh_btn.pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="✅ Set Up Schedule", command=self.setup_schedule_action, style='Action.TButton').pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="❌ Remove Schedule", command=self.remove_schedule_action).pack(side='left', padx=10)
+        ttk.Button(btn_frame, text="🔄 Refresh", command=self.refresh_schedule_status).pack(side='left', padx=10)
         
         # Info
-        info_frame = ttk.LabelFrame(schedule, text="ℹ️ Important Notes", padding=15)
+        info_frame = ttk.LabelFrame(schedule, text="ℹ️ Notes", padding=15)
         info_frame.pack(fill='x', pady=10)
         
-        info_text = """• Your Mac must be ON at the scheduled time (can be sleeping)
-• The automation will attempt to unlock your screen automatically
-• Make sure WhatsApp Desktop is installed and logged in
-• Test with a dry run before setting up the schedule
-• Logs are saved to ~/Library/Logs/whatsapp_marketing.log"""
+        ttk.Label(info_frame, text="• Mac must be ON at scheduled time (can be sleeping)\n• WhatsApp Desktop must be installed and logged in\n• Test with dry run before scheduling", justify='left').pack(anchor='w')
         
-        ttk.Label(info_frame, text=info_text, font=('Helvetica', 11), justify='left').pack(anchor='w')
+        # Load schedule status in background
+        self.root.after(500, lambda: executor.submit(self._load_schedule_status))
     
     def create_logs_tab(self):
         """Create the logs tab."""
         logs = ttk.Frame(self.notebook, padding=20)
         self.notebook.add(logs, text="📋 Logs")
         
-        # Toolbar
         toolbar = ttk.Frame(logs)
         toolbar.pack(fill='x', pady=(0, 10))
         
-        refresh_btn = ttk.Button(toolbar, text="🔄 Refresh", command=self.refresh_logs)
-        refresh_btn.pack(side='left')
+        ttk.Button(toolbar, text="🔄 Refresh", command=self.refresh_logs).pack(side='left')
+        ttk.Button(toolbar, text="🗑️ Clear", command=self.clear_logs).pack(side='left', padx=10)
+        ttk.Button(toolbar, text="📂 Open Folder", command=self.open_logs_folder).pack(side='left', padx=10)
         
-        clear_btn = ttk.Button(toolbar, text="🗑️ Clear Logs", command=self.clear_logs)
-        clear_btn.pack(side='left', padx=10)
-        
-        open_btn = ttk.Button(toolbar, text="📂 Open Log Folder", command=self.open_logs_folder)
-        open_btn.pack(side='left', padx=10)
-        
-        # Log text area
-        self.log_text = scrolledtext.ScrolledText(logs, font=('Courier', 10))
+        self.log_text = scrolledtext.ScrolledText(logs, font=('Courier', 10), state='disabled')
         self.log_text.pack(fill='both', expand=True)
-        self.log_text.config(state='disabled')
+        
+        # Load logs in background
+        self.root.after(1000, lambda: executor.submit(self._load_logs))
     
-    # ============= Actions =============
+    # ============= UI Update Methods (called on main thread) =============
     
-    def refresh_all_data(self):
-        """Refresh all data in the GUI."""
-        self.update_stats()
-        self.update_contacts_list()
-        self.update_images_list()
-        self.refresh_schedule_status()
-        self.refresh_logs()
+    def _update_stats_ui(self):
+        """Update stats display (main thread)."""
+        stats = self._stats_cache
+        self.stat_vars['total_contacts'].set(str(stats.get('total', 0)))
+        self.stat_vars['active_contacts'].set(str(stats.get('active', 0)))
+        self.stat_vars['excluded_contacts'].set(str(stats.get('excluded', 0)))
+        self.stat_vars['images_count'].set(str(len(self._images_cache)))
+        self.stat_vars['messaged_today'].set(str(stats.get('messaged_today', 0)))
+        
+        # Breakdown
+        self.breakdown_text.config(state='normal')
+        self.breakdown_text.delete('1.0', 'end')
+        breakdown = stats.get('by_suffix', {})
+        if breakdown:
+            for suffix, count in breakdown.items():
+                self.breakdown_text.insert('end', f"   {suffix.upper()}: {count} contacts\n")
+        else:
+            self.breakdown_text.insert('end', "   No contacts. Click 'Refresh Contacts' to sync.\n")
+        self.breakdown_text.config(state='disabled')
     
-    def update_stats(self):
-        """Update the dashboard statistics."""
-        try:
-            stats = get_contact_stats()
-            images = get_marketing_images()
-            
-            self.stat_vars['total_contacts'].set(str(stats.get('total', 0)))
-            self.stat_vars['active_contacts'].set(str(stats.get('active', 0)))
-            self.stat_vars['excluded_contacts'].set(str(stats.get('excluded', 0)))
-            self.stat_vars['images_count'].set(str(len(images)))
-            self.stat_vars['messaged_today'].set(str(stats.get('messaged_today', 0)))
-            
-            # Update breakdown
-            self.breakdown_text.config(state='normal')
-            self.breakdown_text.delete('1.0', 'end')
-            
-            breakdown = stats.get('by_suffix', {})
-            if breakdown:
-                for suffix, count in breakdown.items():
-                    self.breakdown_text.insert('end', f"   {suffix.upper()}: {count} contacts\n")
-            else:
-                self.breakdown_text.insert('end', "   No contacts found. Click 'Refresh Contacts' to sync from macOS.\n")
-            
-            self.breakdown_text.config(state='disabled')
-            
-        except Exception as e:
-            print(f"Error updating stats: {e}")
+    def _update_contacts_ui(self):
+        """Update contacts treeview (main thread)."""
+        self._apply_filters()
     
-    def update_contacts_list(self):
-        """Update the contacts treeview."""
+    def _apply_filters(self):
+        """Apply filters and update treeview."""
         # Clear existing
         for item in self.contacts_tree.get_children():
             self.contacts_tree.delete(item)
         
-        try:
-            contacts = get_all_contacts_with_status()
+        filter_type = self.filter_var.get()
+        search_term = self.search_var.get().lower()
+        
+        count = 0
+        for contact in self._contacts_cache:
+            if filter_type != "All" and contact['suffix_type'] != filter_type:
+                continue
+            if search_term and search_term not in contact['name'].lower() and search_term not in contact.get('phone', ''):
+                continue
             
-            # Apply filters
-            filter_type = self.filter_var.get()
-            search_term = self.search_var.get().lower()
+            status = "❌ Excluded" if contact['is_excluded'] else "✅ Active"
+            last_sent = contact['last_messaged'][:10] if contact.get('last_messaged') else "Never"
             
-            for contact in contacts:
-                # Filter by type
-                if filter_type != "All" and contact['suffix_type'] != filter_type:
-                    continue
-                
-                # Filter by search
-                if search_term and search_term not in contact['name'].lower() and search_term not in contact['phone']:
-                    continue
-                
-                # Format values
-                status = "❌ Excluded" if contact['is_excluded'] else "✅ Active"
-                last_sent = contact['last_messaged'][:10] if contact['last_messaged'] else "Never"
-                
-                self.contacts_tree.insert('', 'end', iid=contact['id'], values=(
-                    contact['name'],
-                    contact['phone'],
-                    contact['suffix_type'],
-                    status,
-                    last_sent,
-                    contact['message_count']
-                ))
-                
-        except Exception as e:
-            print(f"Error updating contacts: {e}")
+            self.contacts_tree.insert('', 'end', iid=contact['id'], values=(
+                contact['name'],
+                contact.get('phone', ''),
+                contact['suffix_type'],
+                status,
+                last_sent,
+                contact.get('message_count', 0)
+            ))
+            count += 1
+        
+        self.contacts_count_var.set(f"{count} contacts")
     
-    def update_images_list(self):
-        """Update the images treeview."""
-        # Clear existing
+    def _update_images_ui(self):
+        """Update images treeview (main thread)."""
         for item in self.images_tree.get_children():
             self.images_tree.delete(item)
         
-        images = get_marketing_images()
-        
-        for img_path in images:
+        for img_path in self._images_cache:
             filename = os.path.basename(img_path)
-            size = os.path.getsize(img_path)
-            size_str = f"{size / 1024:.1f} KB" if size < 1024 * 1024 else f"{size / (1024*1024):.1f} MB"
-            
+            try:
+                size = os.path.getsize(img_path)
+                size_str = f"{size / 1024:.1f} KB" if size < 1024 * 1024 else f"{size / (1024*1024):.1f} MB"
+            except:
+                size_str = "—"
             self.images_tree.insert('', 'end', values=(filename, size_str))
         
-        self.images_count_label.config(text=f"{len(images)} images")
+        self.images_count_label.config(text=f"{len(self._images_cache)} images")
+    
+    # ============= Background Data Loading =============
+    
+    def _load_schedule_status(self):
+        """Background: Load schedule status."""
+        import io
+        from contextlib import redirect_stdout
+        
+        f = io.StringIO()
+        with redirect_stdout(f):
+            check_status()
+        output = f.getvalue()
+        
+        self.queue_update(self._set_schedule_text, output)
+    
+    def _set_schedule_text(self, text):
+        """Set schedule status text (main thread)."""
+        self.schedule_status_text.config(state='normal')
+        self.schedule_status_text.delete('1.0', 'end')
+        self.schedule_status_text.insert('end', text)
+        self.schedule_status_text.config(state='disabled')
+    
+    def _load_logs(self):
+        """Background: Load logs."""
+        today = datetime.now().strftime('%Y-%m-%d')
+        log_file = os.path.join(LOG_DIR, f"marketing_{today}.log")
+        
+        content = ""
+        if os.path.exists(log_file):
+            with open(log_file, 'r') as f:
+                content = f.read()
+        else:
+            try:
+                log_files = sorted([f for f in os.listdir(LOG_DIR) if f.endswith('.log')], reverse=True)
+                if log_files:
+                    with open(os.path.join(LOG_DIR, log_files[0]), 'r') as f:
+                        content = f"=== {log_files[0]} ===\n\n{f.read()}"
+                else:
+                    content = "No logs yet. Run a campaign to generate logs."
+            except:
+                content = "No logs folder found."
+        
+        self.queue_update(self._set_log_text, content)
+    
+    def _set_log_text(self, text):
+        """Set log text (main thread)."""
+        self.log_text.config(state='normal')
+        self.log_text.delete('1.0', 'end')
+        self.log_text.insert('end', text)
+        self.log_text.config(state='disabled')
+        self.log_text.see('end')
+    
+    # ============= Actions =============
     
     def refresh_contacts_action(self):
-        """Refresh contacts from macOS Contacts app."""
+        """Refresh contacts from macOS."""
         self.status_var.set("Refreshing contacts...")
-        self.root.update()
         
         def do_refresh():
             try:
                 result = refresh_contacts()
-                self.root.after(0, lambda: self.on_refresh_complete(result))
+                # Reload cache
+                self._contacts_cache = get_all_contacts_with_status()
+                self._stats_cache = get_contact_stats()
+                
+                self.queue_update(self._update_stats_ui)
+                self.queue_update(self._update_contacts_ui)
+                self.queue_update(self._show_refresh_result, result)
             except Exception as e:
-                self.root.after(0, lambda: messagebox.showerror("Error", f"Failed to refresh contacts: {e}"))
+                self.queue_update(messagebox.showerror, "Error", str(e))
+            finally:
+                self.queue_update(self.status_var.set, "Ready")
         
-        threading.Thread(target=do_refresh, daemon=True).start()
+        executor.submit(do_refresh)
     
-    def on_refresh_complete(self, result):
-        """Callback when contact refresh is complete."""
+    def _show_refresh_result(self, result):
+        """Show refresh result dialog."""
         if 'error' in result:
             messagebox.showerror("Error", result['error'])
         else:
-            messagebox.showinfo(
-                "Contacts Refreshed",
-                f"Fetched: {result.get('fetched', 0)}\n"
-                f"New: {result.get('new', 0)}\n"
-                f"Total: {result.get('total', 0)}\n"
-                f"Active: {result.get('active', 0)}"
-            )
-        
-        self.update_stats()
-        self.update_contacts_list()
-        self.status_var.set("Ready")
+            messagebox.showinfo("Done", f"Fetched: {result.get('fetched', 0)}\nNew: {result.get('new', 0)}\nTotal: {result.get('total', 0)}")
     
     def exclude_selected(self):
         """Exclude selected contacts."""
         selected = self.contacts_tree.selection()
         if not selected:
-            messagebox.showwarning("No Selection", "Please select contacts to exclude")
             return
         
-        for contact_id in selected:
-            exclude_contact(contact_id)
+        def do_exclude():
+            for cid in selected:
+                exclude_contact(cid)
+            self._contacts_cache = get_all_contacts_with_status()
+            self._stats_cache = get_contact_stats()
+            self.queue_update(self._update_contacts_ui)
+            self.queue_update(self._update_stats_ui)
+            self.queue_update(self.status_var.set, f"Excluded {len(selected)}")
         
-        self.update_contacts_list()
-        self.update_stats()
-        self.status_var.set(f"Excluded {len(selected)} contacts")
+        executor.submit(do_exclude)
     
     def include_selected(self):
         """Include selected contacts."""
         selected = self.contacts_tree.selection()
         if not selected:
-            messagebox.showwarning("No Selection", "Please select contacts to include")
             return
         
-        for contact_id in selected:
-            include_contact(contact_id)
+        def do_include():
+            for cid in selected:
+                include_contact(cid)
+            self._contacts_cache = get_all_contacts_with_status()
+            self._stats_cache = get_contact_stats()
+            self.queue_update(self._update_contacts_ui)
+            self.queue_update(self._update_stats_ui)
+            self.queue_update(self.status_var.set, f"Included {len(selected)}")
         
-        self.update_contacts_list()
-        self.update_stats()
-        self.status_var.set(f"Included {len(selected)} contacts")
+        executor.submit(do_include)
     
     def toggle_contact_status(self, event):
-        """Toggle contact exclusion status on double-click."""
+        """Toggle contact on double-click."""
         item = self.contacts_tree.selection()
-        if item:
-            contact_id = item[0]
-            values = self.contacts_tree.item(contact_id, 'values')
-            current_status = values[3]
-            
-            if "Excluded" in current_status:
+        if not item:
+            return
+        
+        contact_id = item[0]
+        values = self.contacts_tree.item(contact_id, 'values')
+        is_excluded = "Excluded" in values[3]
+        
+        def do_toggle():
+            if is_excluded:
                 include_contact(contact_id)
             else:
                 exclude_contact(contact_id)
-            
-            self.update_contacts_list()
-            self.update_stats()
+            self._contacts_cache = get_all_contacts_with_status()
+            self._stats_cache = get_contact_stats()
+            self.queue_update(self._update_contacts_ui)
+            self.queue_update(self._update_stats_ui)
+        
+        executor.submit(do_toggle)
     
     def show_context_menu(self, event):
-        """Show right-click context menu."""
+        """Show right-click menu."""
         try:
             self.contacts_menu.tk_popup(event.x_root, event.y_root)
         finally:
             self.contacts_menu.grab_release()
     
     def save_message(self):
-        """Save the message template."""
-        message = self.message_text.get('1.0', 'end-1c')
-        self.config['message_template'] = message
+        """Save message template."""
+        self.config['message_template'] = self.message_text.get('1.0', 'end-1c')
         save_config(self.config)
         self.status_var.set("Message saved!")
-        messagebox.showinfo("Saved", "Message template saved successfully!")
     
     def save_settings(self):
         """Save campaign settings."""
@@ -633,187 +641,135 @@ class MarketingGUI:
             self.config['pause_between_batches_minutes'] = int(self.pause_var.get())
             save_config(self.config)
             self.status_var.set("Settings saved!")
-            messagebox.showinfo("Saved", "Settings saved successfully!")
         except ValueError:
-            messagebox.showerror("Error", "Please enter valid numbers for all settings")
-    
-    def update_preview(self, event=None):
-        """Update the message preview."""
-        message = self.message_text.get('1.0', 'end-1c')
-        self.preview_label.config(text=message if message else "(Empty message)")
+            messagebox.showerror("Error", "Please enter valid numbers")
     
     def open_images_folder(self):
-        """Open the marketing images folder in Finder."""
-        subprocess.run(["open", IMAGES_DIR])
+        """Open images folder in Finder."""
+        subprocess.Popen(["open", IMAGES_DIR])
+    
+    def refresh_images(self):
+        """Refresh images list."""
+        def do_refresh():
+            self._images_cache = get_marketing_images()
+            self.queue_update(self._update_images_ui)
+            self.queue_update(self._update_stats_ui)
+        executor.submit(do_refresh)
     
     def add_images(self):
-        """Add images via file dialog."""
-        files = filedialog.askopenfilenames(
-            title="Select Images",
-            filetypes=[("Images", "*.jpg *.jpeg *.png *.gif *.webp")]
-        )
+        """Add images via dialog."""
+        files = filedialog.askopenfilenames(title="Select Images", filetypes=[("Images", "*.jpg *.jpeg *.png *.gif *.webp")])
+        if not files:
+            return
         
-        if files:
+        def do_copy():
             import shutil
-            for file_path in files:
-                filename = os.path.basename(file_path)
-                dest = os.path.join(IMAGES_DIR, filename)
-                shutil.copy2(file_path, dest)
-            
-            self.update_images_list()
-            self.update_stats()
-            messagebox.showinfo("Added", f"Added {len(files)} images")
+            for fp in files:
+                shutil.copy2(fp, os.path.join(IMAGES_DIR, os.path.basename(fp)))
+            self._images_cache = get_marketing_images()
+            self.queue_update(self._update_images_ui)
+            self.queue_update(self._update_stats_ui)
+            self.queue_update(self.status_var.set, f"Added {len(files)} images")
+        
+        executor.submit(do_copy)
     
     def open_logs_folder(self):
-        """Open the logs folder."""
-        subprocess.run(["open", LOG_DIR])
+        """Open logs folder."""
+        subprocess.Popen(["open", LOG_DIR])
     
     def refresh_logs(self):
-        """Refresh the logs display."""
-        self.log_text.config(state='normal')
-        self.log_text.delete('1.0', 'end')
-        
-        # Find today's log file
-        today = datetime.now().strftime('%Y-%m-%d')
-        log_file = os.path.join(LOG_DIR, f"marketing_{today}.log")
-        
-        if os.path.exists(log_file):
-            with open(log_file, 'r') as f:
-                self.log_text.insert('end', f.read())
-        else:
-            # Try to find any log file
-            log_files = sorted([f for f in os.listdir(LOG_DIR) if f.endswith('.log')], reverse=True)
-            if log_files:
-                with open(os.path.join(LOG_DIR, log_files[0]), 'r') as f:
-                    self.log_text.insert('end', f"=== {log_files[0]} ===\n\n")
-                    self.log_text.insert('end', f.read())
-            else:
-                self.log_text.insert('end', "No logs found yet.\n\nRun a campaign to generate logs.")
-        
-        self.log_text.config(state='disabled')
-        self.log_text.see('end')  # Scroll to bottom
+        """Refresh logs display."""
+        executor.submit(self._load_logs)
     
     def clear_logs(self):
-        """Clear all log files."""
-        if messagebox.askyesno("Clear Logs", "Are you sure you want to clear all logs?"):
-            for f in os.listdir(LOG_DIR):
-                if f.endswith('.log'):
-                    os.remove(os.path.join(LOG_DIR, f))
-            self.refresh_logs()
-            self.status_var.set("Logs cleared")
+        """Clear all logs."""
+        if messagebox.askyesno("Clear Logs", "Clear all logs?"):
+            def do_clear():
+                for f in os.listdir(LOG_DIR):
+                    if f.endswith('.log'):
+                        os.remove(os.path.join(LOG_DIR, f))
+                self.queue_update(self._set_log_text, "Logs cleared.")
+            executor.submit(do_clear)
     
     def refresh_schedule_status(self):
-        """Refresh the schedule status display."""
-        self.schedule_status_text.config(state='normal')
-        self.schedule_status_text.delete('1.0', 'end')
-        
-        # Capture check_status output
-        import io
-        from contextlib import redirect_stdout
-        
-        f = io.StringIO()
-        with redirect_stdout(f):
-            check_status()
-        
-        output = f.getvalue()
-        self.schedule_status_text.insert('end', output)
-        self.schedule_status_text.config(state='disabled')
+        """Refresh schedule status."""
+        executor.submit(self._load_schedule_status)
     
     def setup_schedule_action(self):
-        """Set up the schedule."""
+        """Set up schedule."""
         day = self.schedule_day_var.get()
         time_str = self.schedule_time_var.get()
         
         try:
-            # Validate time format
-            hour, minute = map(int, time_str.split(':'))
-            if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            h, m = map(int, time_str.split(':'))
+            if not (0 <= h <= 23 and 0 <= m <= 59):
                 raise ValueError()
         except:
-            messagebox.showerror("Error", "Invalid time format. Use HH:MM (e.g., 02:00)")
+            messagebox.showerror("Error", "Invalid time. Use HH:MM format.")
             return
         
-        if messagebox.askyesno("Confirm", f"Set up schedule for {day.capitalize()} at {time_str} IST?"):
-            setup_schedule(time_str, day)
-            self.refresh_schedule_status()
-            messagebox.showinfo("Success", "Schedule set up successfully!")
+        if messagebox.askyesno("Confirm", f"Schedule for {day.capitalize()} at {time_str} IST?"):
+            def do_setup():
+                setup_schedule(time_str, day)
+                self._load_schedule_status()
+                self.queue_update(messagebox.showinfo, "Success", "Schedule created!")
+            executor.submit(do_setup)
     
     def remove_schedule_action(self):
-        """Remove the schedule."""
-        if messagebox.askyesno("Confirm", "Remove the scheduled campaign?"):
-            unload_schedule()
-            self.refresh_schedule_status()
-            messagebox.showinfo("Removed", "Schedule removed")
+        """Remove schedule."""
+        if messagebox.askyesno("Confirm", "Remove schedule?"):
+            def do_remove():
+                unload_schedule()
+                self._load_schedule_status()
+            executor.submit(do_remove)
     
     def run_campaign_action(self):
-        """Run the marketing campaign."""
-        stats = get_contact_stats()
-        images = get_marketing_images()
-        
-        message = f"""Are you sure you want to run the campaign?
-
-📊 Contacts to message: {stats.get('active', 0)}
-🖼️ Images to send: {len(images)}
-
-This will send messages to ALL active contacts.
-The process may take several hours depending on the number of contacts."""
-        
-        if not messagebox.askyesno("Confirm Campaign", message):
+        """Run campaign."""
+        if not messagebox.askyesno("Confirm", f"Run campaign to {self._stats_cache.get('active', 0)} contacts?"):
             return
         
         self.status_var.set("Running campaign...")
         
-        def do_campaign():
+        def do_run():
             try:
                 result = run_marketing_campaign(dry_run=False)
-                self.root.after(0, lambda: self.on_campaign_complete(result))
+                self.queue_update(self._show_campaign_result, result, False)
             except Exception as e:
-                self.root.after(0, lambda: messagebox.showerror("Error", f"Campaign failed: {e}"))
-                self.root.after(0, lambda: self.status_var.set("Campaign failed"))
+                self.queue_update(messagebox.showerror, "Error", str(e))
+            finally:
+                self.queue_update(self.status_var.set, "Ready")
         
-        threading.Thread(target=do_campaign, daemon=True).start()
+        executor.submit(do_run)
     
     def dry_run_action(self):
-        """Run a dry test of the campaign."""
-        self.status_var.set("Running dry test...")
+        """Dry run test."""
+        self.status_var.set("Running test...")
         
-        def do_dry_run():
+        def do_test():
             try:
                 result = run_marketing_campaign(dry_run=True, limit=5)
-                self.root.after(0, lambda: self.on_campaign_complete(result, is_dry=True))
+                self.queue_update(self._show_campaign_result, result, True)
             except Exception as e:
-                self.root.after(0, lambda: messagebox.showerror("Error", f"Dry run failed: {e}"))
-                self.root.after(0, lambda: self.status_var.set("Dry run failed"))
+                self.queue_update(messagebox.showerror, "Error", str(e))
+            finally:
+                self.queue_update(self.status_var.set, "Ready")
         
-        threading.Thread(target=do_dry_run, daemon=True).start()
+        executor.submit(do_test)
     
-    def on_campaign_complete(self, result, is_dry=False):
-        """Callback when campaign completes."""
-        prefix = "[DRY RUN] " if is_dry else ""
-        messagebox.showinfo(
-            f"{prefix}Campaign Complete",
-            f"✅ Successful: {result.get('success', 0)}\n"
-            f"❌ Failed: {result.get('failed', 0)}\n"
-            f"📋 Total: {result.get('total', 0)}"
-        )
-        self.update_stats()
-        self.refresh_logs()
-        self.status_var.set("Ready")
+    def _show_campaign_result(self, result, is_dry):
+        """Show campaign result."""
+        prefix = "[TEST] " if is_dry else ""
+        messagebox.showinfo(f"{prefix}Complete", f"✅ Success: {result.get('success', 0)}\n❌ Failed: {result.get('failed', 0)}\n📋 Total: {result.get('total', 0)}")
+        self._stats_cache = get_contact_stats()
+        self._update_stats_ui()
+        executor.submit(self._load_logs)
 
 
 def main():
     root = tk.Tk()
-    
-    # Set app icon (if available)
-    try:
-        root.iconphoto(True, tk.PhotoImage(file=os.path.join(SCRIPT_DIR, 'icon.png')))
-    except:
-        pass
-    
     app = MarketingGUI(root)
     root.mainloop()
 
 
 if __name__ == "__main__":
     main()
-
