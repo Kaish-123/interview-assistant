@@ -1175,6 +1175,9 @@ class Application(tk.Tk):
         
         # Audio level tracking
         self.current_audio_level = 0
+        
+        # UI Mode: "modern" or "classic"
+        self.ui_mode = self.ui_prefs.get("ui_mode", "modern")
 
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
@@ -1573,11 +1576,11 @@ class Application(tk.Tk):
     def toggle_input_mode(self):
         if self.assistant.recorder.input_mode == "internal":
             self.assistant.recorder.input_mode = "external"
-            self.toggle_input_btn.config(text="🎧 External Mic")
+            self.toggle_input_btn.config(text="🎧 Mic")
             self.status.config(text="🎧 Switched to External Microphone")
         else:
             self.assistant.recorder.input_mode = "internal"
-            self.toggle_input_btn.config(text="🔈 Internal Audio (BlackHole)")
+            self.toggle_input_btn.config(text="🔈 BlackHole")
             self.status.config(text="🔈 Switched to Internal Audio (BlackHole)")
 
     # ========== CONNECTION STATUS ==========
@@ -1618,6 +1621,37 @@ class Application(tk.Tk):
         
         # Update the assistant's model
         self.assistant.current_model = self.current_model
+
+    # ========== UI MODE TOGGLE ==========
+    def toggle_ui_mode(self):
+        """Toggle between modern and classic UI mode (requires restart)."""
+        if self.ui_mode == "modern":
+            self.ui_mode = "classic"
+            msg = "🎨 Classic UI mode selected. Restart app to apply."
+        else:
+            self.ui_mode = "modern"
+            msg = "🎨 Modern UI mode selected. Restart app to apply."
+        
+        # Save preference
+        self.ui_prefs["ui_mode"] = self.ui_mode
+        UIPreferences.save(self.ui_prefs)
+        self.status.config(text=msg)
+        
+        # Ask if user wants to restart now
+        if messagebox.askyesno("UI Mode Changed", f"{msg}\n\nRestart now?"):
+            self._restart_app()
+    
+    def _restart_app(self):
+        """Restart the application."""
+        import subprocess
+        try:
+            python = sys.executable
+            script = os.path.abspath(sys.argv[0])
+            subprocess.Popen([python, script])
+            self.destroy()
+            os._exit(0)
+        except Exception as e:
+            self.status.config(text=f"❌ Restart failed: {e}")
 
     # ========== AUDIO LEVEL INDICATOR ==========
     def update_audio_level(self):
@@ -1812,23 +1846,23 @@ class Application(tk.Tk):
         self.main_frame = ttk.Frame(self.paned)
         self.paned.add(self.main_frame, weight=1)
 
-        # Status bar with connection indicator and audio level
-        status_frame = ttk.Frame(self.main_frame)
-        status_frame.pack(fill="x", padx=10, pady=2)
+        # ====== HEADER BAR ======
+        header_frame = ttk.Frame(self.main_frame)
+        header_frame.pack(fill="x", padx=10, pady=(5, 2))
         
-        # Connection status indicator
-        self.connection_label = ttk.Label(status_frame, text="🔴 Checking...", font=('Arial', 9))
-        self.connection_label.pack(side="left", padx=(0, 10))
+        # Connection status (left)
+        self.connection_label = ttk.Label(header_frame, text="🔴", font=('Arial', 10))
+        self.connection_label.pack(side="left", padx=(0, 5))
         
-        # Main status label
-        self.status = ttk.Label(status_frame, text="🔊 Ready", style='TLabel')
+        # Main status label (left-center)
+        self.status = ttk.Label(header_frame, text="🔊 Ready", font=('Arial', 10))
         self.status.pack(side="left", padx=5)
         
-        # Audio level indicator (shows when recording)
-        self.audio_level_frame = ttk.Frame(status_frame)
-        self.audio_level_frame.pack(side="right", padx=10)
+        # Audio level indicator (right)
+        self.audio_level_frame = ttk.Frame(header_frame)
+        self.audio_level_frame.pack(side="right", padx=5)
         ttk.Label(self.audio_level_frame, text="🎙", font=('Arial', 9)).pack(side="left")
-        self.audio_level_bar = ttk.Progressbar(self.audio_level_frame, length=80, mode='determinate', maximum=100)
+        self.audio_level_bar = ttk.Progressbar(self.audio_level_frame, length=60, mode='determinate', maximum=100)
         self.audio_level_bar.pack(side="left", padx=2)
         self.audio_level_label = ttk.Label(self.audio_level_frame, text="--", font=('Arial', 8), width=4)
         self.audio_level_label.pack(side="left")
@@ -1889,68 +1923,91 @@ class Application(tk.Tk):
         self.response_box.bind("<Button-3>", self._show_bookmark_menu)  # Right click
         self.response_box.bind("<Control-Button-1>", self._show_bookmark_menu)  # Ctrl+click on Mac
 
-        # Button bar above chat entry
-        control_frame = ttk.Frame(self.main_frame)
-        control_frame.pack(fill="x", padx=10, pady=5)
-
-        # Performance diagnostic button - FIRST for quick access
-        self.diag_btn = ttk.Button(control_frame, text="📊 Report", command=self.show_performance_dialog)
-        self.diag_btn.pack(side="left", padx=4)
-
-        # New chat button - between Report and Listen
-        self.new_chat_btn = ttk.Button(control_frame, text="🆕 New", command=self.start_new_chat)
-        self.new_chat_btn.pack(side="left", padx=4)
-
-        # Answer Quality Mode toggle button
-        self.answer_mode_btn = ttk.Button(control_frame, text="🔘 Default", command=self.toggle_answer_mode)
-        self.answer_mode_btn.pack(side="left", padx=4)
-
-        # Model selector button - between Default and Listen
-        self.model_btn = ttk.Button(control_frame, text="🧠 4o", command=self.toggle_model, width=6)
-        self.model_btn.pack(side="left", padx=4)
-
-        self.record_btn = ttk.Button(control_frame, text="🎤 Listen", command=self.toggle_recording)
-        self.record_btn.pack(side="left", padx=4)
+        # ====== MODERN CONTROL PANEL - 2 ROWS ======
+        control_container = ttk.Frame(self.main_frame)
+        control_container.pack(fill="x", padx=10, pady=5)
         
-        self.toggle_input_btn = ttk.Button(control_frame, text="🔈 Internal Audio (BlackHole)", command=self.toggle_input_mode)
-        self.toggle_input_btn.pack(side="left", padx=4)
-
-        self.stop_btn = ttk.Button(control_frame, text="⏹ Stop", command=self.stop_output, state=tk.DISABLED)
-        self.stop_btn.pack(side="left", padx=4)
-
-        self.upload_btn = ttk.Button(control_frame, text="📁 Resume", command=self.upload_resume)
-        self.upload_btn.pack(side="left", padx=4)
+        # ----- ROW 1: MAIN ACTIONS (Recording & Chat) -----
+        row1 = ttk.Frame(control_container)
+        row1.pack(fill="x", pady=(0, 3))
         
-        # Optimization Mode Toggle - ON by default for speed
-        self.optimize_btn = ttk.Button(control_frame, text="⚡ Fast Mode ON", command=self.toggle_optimization_mode)
-        self.optimize_btn.pack(side="left", padx=4)
-
-        font_controls = ttk.Frame(control_frame)
-        font_controls.pack(side="left", padx=10)
-        ttk.Button(font_controls, text="A+", command=self.increase_font).pack(side="left")
-        ttk.Button(font_controls, text="A-", command=self.decrease_font).pack(side="left")
-
-        self.topmost_btn = ttk.Button(control_frame, text="📌 Pin", command=self.toggle_always_on_top)
-        self.topmost_btn.pack(side="right", padx=4)
+        # LEFT: Primary actions
+        self.record_btn = ttk.Button(row1, text="🎤 Listen", command=self.toggle_recording, width=10)
+        self.record_btn.pack(side="left", padx=2)
         
-        # Bookmark/Pointer button - mark questions for quick navigation
-        self.bookmark_btn = ttk.Button(control_frame, text="🔖 Mark Q", command=self.add_bookmark_at_cursor)
-        self.bookmark_btn.pack(side="right", padx=4)
+        self.stop_btn = ttk.Button(row1, text="⏹ Stop", command=self.stop_output, state=tk.DISABLED, width=8)
+        self.stop_btn.pack(side="left", padx=2)
         
-        # Clear bookmarks button
-        self.clear_bookmarks_btn = ttk.Button(control_frame, text="🗑 Clear", command=self.clear_all_bookmarks, width=6)
-        self.clear_bookmarks_btn.pack(side="right", padx=2)
+        # Separator
+        ttk.Separator(row1, orient="vertical").pack(side="left", fill="y", padx=8)
+        
+        self.new_chat_btn = ttk.Button(row1, text="🆕 New Chat", command=self.start_new_chat, width=10)
+        self.new_chat_btn.pack(side="left", padx=2)
+        
+        self.upload_btn = ttk.Button(row1, text="📁 Resume/JD", command=self.upload_resume, width=10)
+        self.upload_btn.pack(side="left", padx=2)
+        
+        # RIGHT: Window controls
+        self.topmost_btn = ttk.Button(row1, text="📌", command=self.toggle_always_on_top, width=3)
+        self.topmost_btn.pack(side="right", padx=2)
+        
+        # UI Mode toggle (Classic/Modern)
+        self.ui_mode_btn = ttk.Button(row1, text="🎨", command=self.toggle_ui_mode, width=3)
+        self.ui_mode_btn.pack(side="right", padx=2)
+        
+        # ----- ROW 2: SETTINGS & OPTIONS -----
+        row2 = ttk.Frame(control_container)
+        row2.pack(fill="x", pady=(0, 0))
+        
+        # Model selector
+        self.model_btn = ttk.Button(row2, text="🧠 4o", command=self.toggle_model, width=7)
+        self.model_btn.pack(side="left", padx=2)
+        
+        # Answer mode
+        self.answer_mode_btn = ttk.Button(row2, text="🔘 Default", command=self.toggle_answer_mode, width=10)
+        self.answer_mode_btn.pack(side="left", padx=2)
+        
+        # Fast mode
+        self.optimize_btn = ttk.Button(row2, text="⚡ Fast", command=self.toggle_optimization_mode, width=7)
+        self.optimize_btn.pack(side="left", padx=2)
+        
+        # Separator
+        ttk.Separator(row2, orient="vertical").pack(side="left", fill="y", padx=8)
+        
+        # Audio input toggle (compact)
+        self.toggle_input_btn = ttk.Button(row2, text="🔈 BlackHole", command=self.toggle_input_mode, width=10)
+        self.toggle_input_btn.pack(side="left", padx=2)
+        
+        # Separator
+        ttk.Separator(row2, orient="vertical").pack(side="left", fill="y", padx=8)
+        
+        # Bookmarks
+        self.bookmark_btn = ttk.Button(row2, text="🔖", command=self.add_bookmark_at_cursor, width=3)
+        self.bookmark_btn.pack(side="left", padx=2)
+        
+        self.clear_bookmarks_btn = ttk.Button(row2, text="🗑", command=self.clear_all_bookmarks, width=3)
+        self.clear_bookmarks_btn.pack(side="left", padx=2)
+        
+        # Report button
+        self.diag_btn = ttk.Button(row2, text="📊", command=self.show_performance_dialog, width=3)
+        self.diag_btn.pack(side="left", padx=2)
+        
+        # RIGHT: Font controls
+        font_frame = ttk.Frame(row2)
+        font_frame.pack(side="right", padx=2)
+        ttk.Button(font_frame, text="A+", command=self.increase_font, width=3).pack(side="left")
+        ttk.Button(font_frame, text="A-", command=self.decrease_font, width=3).pack(side="left")
 
-        # Chat input bar at bottom
+        # ====== INPUT BAR (bottom) ======
         input_frame = ttk.Frame(self.main_frame)
-        input_frame.pack(side="bottom", fill="x", padx=10, pady=5)
+        input_frame.pack(side="bottom", fill="x", padx=10, pady=8)
 
-        self.input_entry = ttk.Entry(input_frame, font=('Arial', 14), width=80)
-        self.input_entry.pack(side="left", fill="x", expand=True, padx=(5, 10))
+        self.input_entry = ttk.Entry(input_frame, font=('Arial', 13))
+        self.input_entry.pack(side="left", fill="x", expand=True, padx=(0, 8))
 
         self.input_entry.bind("<Return>", lambda event: self.submit_text_question())
 
-        self.submit_btn = ttk.Button(input_frame, text="➡️", width=4, command=self.submit_text_question)
+        self.submit_btn = ttk.Button(input_frame, text="Send ➡️", width=8, command=self.submit_text_question)
         self.submit_btn.pack(side="right")
 
     def load_chat_tabs(self):
@@ -3329,11 +3386,11 @@ class Application(tk.Tk):
         self.assistant.optimization_mode = not self.assistant.optimization_mode
         
         if self.assistant.optimization_mode:
-            self.optimize_btn.config(text="⚡ Fast Mode ON")
-            self.status.config(text="⚡ Fast Mode ON - Optimized for speed (full history preserved locally)")
+            self.optimize_btn.config(text="⚡ Fast")
+            self.status.config(text="⚡ Fast Mode ON - Optimized for speed")
         else:
-            self.optimize_btn.config(text="🐢 Fast Mode OFF")
-            self.status.config(text="🐢 Fast Mode OFF - Sending full context (may be slower with long chats)")
+            self.optimize_btn.config(text="🐢 Full")
+            self.status.config(text="🐢 Full Mode - Sending complete context (slower)")
 
     # ============================================================================
     # BALANCE / BILLING MANAGEMENT
