@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.pyo
+*.pyd
+venv/
+env/
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+.eggs/
+*.spec
+
+# Next.js
+.next/
+out/
+
+# Electron
+desktop-app/dist/
+desktop-app/node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Test
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Secrets (IMPORTANT: Never commit these!)
+.env
+*.pem
+*.key
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+

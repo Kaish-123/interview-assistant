@@ -1,0 +1,174 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Python dependencies
+        run: |
+          cd interview_assistant_web/backend
+          pip install -r requirements.txt
+          pip install pyinstaller pywebview
+
+      - name: Install Node dependencies
+        run: |
+          cd interview_assistant_web/frontend
+          npm ci
+
+      - name: Build application
+        run: |
+          cd interview_assistant_web
+          python build_app.py
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: InterviewAssistant-mac
+          path: interview_assistant_web/dist/*.dmg
+
+      - name: Upload macOS zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: InterviewAssistant-mac-zip
+          path: interview_assistant_web/dist/*-darwin.zip
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Python dependencies
+        run: |
+          cd interview_assistant_web/backend
+          pip install -r requirements.txt
+          pip install pyinstaller pywebview
+
+      - name: Install Node dependencies
+        run: |
+          cd interview_assistant_web/frontend
+          npm ci
+
+      - name: Build application
+        run: |
+          cd interview_assistant_web
+          python build_app.py
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: InterviewAssistant-windows
+          path: interview_assistant_web/dist/*.exe
+
+      - name: Upload Windows zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: InterviewAssistant-windows-zip
+          path: interview_assistant_web/dist/*-windows.zip
+
+  create-release:
+    needs: [build-mac, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Interview Assistant v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/*.dmg
+            artifacts/**/*.exe
+            artifacts/**/*.zip
+          body: |
+            ## Interview Assistant v${{ steps.version.outputs.version }}
+            
+            AI-powered interview preparation tool with real-time transcription.
+            
+            ### Downloads
+            
+            | Platform | Download |
+            |----------|----------|
+            | macOS | [InterviewAssistant.dmg](https://github.com/${{ github.repository }}/releases/download/v${{ steps.version.outputs.version }}/InterviewAssistant.dmg) |
+            | Windows | [InterviewAssistant.exe](https://github.com/${{ github.repository }}/releases/download/v${{ steps.version.outputs.version }}/InterviewAssistant.exe) |
+            
+            ### Installation
+            
+            **macOS:**
+            1. Download the .dmg file
+            2. Open the DMG and drag Interview Assistant to Applications
+            3. Right-click the app and select "Open" (first time only)
+            4. Grant microphone and accessibility permissions
+            
+            **Windows:**
+            1. Download the .exe file
+            2. Run the installer
+            3. Allow through Windows Firewall if prompted
+            4. Grant microphone permissions
+            
+            ### Features
+            - 🎤 Real-time audio transcription
+            - 🤖 AI-powered interview assistance
+            - 📝 Prompt templates for interviews
+            - 💾 Auto-save sessions
+            - ⌨️ Global hotkeys
+            
+            ### Requirements
+            - macOS 10.15+ or Windows 10+
+            - OpenAI API key
+            - Microphone access
+
