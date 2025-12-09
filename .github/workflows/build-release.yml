@@ -17,11 +17,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: web-v2
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,42 +32,77 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          cd interview_assistant_web/backend
-          pip install -r requirements.txt
-          pip install pyinstaller pywebview
+          cd backend
+          # Filter out Windows-specific packages
+          grep -v "pywin32" requirements.txt > requirements-mac.txt || cp requirements.txt requirements-mac.txt
+          pip install -r requirements-mac.txt
+          pip install pyinstaller pywebview pyobjc
 
       - name: Install Node dependencies
         run: |
-          cd interview_assistant_web/frontend
+          cd frontend
           npm ci
 
-      - name: Build application
+      - name: Build Frontend
         run: |
-          cd interview_assistant_web
-          python build_app.py
+          cd frontend
+          npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Build Backend with PyInstaller
+        run: |
+          cd backend
+          pyinstaller --name="InterviewAssistant" \
+            --onedir \
+            --windowed \
+            --add-data="database:database" \
+            --add-data="routes:routes" \
+            --add-data="services:services" \
+            --add-data="models:models" \
+            --hidden-import=uvicorn \
+            --hidden-import=uvicorn.logging \
+            --hidden-import=uvicorn.loops \
+            --hidden-import=uvicorn.loops.auto \
+            --hidden-import=uvicorn.protocols \
+            --hidden-import=uvicorn.protocols.http \
+            --hidden-import=uvicorn.protocols.http.auto \
+            --hidden-import=uvicorn.protocols.websockets \
+            --hidden-import=uvicorn.protocols.websockets.auto \
+            --hidden-import=uvicorn.lifespan \
+            --hidden-import=uvicorn.lifespan.on \
+            --hidden-import=fastapi \
+            --hidden-import=pydantic \
+            --hidden-import=sqlalchemy \
+            --hidden-import=openai \
+            main.py
+
+      - name: Create DMG
+        run: |
+          mkdir -p dist
+          cd backend/dist
+          # Create a simple zip for now
+          zip -r ../../dist/InterviewAssistant-mac.zip InterviewAssistant.app 2>/dev/null || \
+          zip -r ../../dist/InterviewAssistant-mac.zip InterviewAssistant/
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: InterviewAssistant-mac
-          path: interview_assistant_web/dist/*.dmg
-
-      - name: Upload macOS zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: InterviewAssistant-mac-zip
-          path: interview_assistant_web/dist/*-darwin.zip
+          path: dist/InterviewAssistant-mac.zip
 
   build-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: web-v2
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -74,31 +111,42 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          cd interview_assistant_web/backend
-          pip install -r requirements.txt
-          pip install pyinstaller pywebview
+          cd backend
+          # Filter out macOS-specific packages
+          Get-Content requirements.txt | Where-Object { $_ -notmatch 'pyobjc' } | Set-Content requirements-win.txt
+          pip install -r requirements-win.txt
+          pip install pyinstaller pywebview pywin32
+        shell: pwsh
 
       - name: Install Node dependencies
         run: |
-          cd interview_assistant_web/frontend
+          cd frontend
           npm ci
 
-      - name: Build application
+      - name: Build Frontend
         run: |
-          cd interview_assistant_web
-          python build_app.py
+          cd frontend
+          npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Build Backend with PyInstaller
+        run: |
+          cd backend
+          pyinstaller --name="InterviewAssistant" --onedir --windowed --add-data="database;database" --add-data="routes;routes" --add-data="services;services" --add-data="models;models" --hidden-import=uvicorn --hidden-import=uvicorn.logging --hidden-import=uvicorn.loops --hidden-import=uvicorn.loops.auto --hidden-import=uvicorn.protocols --hidden-import=uvicorn.protocols.http --hidden-import=uvicorn.protocols.http.auto --hidden-import=uvicorn.protocols.websockets --hidden-import=uvicorn.protocols.websockets.auto --hidden-import=uvicorn.lifespan --hidden-import=uvicorn.lifespan.on --hidden-import=fastapi --hidden-import=pydantic --hidden-import=sqlalchemy --hidden-import=openai main.py
+        shell: cmd
+
+      - name: Create Windows zip
+        run: |
+          mkdir dist-final
+          Compress-Archive -Path backend/dist/InterviewAssistant -DestinationPath dist-final/InterviewAssistant-windows.zip
+        shell: pwsh
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: InterviewAssistant-windows
-          path: interview_assistant_web/dist/*.exe
-
-      - name: Upload Windows zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: InterviewAssistant-windows-zip
-          path: interview_assistant_web/dist/*-windows.zip
+          path: dist-final/InterviewAssistant-windows.zip
 
   create-release:
     needs: [build-mac, build-windows]
@@ -113,6 +161,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: List artifacts
+        run: |
+          echo "=== Downloaded artifacts ==="
+          find artifacts -type f -name "*.zip" -o -name "*.dmg" -o -name "*.exe"
 
       - name: Get version
         id: version
@@ -131,44 +184,45 @@ jobs:
           draft: false
           prerelease: false
           files: |
+            artifacts/**/*.zip
             artifacts/**/*.dmg
             artifacts/**/*.exe
-            artifacts/**/*.zip
           body: |
-            ## Interview Assistant v${{ steps.version.outputs.version }}
+            ## 🎉 Interview Assistant v${{ steps.version.outputs.version }}
             
             AI-powered interview preparation tool with real-time transcription.
             
-            ### Downloads
+            ### 📥 Downloads
             
             | Platform | Download |
             |----------|----------|
-            | macOS | [InterviewAssistant.dmg](https://github.com/${{ github.repository }}/releases/download/v${{ steps.version.outputs.version }}/InterviewAssistant.dmg) |
-            | Windows | [InterviewAssistant.exe](https://github.com/${{ github.repository }}/releases/download/v${{ steps.version.outputs.version }}/InterviewAssistant.exe) |
+            | 🍎 macOS | `InterviewAssistant-mac.zip` |
+            | 🪟 Windows | `InterviewAssistant-windows.zip` |
             
-            ### Installation
+            ### 🚀 Installation
             
             **macOS:**
-            1. Download the .dmg file
-            2. Open the DMG and drag Interview Assistant to Applications
-            3. Right-click the app and select "Open" (first time only)
-            4. Grant microphone and accessibility permissions
+            1. Download `InterviewAssistant-mac.zip`
+            2. Extract and move to Applications
+            3. Right-click → Open (first time only, to bypass Gatekeeper)
+            4. Grant microphone permissions when prompted
             
             **Windows:**
-            1. Download the .exe file
-            2. Run the installer
-            3. Allow through Windows Firewall if prompted
-            4. Grant microphone permissions
+            1. Download `InterviewAssistant-windows.zip`
+            2. Extract to a folder
+            3. Run `InterviewAssistant.exe`
+            4. Allow through Windows Firewall if prompted
             
-            ### Features
-            - 🎤 Real-time audio transcription
-            - 🤖 AI-powered interview assistance
-            - 📝 Prompt templates for interviews
-            - 💾 Auto-save sessions
-            - ⌨️ Global hotkeys
+            ### ✨ Features
+            - 🎤 Real-time audio transcription (Whisper API)
+            - 🤖 AI-powered interview assistance (GPT-4)
+            - 📝 Customizable prompt templates
+            - 💾 Auto-save chat sessions
+            - ⌨️ Global hotkeys (` to record, PgUp/PgDn to scroll)
+            - 📄 Resume & JD document upload
             
-            ### Requirements
+            ### ⚙️ Requirements
             - macOS 10.15+ or Windows 10+
-            - OpenAI API key
+            - OpenAI API key (get one at https://platform.openai.com)
             - Microphone access
 
