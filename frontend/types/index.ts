@@ -39,6 +39,16 @@ export interface TabWithSubtabs {
   subtabs: PromptTemplate[];
 }
 
+// Simplified type for grouped templates API response
+export interface GroupedPromptTab {
+  tab_name: string;
+  subtabs: Array<{
+    id: number;
+    subtab_name: string;
+    prompt_text: string;
+  }>;
+}
+
 // Document types
 export interface Document {
   id: number;
@@ -54,7 +64,7 @@ export interface SetupProfile {
   id: number;
   name: string;
   prompt_ids: number[];
-  created_at: string;
+  created_at?: string;
 }
 
 // Performance diagnostic types

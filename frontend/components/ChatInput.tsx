@@ -206,7 +206,8 @@ export default function ChatInput({
     // Check for image in clipboard
     const items = e.clipboardData?.items;
     if (items) {
-      for (const item of items) {
+      const itemsArray = Array.from(items);
+      for (const item of itemsArray) {
         if (item.type.startsWith('image/')) {
           e.preventDefault();
           const file = item.getAsFile();
@@ -228,7 +229,8 @@ export default function ChatInput({
     const files = e.target.files;
     if (!files) return;
 
-    for (const file of files) {
+    const filesArray = Array.from(files);
+    for (const file of filesArray) {
       if (file.type.startsWith('image/')) {
         try {
           const compressed = await compressImage(file);

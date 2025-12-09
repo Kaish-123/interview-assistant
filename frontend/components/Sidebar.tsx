@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { cn, formatDate, truncate } from '@/lib/utils';
 import { chatAPI, promptsAPI } from '@/lib/api';
-import type { ChatSession, TabWithSubtabs } from '@/types';
+import type { ChatSession, GroupedPromptTab } from '@/types';
 
 interface SidebarProps {
   sessions: ChatSession[];
@@ -54,7 +54,7 @@ export default function Sidebar({
   minWidth = 200,
   maxWidth = 500,
 }: SidebarProps) {
-  const [promptTabs, setPromptTabs] = useState<TabWithSubtabs[]>([]);
+  const [promptTabs, setPromptTabs] = useState<GroupedPromptTab[]>([]);
   const [expandedTabs, setExpandedTabs] = useState<Set<string>>(new Set());
   const [editingSession, setEditingSession] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState('');

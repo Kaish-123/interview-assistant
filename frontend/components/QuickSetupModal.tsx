@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { X, Rocket, Check, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { promptsAPI } from '@/lib/api';
-import type { TabWithSubtabs, SetupProfile } from '@/types';
+import type { GroupedPromptTab, SetupProfile } from '@/types';
 
 interface QuickSetupModalProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface QuickSetupModalProps {
 }
 
 export default function QuickSetupModal({ isOpen, onClose, onApply }: QuickSetupModalProps) {
-  const [promptTabs, setPromptTabs] = useState<TabWithSubtabs[]>([]);
+  const [promptTabs, setPromptTabs] = useState<GroupedPromptTab[]>([]);
   const [profiles, setProfiles] = useState<SetupProfile[]>([]);
   const [selectedPrompts, setSelectedPrompts] = useState<Set<number>>(new Set());
   const [additionalText, setAdditionalText] = useState('');
