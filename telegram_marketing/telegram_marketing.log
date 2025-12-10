@@ -1,0 +1,208 @@
+2025-12-10 22:46:44,455 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 22:46:44,546 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 22:46:45,058 - ERROR - Connection failed: EOF when reading a line
+2025-12-10 22:48:06,208 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 22:48:06,286 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 22:48:06,730 - ERROR - Connection failed: EOF when reading a line
+2025-12-10 22:49:59,779 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 22:49:59,858 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 22:50:00,521 - INFO - Connected as Data (@None)
+2025-12-10 22:50:03,899 - INFO - Disconnecting from 91.108.56.127:443/TcpFull...
+2025-12-10 22:50:03,900 - INFO - Disconnection from 91.108.56.127:443/TcpFull complete!
+2025-12-10 22:55:17,482 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 22:55:17,557 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 22:55:18,158 - INFO - Connected as Data (@None)
+2025-12-10 22:55:18,354 - ERROR - Error sending to Data Engineer job support: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 22:56:07,535 - ERROR - Error sending to DevOps Job Support: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 22:57:01,810 - ERROR - Error sending to Java interview Proxy: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 22:57:52,063 - INFO - Message sent to Proxy Interview Support
+2025-12-10 22:58:43,409 - ERROR - Error sending to Experienced documents BGV: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 22:59:35,594 - ERROR - Error sending to Production support L1L2: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 23:00:24,819 - ERROR - Error sending to Hagadmansa: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 23:01:12,001 - ERROR - Error sending to Devops data engineer proxy: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 23:01:57,130 - ERROR - Error sending to Proxy Developer: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 23:02:46,314 - ERROR - Error sending to Scaler Data Engineering: Chat admin privileges are required to do that in the specified chat (for example, to send a message in a channel which is not yours), or invalid permissions used for the channel or group (caused by SendMessageRequest)
+2025-12-10 23:03:52,157 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 23:03:52,234 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 23:03:53,032 - INFO - Connected as Data (@None)
+2025-12-10 23:03:53,033 - INFO - Disconnecting from 91.108.56.127:443/TcpFull...
+2025-12-10 23:03:53,034 - INFO - Disconnection from 91.108.56.127:443/TcpFull complete!
+2025-12-10 23:04:11,902 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 23:04:11,980 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 23:04:12,592 - INFO - Connected as Data (@None)
+2025-12-10 23:04:12,905 - INFO - Message sent to Job support UK USA CANADA
+2025-12-10 23:05:03,161 - INFO - Message sent to Salesforce Proxy Interviews
+2025-12-10 23:05:55,081 - INFO - Message sent to Training Proxy Job support
+2025-12-10 23:06:40,372 - INFO - Message sent to Interview Proxy Discussion
+2025-12-10 23:06:40,771 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:07:28,640 - INFO - Message sent to Interview proxy USA Canada
+2025-12-10 23:08:23,181 - INFO - Message sent to Data scientist proxy
+2025-12-10 23:08:33,160 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:09:18,434 - INFO - Message sent to USA Proxy support
+2025-12-10 23:10:12,759 - INFO - Message sent to Proxy Job Interview Support
+2025-12-10 23:10:59,052 - INFO - Message sent to Google data Engineer
+2025-12-10 23:11:49,314 - INFO - Message sent to Work support java python
+2025-12-10 23:12:06,257 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:12:14,548 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:12:35,568 - INFO - Message sent to PROXY JOB SUPPORTS
+2025-12-10 23:13:30,853 - INFO - Message sent to ETL testing Support
+2025-12-10 23:14:24,112 - INFO - Message sent to Freelance job proxy support
+2025-12-10 23:15:01,547 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:15:12,437 - INFO - Message sent to BikusRE Group
+2025-12-10 23:15:58,749 - INFO - Message sent to nigel carter
+2025-12-10 23:15:58,754 - INFO - Batch complete: 15/15 successful
+2025-12-10 23:15:58,754 - INFO - Disconnecting from 91.108.56.127:443/TcpFull...
+2025-12-10 23:15:58,756 - INFO - Disconnection from 91.108.56.127:443/TcpFull complete!
+2025-12-10 23:23:42,782 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-10 23:23:42,869 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-10 23:23:43,561 - INFO - Connected as Data (@None)
+2025-12-10 23:23:43,893 - INFO - Message sent to Job support UK USA CANADA
+2025-12-10 23:24:37,142 - INFO - Message sent to Salesforce Proxy Interviews
+2025-12-10 23:24:56,351 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:25:31,702 - INFO - Message sent to Training Proxy Job support
+2025-12-10 23:26:26,025 - INFO - Message sent to Interview Proxy Discussion
+2025-12-10 23:26:44,167 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:27:15,297 - INFO - Message sent to Interview proxy USA Canada
+2025-12-10 23:28:08,936 - INFO - Message sent to Data scientist proxy
+2025-12-10 23:28:57,277 - INFO - Message sent to USA Proxy support
+2025-12-10 23:29:22,273 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:29:51,620 - INFO - Message sent to Proxy Job Interview Support
+2025-12-10 23:30:45,912 - INFO - Message sent to Google data Engineer
+2025-12-10 23:31:34,240 - INFO - Message sent to Work support java python
+2025-12-10 23:32:28,568 - INFO - Message sent to PROXY JOB SUPPORTS
+2025-12-10 23:32:29,000 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:33:22,908 - INFO - Message sent to ETL testing Support
+2025-12-10 23:33:30,234 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:33:30,341 - INFO - Got difference for channel 1955015115 updates
+2025-12-10 23:34:17,207 - INFO - Message sent to Freelance job proxy support
+2025-12-10 23:35:08,472 - INFO - Message sent to BikusRE Group
+2025-12-10 23:36:00,796 - INFO - Message sent to nigel carter
+2025-12-10 23:36:00,797 - INFO - Batch complete: 15/15 successful
+2025-12-10 23:36:27,086 - INFO - Got difference for channel 1955015115 updates
+2025-12-10 23:37:06,288 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:37:24,607 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:39:18,577 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:41:04,776 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:41:20,589 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:46:20,443 - INFO - Got difference for channel 1955015115 updates
+2025-12-10 23:47:28,136 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:49:43,416 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:51:01,545 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:52:38,199 - INFO - Got difference for channel 1955015115 updates
+2025-12-10 23:52:58,206 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:53:43,594 - INFO - Got difference for account updates
+2025-12-10 23:54:34,943 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:54:40,062 - INFO - Got difference for channel 1955015115 updates
+2025-12-10 23:55:44,312 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:55:55,645 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:55:55,751 - INFO - Got difference for channel 1955015115 updates
+2025-12-10 23:58:09,865 - INFO - Got difference for channel 1634881166 updates
+2025-12-10 23:59:44,368 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:02:17,248 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:03:13,515 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:03:14,127 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:03:31,656 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:04:44,387 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:06:42,526 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:08:08,849 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:08:08,963 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:08:43,707 - INFO - Got difference for account updates
+2025-12-11 00:09:40,656 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:10:14,639 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:11:27,261 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:11:46,722 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:13:44,536 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:15:04,617 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:17:55,817 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:18:23,856 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:19:26,872 - WARNING - Server closed the connection: [Errno 54] Connection reset by peer
+2025-12-11 00:19:26,875 - INFO - Connection closed while receiving data: [Errno 54] Connection reset by peer
+2025-12-11 00:19:26,876 - INFO - Closing current connection to begin reconnect...
+2025-12-11 00:19:26,878 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-11 00:19:26,880 - INFO - <class 'ConnectionResetError'> during disconnect: [Errno 54] Connection reset by peer
+2025-12-11 00:19:26,968 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-11 00:19:43,787 - WARNING - Server closed the connection: [Errno 54] Connection reset by peer
+2025-12-11 00:19:43,788 - INFO - Connection closed while receiving data: [Errno 54] Connection reset by peer
+2025-12-11 00:19:43,788 - INFO - Closing current connection to begin reconnect...
+2025-12-11 00:19:43,788 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-11 00:19:43,789 - INFO - <class 'ConnectionResetError'> during disconnect: [Errno 54] Connection reset by peer
+2025-12-11 00:19:43,897 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-11 00:20:11,636 - INFO - Got difference for channel 1658892035 updates
+2025-12-11 00:20:11,778 - INFO - Got difference for channel 1790398948 updates
+2025-12-11 00:20:17,547 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:21:09,935 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:22:10,443 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:22:44,542 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:23:39,331 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:24:40,158 - INFO - Got difference for channel 1353108096 updates
+2025-12-11 00:24:40,791 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:26:13,859 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:26:25,106 - INFO - Got difference for channel 1859497054 updates
+2025-12-11 00:27:25,362 - INFO - Got difference for channel 1353108096 updates
+2025-12-11 00:29:26,916 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:31:27,463 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:31:27,597 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:33:24,016 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:35:20,739 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:36:44,056 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:38:02,451 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:38:31,790 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:40:07,337 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:42:26,096 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:43:12,262 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:44:58,241 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:46:33,909 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:47:33,848 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:47:40,594 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:48:56,336 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 00:49:52,136 - INFO - Got difference for channel 1353108096 updates
+2025-12-11 00:50:02,272 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:50:11,892 - INFO - Got difference for channel 1790398948 updates
+2025-12-11 00:52:33,808 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:52:55,580 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:56:06,814 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 00:58:13,674 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-11 00:58:13,745 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-11 00:58:14,419 - INFO - Connected as Data (@None)
+2025-12-11 00:58:51,127 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-11 00:58:51,198 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+2025-12-11 00:58:52,697 - INFO - Connected as Data (@None)
+2025-12-11 00:58:52,864 - WARNING - No write permission for Fresher Jobs & Internships (83K)
+2025-12-11 00:59:45,113 - INFO - Message sent to Full Stack Web React Dev (5.7K)
+2025-12-11 01:00:36,478 - INFO - Message sent to Java Support/Jobs (4.7K)
+2025-12-11 01:01:26,696 - WARNING - No write permission for IT/Pharma fresher jobs (4.3K)
+2025-12-11 01:02:12,153 - INFO - Message sent to Front-End Developer Jobs (3.9K)
+2025-12-11 01:03:05,389 - INFO - Message sent to Job support UK USA CANADA
+2025-12-11 01:03:52,608 - INFO - Message sent to Salesforce Proxy Interviews
+2025-12-11 01:04:39,173 - INFO - Message sent to Training Proxy Job support
+2025-12-11 01:04:39,294 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:05:34,491 - INFO - Message sent to Interview Proxy Discussion
+2025-12-11 01:05:53,053 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:06:22,755 - INFO - Message sent to Interview proxy USA Canada
+2025-12-11 01:06:36,440 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:07:06,547 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:07:11,314 - INFO - Message sent to Data scientist proxy
+2025-12-11 01:08:02,542 - INFO - Message sent to USA Proxy support
+2025-12-11 01:08:02,991 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:08:56,816 - INFO - Message sent to Proxy Job Interview Support
+2025-12-11 01:09:48,093 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:09:51,055 - INFO - Message sent to Google data Engineer
+2025-12-11 01:10:38,311 - INFO - Message sent to Work support java python
+2025-12-11 01:10:53,083 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:11:31,569 - INFO - Message sent to PROXY JOB SUPPORTS
+2025-12-11 01:12:20,827 - INFO - Message sent to ETL testing Support
+2025-12-11 01:13:12,051 - INFO - Message sent to Freelance job proxy support
+2025-12-11 01:13:34,859 - INFO - Got difference for channel 1790398948 updates
+2025-12-11 01:14:07,278 - INFO - Message sent to BikusRE Group
+2025-12-11 01:14:41,797 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:15:01,547 - INFO - Message sent to nigel carter
+2025-12-11 01:15:01,547 - INFO - Batch complete: 18/20 successful
+2025-12-11 01:15:58,609 - INFO - Got difference for channel 1718899604 updates
+2025-12-11 01:16:53,106 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:17:12,168 - INFO - Account is now banned in 1169018939 so we can no longer fetch updates from it
+2025-12-11 01:17:59,606 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:21:23,452 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:22:17,332 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 01:22:28,222 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:23:44,757 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:26:47,670 - INFO - Got difference for channel 1634881166 updates

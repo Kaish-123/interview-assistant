@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.techyera.telegram.send</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/bin/python</string>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_send_messages.py</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing</string>
+    
+    <key>StartInterval</key>
+    <integer>3600</integer>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/launchd_send.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/launchd_send_error.log</string>
+</dict>
+</plist>

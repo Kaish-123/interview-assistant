@@ -1,0 +1,179 @@
+{
+    "api_id": "34298736",
+    "api_hash": "3281aec7ae61b330628f4d29c47a4cdf",
+    "phone_number": "+917987460954",
+    "session_name": "techyera_marketing",
+    "targets": [
+        {
+            "name": "Fresher Jobs & Internships (83K)",
+            "username": "@offcampusjobsindia",
+            "enabled": true
+        },
+        {
+            "name": "Full Stack Web React Dev (5.7K)",
+            "username": "@FullStackWebDeveloper2021",
+            "enabled": true
+        },
+        {
+            "name": "Java Support/Jobs (4.7K)",
+            "username": "@JavaTechSupport",
+            "enabled": true
+        },
+        {
+            "name": "IT/Pharma fresher jobs (4.3K)",
+            "username": "@hire2hire",
+            "enabled": true
+        },
+        {
+            "name": "Front-End Developer Jobs (3.9K)",
+            "username": "@front_end_jobs",
+            "enabled": true
+        },
+        {
+            "name": "Job support UK USA CANADA",
+            "username": "@jobsupportsupport",
+            "enabled": true
+        },
+        {
+            "name": "Salesforce Proxy Interviews",
+            "username": "@SalesforceProxyIntervies",
+            "enabled": true
+        },
+        {
+            "name": "Training Proxy Job support",
+            "username": "@usa_IT_Training_Job",
+            "enabled": true
+        },
+        {
+            "name": "Interview Proxy Discussion",
+            "username": "@interview_proxy_d",
+            "enabled": true
+        },
+        {
+            "name": "Interview proxy USA Canada",
+            "username": "@interviewproxyservice",
+            "enabled": true
+        },
+        {
+            "name": "Data scientist proxy",
+            "username": "@Datascienceproxysupport",
+            "enabled": true
+        },
+        {
+            "name": "USA Proxy support",
+            "username": "@usaproxysupport",
+            "enabled": true
+        },
+        {
+            "name": "Proxy Job Interview Support",
+            "username": "@proxyinterviewjobsupport",
+            "enabled": true
+        },
+        {
+            "name": "Google data Engineer",
+            "username": "@gcp_certificates",
+            "enabled": true
+        },
+        {
+            "name": "Work support java python",
+            "username": "@interviewsupportworksupportgroup",
+            "enabled": true
+        },
+        {
+            "name": "PROXY JOB SUPPORTS",
+            "username": "@ProxyJobSupports",
+            "enabled": true
+        },
+        {
+            "name": "ETL testing Support",
+            "username": "@ETLtestingSupport_Proxy",
+            "enabled": true
+        },
+        {
+            "name": "Freelance job proxy support",
+            "username": "@it_online_job_proxy_support",
+            "enabled": true
+        },
+        {
+            "name": "BikusRE Group",
+            "username": "ID:3193084792",
+            "enabled": true
+        },
+        {
+            "name": "nigel carter",
+            "username": "ID:2704942369",
+            "enabled": true
+        },
+        {
+            "name": "Web Developers Group (21669)",
+            "username": "@webdevelopergroups",
+            "enabled": true
+        },
+        {
+            "name": "DevOps Jobs - \u0440\u0430\u0431\u043e\u0442\u0430 \u0438 \u0430\u043d\u0430\u043b\u0438\u0442\u0438\u043a\u0430 (18706)",
+            "username": "@devops_jobs",
+            "enabled": true
+        },
+        {
+            "name": "DataPro: Data | Cloud | Jobs | Free (18178)",
+            "username": "@DatacloudEngineers",
+            "enabled": true
+        },
+        {
+            "name": "Fresher Tech Jobs (47134)",
+            "username": "@fresher_tech_job",
+            "enabled": true
+        },
+        {
+            "name": "Jobs/Internship/Hiring/ updates - F (19357)",
+            "username": "@referredjobs",
+            "enabled": true
+        },
+        {
+            "name": "\ud83d\udcbb DevSecure \ud83d\udcb0 (12966)",
+            "username": "@Web_developersz",
+            "enabled": true
+        },
+        {
+            "name": "Java Developers (12565)",
+            "username": "@LearnJavaCodingDisussionGroup",
+            "enabled": true
+        },
+        {
+            "name": "Mobile/Web Developers/Freelancers (4862)",
+            "username": "@softwaredevelopersgroup",
+            "enabled": true
+        }
+    ],
+    "messages": [
+        {
+            "id": "techyera_promo",
+            "text": "\ud83d\udce2 (PING ME DIRECTLY on WHATSAPP)\n\nI am the direct person as senior data engineer/ data analyst/ Full stack developer and I provide the proxy interview support and assessment support to data engineer/data analyst/ full stack developer.\n\nPlease let me know if anyone wants my services.\n\nAny Consultantancy/Organization can also connect with me.\n\n\ud83d\udcf2 Ping me on WhatsApp for quick reply: 7987460954\n\n\ud83d\udd17 https://wa.link/5vevla\n\n\ud83c\udf10 Below is my company (TechyEra) website:\nhttps://techyera.co\n\n\ud83d\udce2 (PING ME DIRECTLY on WHATSAPP)",
+            "enabled": true
+        }
+    ],
+    "schedule": {
+        "enabled": true,
+        "interval_minutes": 60,
+        "random_delay_minutes": 5,
+        "active_hours": {
+            "start": 0,
+            "end": 24
+        },
+        "active_days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ]
+    },
+    "settings": {
+        "rotate_messages": true,
+        "delay_between_groups_seconds": 45,
+        "max_messages_per_day": 150,
+        "log_file": "telegram_marketing.log"
+    }
+}

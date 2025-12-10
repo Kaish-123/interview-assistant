@@ -1,0 +1,979 @@
+{
+  "groups": [
+    {
+      "title": "Salesforce Proxy Interviews Available Here",
+      "username": "@SalesforceProxyIntervies",
+      "type": "Group",
+      "members": 1034
+    },
+    {
+      "title": "Interview Proxy Group Discussion",
+      "username": "@interview_proxy_d",
+      "type": "Group",
+      "members": 680
+    },
+    {
+      "title": "Proxy Job Interview Support",
+      "username": "@proxyinterviewjobsupport",
+      "type": "Group",
+      "members": 2536
+    },
+    {
+      "title": "Interview proxy USA/Canada",
+      "username": "@interviewproxyservice",
+      "type": "Group",
+      "members": 353
+    },
+    {
+      "title": "Java Interview Support/Proxy/ Work Support - Hyderabad",
+      "username": "@java_proxy_interview_support",
+      "type": "Group",
+      "members": 1674
+    },
+    {
+      "title": "Java Interview Support/Jobs",
+      "username": "@java_jobs_inteview_support_proxy",
+      "type": "Group",
+      "members": 584
+    },
+    {
+      "title": "Training, Proxy, Job support & Job placement",
+      "username": "@usa_IT_Training_Job",
+      "type": "Group",
+      "members": 3085
+    },
+    {
+      "title": "ETL testing Jobs/Support \ud83d\udc68\u200d\ud83d\udcbb",
+      "username": "@ETLtestingSupport_Proxy",
+      "type": "Group",
+      "members": 2440
+    },
+    {
+      "title": "Job support and interview Support (Uk USA CANADA)",
+      "username": "@jobsupportsupport",
+      "type": "Group",
+      "members": 6003
+    },
+    {
+      "title": "PROXY & JOB SUPPORTS & IT CERTIFICATIONS & TRAININGS",
+      "username": "@ProxyJobSupports",
+      "type": "Group",
+      "members": 1549
+    },
+    {
+      "title": "Freelance/job proxy/job support",
+      "username": "@it_online_job_proxy_support",
+      "type": "Group",
+      "members": 567
+    },
+    {
+      "title": "Java Support/ Java Jobs",
+      "username": "@JavaTechSupport",
+      "type": "Group",
+      "members": 4775
+    },
+    {
+      "title": "Job support USA Canada UK",
+      "username": "@tech_job_support",
+      "type": "Group",
+      "members": 2395
+    },
+    {
+      "title": "USA Java Job Support",
+      "username": "@usa_java_jobs_support",
+      "type": "Group",
+      "members": 1176
+    },
+    {
+      "title": "Performance Testing Support Group \ud83e\udd1d",
+      "username": "@job_support1",
+      "type": "Group",
+      "members": 1722
+    },
+    {
+      "title": "Work support offline java python full stack \ud83d\udcaa",
+      "username": "@interviewsupportworksupportgroup",
+      "type": "Group",
+      "members": 1408
+    },
+    {
+      "title": "USA Interview Support",
+      "username": "@usainterviewsupport",
+      "type": "Group",
+      "members": 172
+    },
+    {
+      "title": "Oa Help | Interview Help",
+      "username": "@oa_interview_support",
+      "type": "Group",
+      "members": 1663
+    },
+    {
+      "title": "Interview Proxy and Job Support",
+      "username": "@proxyandsupport",
+      "type": "Group",
+      "members": 755
+    },
+    {
+      "title": "QubitsInnovation : Get Hired Fast",
+      "username": "@interview_support01",
+      "type": "Group",
+      "members": 39
+    },
+    {
+      "title": "NETWORKING & DATA CENTRE ENGINEER JOBS",
+      "username": "@Networking_Data_Center_Jobs",
+      "type": "Group",
+      "members": 190
+    },
+    {
+      "title": "Data Science & Engineering Careers - Data Coach",
+      "username": "@ds_de_jobs",
+      "type": "Group",
+      "members": 36
+    },
+    {
+      "title": "Data engineering(Azure,Aws, Pyspark, Python,SQL) and Jobs",
+      "username": "@datahari",
+      "type": "Group",
+      "members": 1070
+    },
+    {
+      "title": "Tech & Data Analyst Jobs",
+      "username": "@techjobs2024",
+      "type": "Group",
+      "members": 851
+    },
+    {
+      "title": "Software, QA, Automation, Analyst, Datasciene, ML, AI Jobs Hub",
+      "username": "@RioSkill",
+      "type": "Group",
+      "members": 1428
+    },
+    {
+      "title": "IT JOBS - USA",
+      "username": "@itjobsusa",
+      "type": "Group",
+      "members": 3179
+    },
+    {
+      "title": "IT JOBS in the USA",
+      "username": "@itjobsus",
+      "type": "Group",
+      "members": 1315
+    },
+    {
+      "title": "IT Jobs | USA \ud83c\uddfa\ud83c\uddf8",
+      "username": "@usa_it_jobs",
+      "type": "Group",
+      "members": 368
+    },
+    {
+      "title": "IT Jobs (India & USA)",
+      "username": "@ITJobsIndiaUSA",
+      "type": "Group",
+      "members": 941
+    },
+    {
+      "title": "USA IT C2C JOBS",
+      "username": "@USAH1BJOBS",
+      "type": "Group",
+      "members": 1058
+    },
+    {
+      "title": "IT WORK | WORLD, UAE, GEORGIA, ASIA, USA",
+      "username": "@it_world_jobs",
+      "type": "Group",
+      "members": 252
+    },
+    {
+      "title": "It jobs Usa",
+      "username": "@it_jobs_usa",
+      "type": "Group",
+      "members": 44
+    },
+    {
+      "title": "IT JOBS USA/LATAM | IT \u043f\u043e\u0438\u0441\u043a \u0440\u0430\u0431\u043e\u0442\u044b \u0421\u0428\u0410, \u042e\u0436\u043d\u0430\u044f \u0410\u043c\u0435\u0440\u0438\u043a\u0430",
+      "username": "@it_jobs_usa_latam",
+      "type": "Group",
+      "members": 5
+    },
+    {
+      "title": "Front-End Developer Jobs",
+      "username": "@front_end_jobs",
+      "type": "Group",
+      "members": 3982
+    },
+    {
+      "title": "Power BI Developer & Jobs",
+      "username": "@ms_power_bi_thebest",
+      "type": "Group",
+      "members": 14642
+    },
+    {
+      "title": "Developer Jobs (EN)",
+      "username": "@developer_jobs",
+      "type": "Group",
+      "members": 397
+    },
+    {
+      "title": "Fresher Jobs and Internships | Remote Jobs | Software Engineer",
+      "username": "@offcampusjobsindia",
+      "type": "Group",
+      "members": 83688
+    },
+    {
+      "title": "Na3ml, Software Engineering Jobs",
+      "username": "@na3ml_jobs",
+      "type": "Group",
+      "members": 3651
+    },
+    {
+      "title": "JOBIT Recruitment Indonesia (Job IT & SAP)",
+      "username": "@JOBIT_Recruitment_Indonesia",
+      "type": "Group",
+      "members": 703
+    },
+    {
+      "title": "Jobs Postings & Recruitment",
+      "username": "@ITJobs431",
+      "type": "Group",
+      "members": 112
+    },
+    {
+      "title": "ITI Placement Support",
+      "username": "@itiplacementsupport",
+      "type": "Group",
+      "members": 17674
+    },
+    {
+      "title": "Top IT Trainings and Placements",
+      "username": "@USA_Top_IT_Trainings_Placements",
+      "type": "Group",
+      "members": 723
+    },
+    {
+      "title": "Naresh IT Placement Cell",
+      "username": "@nareshitplacements",
+      "type": "Group",
+      "members": 15343
+    },
+    {
+      "title": "Jobs/Internship/Hiring/ updates - Fresher / IT / Non-IT",
+      "username": "@referredjobs",
+      "type": "Group",
+      "members": 19354
+    },
+    {
+      "title": "IT/ Pharma fresher jobs,",
+      "username": "@hire2hire",
+      "type": "Group",
+      "members": 4388
+    },
+    {
+      "title": "Fresher's IT Jobs",
+      "username": "@IT_Fresher_Jobs",
+      "type": "Group",
+      "members": 430
+    },
+    {
+      "title": "Python Developers Bangalore",
+      "username": "@python_india",
+      "type": "Group",
+      "members": 1547
+    },
+    {
+      "title": "Only Python Developers",
+      "username": "@onlypythondevelopers",
+      "type": "Group",
+      "members": 3112
+    },
+    {
+      "title": "python developer jobs and support \ud83d\udc4d",
+      "username": "@pythonproexpert",
+      "type": "Group",
+      "members": 484
+    },
+    {
+      "title": "Python",
+      "username": "@python_developers",
+      "type": "Group",
+      "members": 149
+    },
+    {
+      "title": "DevPython",
+      "username": "@developers_python",
+      "type": "Group",
+      "members": 60
+    },
+    {
+      "title": "Java Developers",
+      "username": "@LearnJavaCodingDisussionGroup",
+      "type": "Group",
+      "members": 12565
+    },
+    {
+      "title": "JavaScript Developers",
+      "username": "@mern_mean_dev",
+      "type": "Group",
+      "members": 1919
+    },
+    {
+      "title": "Fullstack web developers",
+      "username": "@reactjs2020",
+      "type": "Group",
+      "members": 3918
+    },
+    {
+      "title": "Full Stack Web React Developer",
+      "username": "@FullStackWebDeveloper2021",
+      "type": "Group",
+      "members": 5726
+    },
+    {
+      "title": "Full stack developer jobs",
+      "username": "@fullstackdevlopermari",
+      "type": "Group",
+      "members": 958
+    },
+    {
+      "title": "Full Stack Developers Jobs",
+      "username": "@fullstackdeveloperjob",
+      "type": "Group",
+      "members": 637
+    },
+    {
+      "title": "Asp.Net Developers (c#)",
+      "username": "@FullStackDevsGroup",
+      "type": "Group",
+      "members": 988
+    },
+    {
+      "title": "DevOps Jobs - \u0440\u0430\u0431\u043e\u0442\u0430 \u0438 \u0430\u043d\u0430\u043b\u0438\u0442\u0438\u043a\u0430",
+      "username": "@devops_jobs",
+      "type": "Group",
+      "members": 18709
+    },
+    {
+      "title": "DevOps / IT / system \u05de\u05e9\u05e8\u05d5\u05ea",
+      "username": "@devops_it_jobs",
+      "type": "Group",
+      "members": 842
+    },
+    {
+      "title": "DevOps Jobs: \u0440\u0430\u0431\u043e\u0442\u0430, \u0432\u0430\u043a\u0430\u043d\u0441\u0438\u0438 \u0438 \u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u043d\u0430 \u0441\u0432\u044f\u0437\u0430\u043d\u043d\u044b\u0435 \u0442\u0435\u043c\u044b",
+      "username": "@devops_jobs_ru",
+      "type": "Group",
+      "members": 301
+    },
+    {
+      "title": "ANZ Jobs - AI, ML, Cloud, Data Sci",
+      "username": "@AI_ML_Jobs",
+      "type": "Group",
+      "members": 311
+    },
+    {
+      "title": "DataPro: Data | Cloud | Jobs | Free Resources | Careers \ud83d\udc68\u200d\ud83d\udcbb\ud83d\udcbb",
+      "username": "@DatacloudEngineers",
+      "type": "Group",
+      "members": 18171
+    },
+    {
+      "title": "GCP GOOGLE CLOUD JOBS & RESOURCES",
+      "username": "@gcpjobs",
+      "type": "Group",
+      "members": 555
+    },
+    {
+      "title": "AWS CLOUD DATABASE TRAINING & JOBS",
+      "username": "@awscloud_database",
+      "type": "Group",
+      "members": 215
+    },
+    {
+      "title": "AWS CLOUD SOLUTIONS ARCHITECT PROFESSIONAL TRAINING & JOBS",
+      "username": "@aws_cloud_professional",
+      "type": "Group",
+      "members": 616
+    },
+    {
+      "title": "AWS and Azure Devops Jobs",
+      "username": "@devopssupportazureaws",
+      "type": "Group",
+      "members": 3178
+    },
+    {
+      "title": "Devops | AWS |Azure training & jobs",
+      "username": "@azuretra",
+      "type": "Group",
+      "members": 3173
+    },
+    {
+      "title": "AWS | Azure | GCS | DevOps - Jobs & Training",
+      "username": "@awsdevopsgroup",
+      "type": "Group",
+      "members": 903
+    },
+    {
+      "title": "AWS Solutions Architect Associate - Cheat Sheets, Notes & Jobs",
+      "username": "@awssaac03practiceandjobs",
+      "type": "Group",
+      "members": 368
+    },
+    {
+      "title": "awsbrasil-vagas",
+      "username": "@awsbrasil_jobs",
+      "type": "Group",
+      "members": 300
+    },
+    {
+      "title": "aws_minsk_flood",
+      "username": "@aws_minsk_jobs",
+      "type": "Group",
+      "members": 28
+    },
+    {
+      "title": "Azure DevOps jobs",
+      "username": "@azuredevopsjobs",
+      "type": "Group",
+      "members": 357
+    },
+    {
+      "title": "Azure Administration Jobs on careerbuddyonline",
+      "username": "@Azure_Jobs_careerbuddyonline",
+      "type": "Group",
+      "members": 221
+    },
+    {
+      "title": "Azure Learning, Tutorial, Exam & Jobs",
+      "username": "@az8106",
+      "type": "Group",
+      "members": 296
+    }
+  ],
+  "channels": [
+    {
+      "title": "Java interview proxy",
+      "username": "@java_proxy_java_interview",
+      "type": "Channel",
+      "members": 4290
+    },
+    {
+      "title": "Testing Automation SDET Interview Clearing Proxy",
+      "username": "@testing_interview_proxy",
+      "type": "Channel",
+      "members": 11
+    },
+    {
+      "title": "DevOps / devsecops / secops Job Support",
+      "username": "@devopssupport",
+      "type": "Channel",
+      "members": 3463
+    },
+    {
+      "title": "Customer Service : jobs \ud83d\udc77",
+      "username": "@jobs_support",
+      "type": "Channel",
+      "members": 1623
+    },
+    {
+      "title": "Job Support(DevOps/SDT/SDET/Data Engineer)",
+      "username": "@Job_support",
+      "type": "Channel",
+      "members": 937
+    },
+    {
+      "title": "\u091c\u0949\u092c \u0938\u092a\u094b\u0930\u094d\u091f",
+      "username": "@job_supportt",
+      "type": "Channel",
+      "members": 82
+    },
+    {
+      "title": "Production support/Application support Interview Questions & answers",
+      "username": "@L1L2support",
+      "type": "Channel",
+      "members": 2211
+    },
+    {
+      "title": "Data Engineering & DataOps Jobs",
+      "username": "@dataeng_jobs",
+      "type": "Channel",
+      "members": 1758
+    },
+    {
+      "title": "Data Engineer Jobs",
+      "username": "@data_engineer_jobs",
+      "type": "Channel",
+      "members": 2424
+    },
+    {
+      "title": "Data Engineers\u2764\ufe0f",
+      "username": "@shubham_wadekar_jobs",
+      "type": "Channel",
+      "members": 27094
+    },
+    {
+      "title": "Jobs - Data Analytics and Engineering",
+      "username": "@powerbijibs",
+      "type": "Channel",
+      "members": 4234
+    },
+    {
+      "title": "Kalibre Data Engineer jobs",
+      "username": "@kalibre_data_engineer_jobs",
+      "type": "Channel",
+      "members": 9
+    },
+    {
+      "title": "Data Engineering Jobs",
+      "username": "@Data_Engineering_jobs_India",
+      "type": "Channel",
+      "members": 371
+    },
+    {
+      "title": "Data Analyst Jobs",
+      "username": "@jobs_SQL",
+      "type": "Channel",
+      "members": 87296
+    },
+    {
+      "title": "Data Analyst Jobs",
+      "username": "@DataAnalyticsJob",
+      "type": "Channel",
+      "members": 13554
+    },
+    {
+      "title": "Data Analyst Jobs \u26e5",
+      "username": "@analystjob",
+      "type": "Channel",
+      "members": 392
+    },
+    {
+      "title": "DataMindscape | Data Analyst Jobs| Free Courses| Free Projects| Internships",
+      "username": "@datamindscape",
+      "type": "Channel",
+      "members": 4532
+    },
+    {
+      "title": "Data Analyst jobs & Science ( corporate hunter )",
+      "username": "@data_analystjobs",
+      "type": "Channel",
+      "members": 1834
+    },
+    {
+      "title": "Data Analyst / Science Jobs | Government Jobs update | Study material | Interview Questions with Answers",
+      "username": "@data_analyst_jobs1",
+      "type": "Channel",
+      "members": 671
+    },
+    {
+      "title": "Data Analyst & Jobs",
+      "username": "@da_Data_Analyst_Jobs",
+      "type": "Channel",
+      "members": 24
+    },
+    {
+      "title": "Data Analyst/Science Jobs | Udemy certificates | courses | Books | Study material",
+      "username": "@data_analyst_science_jobs",
+      "type": "Channel",
+      "members": 1818
+    },
+    {
+      "title": "USA/US IT Jobs - Daily Updates",
+      "username": "@UnitedStatesJobs",
+      "type": "Channel",
+      "members": 4608
+    },
+    {
+      "title": "USA IT Administration Jobs",
+      "username": "@it_administration_jobs_usa",
+      "type": "Channel",
+      "members": 5
+    },
+    {
+      "title": "Remote Software Developer Jobs (English)",
+      "username": "@Remote_Software_Developer_Jobs",
+      "type": "Channel",
+      "members": 23394
+    },
+    {
+      "title": "GermanTechJobs.de - IT & Developer jobs in Germany",
+      "username": "@germantechjobs",
+      "type": "Channel",
+      "members": 13821
+    },
+    {
+      "title": "Web3 Developer jobs (remotely)",
+      "username": "@ddevjobs",
+      "type": "Channel",
+      "members": 6887
+    },
+    {
+      "title": "Software Developer Jobs & IT Internships",
+      "username": "@internshiptojobs",
+      "type": "Channel",
+      "members": 43174
+    },
+    {
+      "title": "SwissDevJobs.ch - Developer Jobs",
+      "username": "@switzerlanddevjobs",
+      "type": "Channel",
+      "members": 8536
+    },
+    {
+      "title": "Q5 Platform_Economy_jobs",
+      "username": "@Q5_Developer_jobs",
+      "type": "Channel",
+      "members": 5
+    },
+    {
+      "title": "UzDevelopers",
+      "username": "@uz_developers_jobs",
+      "type": "Channel",
+      "members": 56
+    },
+    {
+      "title": "Remote Jobs \ud83c\udf0f [Tech, Gaming, Web3]",
+      "username": "@remotejobsglobal",
+      "type": "Channel",
+      "members": 365
+    },
+    {
+      "title": "BEON.tech Remote U.S. Jobs",
+      "username": "@beontech_usjobs",
+      "type": "Channel",
+      "members": 334
+    },
+    {
+      "title": "Remote Jobs from Remotive",
+      "username": "@tech_remote_jobs",
+      "type": "Channel",
+      "members": 86
+    },
+    {
+      "title": "Tech Remote Jobs India | Permanent Work From Home Job Updates",
+      "username": "@techremotejobs",
+      "type": "Channel",
+      "members": 54
+    },
+    {
+      "title": "Worldwide tech. Remote Jobs(Ruby on rails/React/Angular jobs/django)",
+      "username": "@rubyonrailsjobs",
+      "type": "Channel",
+      "members": 214
+    },
+    {
+      "title": "Remote LATAM Tech Jobs",
+      "username": "@remotejobsinlatam",
+      "type": "Channel",
+      "members": 361
+    },
+    {
+      "title": "Remote IT Jobs \ud83d\udce3",
+      "username": "@jobs_remote_tech",
+      "type": "Channel",
+      "members": 14
+    },
+    {
+      "title": "Remote Tech Jobs",
+      "username": "@Remote_tech_jobs",
+      "type": "Channel",
+      "members": 11
+    },
+    {
+      "title": "Software Engineer Jobs and internships",
+      "username": "@offcampusjobsandinternships",
+      "type": "Channel",
+      "members": 2307
+    },
+    {
+      "title": "Software Engineering jobs\ud83d\udda5\ud83d\udcbb\ud83d\udcbb\ud83d\udda5",
+      "username": "@software_jobs1",
+      "type": "Channel",
+      "members": 894
+    },
+    {
+      "title": "Software Engineering Jobs",
+      "username": "@radionics_jobs",
+      "type": "Channel",
+      "members": 166
+    },
+    {
+      "title": "Software Jobs for Freshers, Engineers - VisionPort",
+      "username": "@softwarejobindia",
+      "type": "Channel",
+      "members": 1525
+    },
+    {
+      "title": "Software Engineering Latest Job opportunities",
+      "username": "@se_jobs",
+      "type": "Channel",
+      "members": 158
+    },
+    {
+      "title": "Software Engineer Jobs Info",
+      "username": "@Software_Engineer_Jobs_Info",
+      "type": "Channel",
+      "members": 39
+    },
+    {
+      "title": "SkillHunt IT Recruitment & HR Consulting",
+      "username": "@SkillHuntIT",
+      "type": "Channel",
+      "members": 140
+    },
+    {
+      "title": "IT_JOBS_Recruitment",
+      "username": "@IT_JOBS_Recruitment_Hiring",
+      "type": "Channel",
+      "members": 1234
+    },
+    {
+      "title": "ITI INSTRUCTOR Recruitment 2022",
+      "username": "@ITIRECRUITMENT1457",
+      "type": "Channel",
+      "members": 1834
+    },
+    {
+      "title": "EMPLEOS IT - DGM Staff Recruitment",
+      "username": "@dgmstaff",
+      "type": "Channel",
+      "members": 1432
+    },
+    {
+      "title": "Jobs/Recruitment",
+      "username": "@IT_Recr",
+      "type": "Channel",
+      "members": 79
+    },
+    {
+      "title": "itpq \u2014 \u041f\u043e\u0438\u0441\u043a \u0440\u0430\u0431\u043e\u0442\u044b \u0432 IT",
+      "username": "@itpq_recruitment",
+      "type": "Channel",
+      "members": 2
+    },
+    {
+      "title": "STUDY MATERIAL - Placement Jobs & Materials",
+      "username": "@studymaterial_IT",
+      "type": "Channel",
+      "members": 108153
+    },
+    {
+      "title": "CODING SOLUTION - Placement Jobs & Materials",
+      "username": "@codingsolution_IT",
+      "type": "Channel",
+      "members": 163834
+    },
+    {
+      "title": "\u0aad\u0ab0\u0aa4\u0ac0\u0aae\u0ac7\u0ab3\u0acb ITI PATDI",
+      "username": "@iti_patdi_placement",
+      "type": "Channel",
+      "members": 42
+    },
+    {
+      "title": "BE/BTech/MCA Freshers IT JOBS",
+      "username": "@freshers_it_jobs",
+      "type": "Channel",
+      "members": 34357
+    },
+    {
+      "title": "FRESHER IT JOBS - CAMPUS DRIVES",
+      "username": "@offcampusupdates",
+      "type": "Channel",
+      "members": 18845
+    },
+    {
+      "title": "HiringYou\ud83d\udd25 \u2013 IT, WFH, Fresher & Experience Jobs",
+      "username": "@hiringyou",
+      "type": "Channel",
+      "members": 7099
+    },
+    {
+      "title": "All India Freshers IT Jobs",
+      "username": "@IndiaSoftwareTechnicalJobs",
+      "type": "Channel",
+      "members": 15695
+    },
+    {
+      "title": "Fresher IT Job in IT MNC Software Engineer Jobs Hiring Openings Latest for MCA Btech Bangalore Hyderabad Delhi Pune",
+      "username": "@Fresher_Jobs_IT",
+      "type": "Channel",
+      "members": 3947
+    },
+    {
+      "title": "Fresher IT Jobs \ud83c\udf93",
+      "username": "@fresher_it_jobs",
+      "type": "Channel",
+      "members": 178
+    },
+    {
+      "title": "Python community developers",
+      "username": "@python_scrypt",
+      "type": "Channel",
+      "members": 1499
+    },
+    {
+      "title": "ULearn - Complete Python Developer",
+      "username": "@ULearn_Python_Developer",
+      "type": "Channel",
+      "members": 1408
+    },
+    {
+      "title": "PYTHON DEVELOPER",
+      "username": "@Python_Devloper",
+      "type": "Channel",
+      "members": 3594
+    },
+    {
+      "title": "python_developer",
+      "username": "@python_developernew",
+      "type": "Channel",
+      "members": 1635
+    },
+    {
+      "title": "Java Developer",
+      "username": "@java_developer",
+      "type": "Channel",
+      "members": 6517
+    },
+    {
+      "title": "Full Stack JavaScript Developer",
+      "username": "@full_stack_js",
+      "type": "Channel",
+      "members": 11250
+    },
+    {
+      "title": "Java Developer | Backend",
+      "username": "@java_dev_tg",
+      "type": "Channel",
+      "members": 2188
+    },
+    {
+      "title": "Books For Java Developers",
+      "username": "@books_by_internet",
+      "type": "Channel",
+      "members": 1903
+    },
+    {
+      "title": "Java Full Stack Developers",
+      "username": "@javafullstackdeveloperss",
+      "type": "Channel",
+      "members": 6533
+    },
+    {
+      "title": "Fathulloh forwards",
+      "username": "@developer_java",
+      "type": "Channel",
+      "members": 53
+    },
+    {
+      "title": "\ud83d\udcbb Full Stack Developer \u2328",
+      "username": "@FullStackDeveloperTrends",
+      "type": "Channel",
+      "members": 3480
+    },
+    {
+      "title": "Full Stack Developer Jobs",
+      "username": "@Fullstack_Developer_Jobs",
+      "type": "Channel",
+      "members": 169
+    },
+    {
+      "title": "@Fullstack_developer-chat",
+      "username": "@Fullstack_developerr",
+      "type": "Channel",
+      "members": 3
+    },
+    {
+      "title": "Web.developer",
+      "username": "@Fullstack_developer1",
+      "type": "Channel",
+      "members": 25
+    },
+    {
+      "title": "DevOps/SRE_Jobs",
+      "username": "@DevOpsSRE_Jobs",
+      "type": "Channel",
+      "members": 2793
+    },
+    {
+      "title": "DevOps Jobs - \u0412\u0430\u043a\u0430\u043d\u0441\u0438\u0438",
+      "username": "@rabota_razrabotchik",
+      "type": "Channel",
+      "members": 12361
+    },
+    {
+      "title": "DevOps jobs vietnam",
+      "username": "@devopsjobs",
+      "type": "Channel",
+      "members": 1639
+    },
+    {
+      "title": "Remote DevOps Jobs \ud83c\udf10\u2728",
+      "username": "@remote_devops_jobs",
+      "type": "Channel",
+      "members": 1643
+    },
+    {
+      "title": "DevOps Jobs - \u0412\u0430\u043a\u0430\u043d\u0441\u0438\u0438",
+      "username": "@rabota_razrabotchikf",
+      "type": "Channel",
+      "members": 5934
+    },
+    {
+      "title": "Remote DevOps / SysAdmin Jobs",
+      "username": "@findmyremote_devops",
+      "type": "Channel",
+      "members": 369
+    },
+    {
+      "title": "Remote Devops/SysAdmin Jobs (English)",
+      "username": "@remotedevopsandsysadminjobs",
+      "type": "Channel",
+      "members": 1565
+    },
+    {
+      "title": "VoIP, Cloud, CC, Tech Group",
+      "username": "@jobsinfo360",
+      "type": "Channel",
+      "members": 1010
+    },
+    {
+      "title": "Jobs Cloud",
+      "username": "@Jobs_Cloud",
+      "type": "Channel",
+      "members": 293
+    },
+    {
+      "title": "Cloud/devops jobs",
+      "username": "@cloud_devops_jobs",
+      "type": "Channel",
+      "members": 5
+    },
+    {
+      "title": "Infrastructure & Cloud Jobs",
+      "username": "@jobshub_infra_cloud",
+      "type": "Channel",
+      "members": 11
+    },
+    {
+      "title": "AWS Jobs | AWS Trainings | AWS Learnings",
+      "username": "@aws_allprotrainings",
+      "type": "Channel",
+      "members": 121
+    },
+    {
+      "title": "Azure Jobs",
+      "username": "@Azure_Jobs",
+      "type": "Channel",
+      "members": 82
+    },
+    {
+      "title": "Cloud Technology(Azure, AWS and GCP) Jobs",
+      "username": "@Azure_aws_gcp_jobs_Pune",
+      "type": "Channel",
+      "members": 250
+    }
+  ],
+  "total": 162
+}

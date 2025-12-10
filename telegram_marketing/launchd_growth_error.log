@@ -1,0 +1,25 @@
+2025-12-11 02:14:55,953 - INFO - ==================================================
+2025-12-11 02:14:55,953 - INFO - CRON JOB: Growth Started
+2025-12-11 02:14:55,953 - INFO - ==================================================
+2025-12-11 02:14:55,954 - INFO - Current targets: 23
+2025-12-11 02:14:55,960 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2025-12-11 02:14:56,054 - INFO - Connection to 91.108.56.174:443/TcpFull complete!
+2025-12-11 02:15:04,995 - ERROR - Fatal error: database is locked
+2025-12-11 02:15:05,009 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2025-12-11 02:15:05,013 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+Traceback (most recent call last):
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_growth.py", line 151, in <module>
+    asyncio.run(run_growth())
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/asyncio/base_events.py", line 646, in run_until_complete
+    return future.result()
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_growth.py", line 146, in run_growth
+    await client.disconnect()
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/lib/python3.10/site-packages/telethon/client/telegrambaseclient.py", line 746, in _disconnect_coro
+    await self._save_states_and_entities()
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/lib/python3.10/site-packages/telethon/client/telegrambaseclient.py", line 701, in _save_states_and_entities
+    self.session.process_entities(
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/lib/python3.10/site-packages/telethon/sessions/sqlite.py", line 301, in process_entities
+    c.executemany(
+sqlite3.OperationalError: database is locked

@@ -1,0 +1,65 @@
+2025-12-11 01:29:59,177 - INFO - Connecting to 91.108.56.113:443/TcpFull...
+2025-12-11 01:29:59,243 - INFO - Connection to 91.108.56.113:443/TcpFull complete!
+2025-12-11 01:30:00,500 - INFO - Connected as: Data
+2025-12-11 01:30:00,501 - INFO - Sending to 20 targets...
+2025-12-11 01:30:50,926 - INFO - Sent to Full Stack Web React Dev (5.7K)
+2025-12-11 01:34:18,876 - INFO - Sent to Job support UK USA CANADA
+2025-12-11 01:34:19,479 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:35:16,119 - INFO - Sent to Salesforce Proxy Interviews
+2025-12-11 01:35:56,067 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:36:07,608 - INFO - Sent to Training Proxy Job support
+2025-12-11 01:37:01,089 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:37:04,837 - INFO - Sent to Interview Proxy Discussion
+2025-12-11 01:37:55,079 - INFO - Sent to Interview proxy USA Canada
+2025-12-11 01:38:42,635 - INFO - Sent to Data scientist proxy
+2025-12-11 01:38:42,753 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:39:25,297 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:39:32,890 - INFO - Sent to USA Proxy support
+2025-12-11 01:40:25,204 - INFO - Sent to Proxy Job Interview Support
+2025-12-11 01:41:13,459 - INFO - Sent to Google data Engineer
+2025-12-11 01:42:03,682 - INFO - Sent to Work support java python
+2025-12-11 01:43:01,942 - INFO - Sent to PROXY JOB SUPPORTS
+2025-12-11 01:43:50,213 - INFO - Sent to ETL testing Support
+2025-12-11 01:44:39,549 - INFO - Sent to Freelance job proxy support
+2025-12-11 01:46:28,717 - INFO - Batch complete: 14/20
+2025-12-11 01:46:28,717 - INFO - Starting growth cycle
+2025-12-11 01:46:33,246 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:47:19,835 - WARNING - Server closed the connection: [Errno 60] Operation timed out
+2025-12-11 01:47:19,836 - INFO - Connection closed while receiving data: [Errno 60] Operation timed out
+2025-12-11 01:47:19,836 - INFO - Closing current connection to begin reconnect...
+2025-12-11 01:47:19,837 - INFO - Connecting to 91.108.56.113:443/TcpFull...
+2025-12-11 01:47:19,838 - INFO - <class 'TimeoutError'> during disconnect: [Errno 60] Operation timed out
+2025-12-11 01:47:29,848 - WARNING - Attempt 1 at connecting failed: TimeoutError: 
+2025-12-11 01:47:30,929 - INFO - Connection to 91.108.56.113:443/TcpFull complete!
+2025-12-11 01:47:46,531 - INFO - Got difference for channel 1353108096 updates
+2025-12-11 01:47:46,646 - INFO - Got difference for channel 1658892035 updates
+2025-12-11 01:47:59,510 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:48:50,407 - INFO - Growth complete: joined 3 groups
+2025-12-11 01:48:55,834 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:48:55,943 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 01:51:01,236 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:51:46,109 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:52:48,080 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 01:53:01,288 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:54:01,271 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:56:01,293 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:57:22,664 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 01:58:35,460 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:00:00,617 - INFO - Got difference for account updates
+2025-12-11 02:00:43,798 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:02:37,670 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:02:46,649 - INFO - Got difference for channel 1353108096 updates
+2025-12-11 02:03:34,307 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:03:48,733 - INFO - Got difference for channel 1051806860 updates
+2025-12-11 02:04:01,359 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:05:01,354 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:06:50,224 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:07:01,366 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 02:08:01,394 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:09:31,061 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:09:50,079 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:10:03,948 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:11:46,506 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 02:11:46,625 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 02:12:31,159 - INFO - Got difference for channel 1051806860 updates
+2025-12-11 02:14:34,815 - INFO - Got difference for channel 1634881166 updates

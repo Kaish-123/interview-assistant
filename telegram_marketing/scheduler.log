@@ -1,0 +1,85 @@
+
+╔══════════════════════════════════════════════════════════╗
+║           📱 TELEGRAM MARKETING AUTOMATION 📱              ║
+║                    TechyEra Suite                          ║
+╚══════════════════════════════════════════════════════════╝
+        
+2025-12-11 00:58:51,127 - INFO - Connecting to 91.108.56.127:443/TcpFull...
+2025-12-11 00:58:51,198 - INFO - Connection to 91.108.56.127:443/TcpFull complete!
+✓ Connected as: Data (@None)
+2025-12-11 00:58:52,697 - INFO - Connected as Data (@None)
+
+🔄 Starting scheduler...
+   Interval: Every 60 minutes (+/- 5 min random)
+   Active hours: 0:00 - 24:00
+   Press Ctrl+C to stop
+
+
+📤 Sending to 20 targets...
+Message preview: 📢 (PING ME DIRECTLY on WHATSAPP)
+
+I am the direct ...
+----------------------------------------
+✗ Cannot write to: Fresher Jobs & Internships (83K) (no permission)
+2025-12-11 00:58:52,864 - WARNING - No write permission for Fresher Jobs & Internships (83K)
+✓ Sent to: Full Stack Web React Dev (5.7K)
+2025-12-11 00:59:45,113 - INFO - Message sent to Full Stack Web React Dev (5.7K)
+✓ Sent to: Java Support/Jobs (4.7K)
+2025-12-11 01:00:36,478 - INFO - Message sent to Java Support/Jobs (4.7K)
+✗ Cannot write to: IT/Pharma fresher jobs (4.3K) (no permission)
+2025-12-11 01:01:26,696 - WARNING - No write permission for IT/Pharma fresher jobs (4.3K)
+✓ Sent to: Front-End Developer Jobs (3.9K)
+2025-12-11 01:02:12,153 - INFO - Message sent to Front-End Developer Jobs (3.9K)
+✓ Sent to: Job support UK USA CANADA
+2025-12-11 01:03:05,389 - INFO - Message sent to Job support UK USA CANADA
+✓ Sent to: Salesforce Proxy Interviews
+2025-12-11 01:03:52,608 - INFO - Message sent to Salesforce Proxy Interviews
+✓ Sent to: Training Proxy Job support
+2025-12-11 01:04:39,173 - INFO - Message sent to Training Proxy Job support
+2025-12-11 01:04:39,294 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: Interview Proxy Discussion
+2025-12-11 01:05:34,491 - INFO - Message sent to Interview Proxy Discussion
+2025-12-11 01:05:53,053 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: Interview proxy USA Canada
+2025-12-11 01:06:22,755 - INFO - Message sent to Interview proxy USA Canada
+2025-12-11 01:06:36,440 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:07:06,547 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: Data scientist proxy
+2025-12-11 01:07:11,314 - INFO - Message sent to Data scientist proxy
+✓ Sent to: USA Proxy support
+2025-12-11 01:08:02,542 - INFO - Message sent to USA Proxy support
+2025-12-11 01:08:02,991 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: Proxy Job Interview Support
+2025-12-11 01:08:56,816 - INFO - Message sent to Proxy Job Interview Support
+2025-12-11 01:09:48,093 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: Google data Engineer
+2025-12-11 01:09:51,055 - INFO - Message sent to Google data Engineer
+✓ Sent to: Work support java python
+2025-12-11 01:10:38,311 - INFO - Message sent to Work support java python
+2025-12-11 01:10:53,083 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: PROXY JOB SUPPORTS
+2025-12-11 01:11:31,569 - INFO - Message sent to PROXY JOB SUPPORTS
+✓ Sent to: ETL testing Support
+2025-12-11 01:12:20,827 - INFO - Message sent to ETL testing Support
+✓ Sent to: Freelance job proxy support
+2025-12-11 01:13:12,051 - INFO - Message sent to Freelance job proxy support
+2025-12-11 01:13:34,859 - INFO - Got difference for channel 1790398948 updates
+✓ Sent to: BikusRE Group
+2025-12-11 01:14:07,278 - INFO - Message sent to BikusRE Group
+2025-12-11 01:14:41,797 - INFO - Got difference for channel 1634881166 updates
+✓ Sent to: nigel carter
+2025-12-11 01:15:01,547 - INFO - Message sent to nigel carter
+
+✓ Completed: 18/20 successful
+2025-12-11 01:15:01,547 - INFO - Batch complete: 18/20 successful
+
+⏰ Next run at: 02:18:01 (63 min)
+2025-12-11 01:15:58,609 - INFO - Got difference for channel 1718899604 updates
+2025-12-11 01:16:53,106 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:17:12,168 - INFO - Account is now banned in 1169018939 so we can no longer fetch updates from it
+2025-12-11 01:17:59,606 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:21:23,452 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:22:17,332 - INFO - Got difference for channel 1955015115 updates
+2025-12-11 01:22:28,222 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:23:44,757 - INFO - Got difference for channel 1634881166 updates
+2025-12-11 01:26:47,670 - INFO - Got difference for channel 1634881166 updates
