@@ -52,3 +52,4 @@ if __name__ == "__main__":
     message = sys.argv[2]
     
     asyncio.run(quick_send(target, message))
+

@@ -33,3 +33,4 @@ echo "   • View live log: tail -f master_automation.log"
 echo "   • View output: tail -f master_automation_output.log"
 echo "   • Stop bot: pkill -f master_automation.py"
 echo ""
+

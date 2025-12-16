@@ -46,3 +46,4 @@ echo ""
 echo "Current crontab:"
 echo "----------------"
 crontab -l | grep -E "(telegram|cron_send|cron_growth|TechyEra)"
+

@@ -1,0 +1,86 @@
+{
+    "phone_number_id": "YOUR_PHONE_NUMBER_ID",
+    "access_token": "YOUR_ACCESS_TOKEN",
+    "waba_id": "YOUR_WABA_ID",
+    
+    "targets": [
+        {
+            "name": "Example Contact 1",
+            "phone": "919876543210",
+            "enabled": false
+        },
+        {
+            "name": "Example Contact 2",
+            "phone": "919876543211",
+            "enabled": false
+        }
+    ],
+    
+    "broadcasts": [
+        {
+            "name": "Marketing Broadcast",
+            "enabled": false,
+            "recipients": [
+                {"phone": "919876543210", "name": "Contact 1"},
+                {"phone": "919876543211", "name": "Contact 2"},
+                {"phone": "919876543212", "name": "Contact 3"}
+            ]
+        },
+        {
+            "name": "VIP Clients",
+            "enabled": false,
+            "recipients": [
+                {"phone": "919999999999", "name": "VIP Client 1"}
+            ]
+        }
+    ],
+    
+    "messages": [
+        {
+            "id": "promo1",
+            "type": "text",
+            "text": "🎯 Special Offer!\n\nHello {{name}},\n\nWe have an exclusive opportunity for you!\n\n✅ Data Engineering positions\n✅ Data Analyst roles\n✅ Amazon SDE interviews\n\nReply 'INTERESTED' to learn more!\n\n- TechyEra Team",
+            "enabled": true
+        },
+        {
+            "id": "promo2",
+            "type": "text",
+            "text": "👋 Hi there!\n\nPlease refer me to your known friends and consultancies for:\n\n📊 Data Engineering\n📈 Data Analyst\n💻 Amazon SDE Interview Proxy\n📝 Technical Assessments\n\nYour referral is highly appreciated!\n\nThanks!",
+            "enabled": true
+        },
+        {
+            "id": "template_example",
+            "type": "template",
+            "template_name": "hello_world",
+            "language": "en",
+            "enabled": false
+        },
+        {
+            "id": "image_promo",
+            "type": "image",
+            "image_url": "https://example.com/promo-image.jpg",
+            "text": "Check out our latest services! 🚀",
+            "enabled": false
+        }
+    ],
+    
+    "schedule": {
+        "enabled": true,
+        "interval_minutes": 60,
+        "random_delay_minutes": 10,
+        "active_hours": {
+            "start": 9,
+            "end": 21
+        },
+        "active_days": [0, 1, 2, 3, 4, 5, 6]
+    },
+    
+    "settings": {
+        "rotate_messages": true,
+        "personalize": true,
+        "delay_between_groups_seconds": 30,
+        "delay_between_messages_seconds": 3,
+        "max_messages_per_day": 1000,
+        "log_file": "whatsapp_marketing.log"
+    }
+}

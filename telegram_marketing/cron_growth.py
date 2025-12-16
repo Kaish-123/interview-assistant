@@ -109,7 +109,7 @@ async def run_growth():
         
         # Join top 3-5 groups
         joined = 0
-        max_joins = random.randint(3, 5)
+        max_joins = random.randint(5, 8)
         
         for group in found_groups[:max_joins]:
             try:
@@ -117,16 +117,17 @@ async def run_growth():
                 entity = await client.get_entity(group['username'])
                 await client(JoinChannelRequest(entity))
                 
-                # Add to config
+                # Add to config with timestamp
                 config['targets'].append({
                     'name': f"{group['title'][:35]} ({group.get('members', '?')})",
                     'username': group['username'],
-                    'enabled': True
+                    'enabled': True,
+                    'added_at': datetime.now().strftime('%Y-%m-%d %H:%M')
                 })
                 joined += 1
                 logger.info(f"✓ Joined: {group['title']}")
                 
-                await asyncio.sleep(random.randint(20, 40))
+                await asyncio.sleep(random.randint(5, 10))
                 
             except errors.FloodWaitError as e:
                 logger.warning(f"Rate limited: {e.seconds}s")
@@ -149,3 +150,4 @@ async def run_growth():
 
 if __name__ == "__main__":
     asyncio.run(run_growth())
+

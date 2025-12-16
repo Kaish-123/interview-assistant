@@ -46,8 +46,11 @@ def main():
     print("╚══════════════════════════════════════════════════════════════╝")
     print()
     
-    # Calculate next message run (every hour at :00)
-    next_msg = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+    # Calculate next message run (every 30 minutes at :00 and :30)
+    if now.minute < 30:
+        next_msg = now.replace(minute=30, second=0, microsecond=0)
+    else:
+        next_msg = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
     time_to_msg = next_msg - now
     mins_to_msg = int(time_to_msg.total_seconds() / 60)
     
@@ -107,9 +110,10 @@ def main():
     # Schedule summary
     print("📋 SCHEDULE SUMMARY:")
     print("─" * 60)
-    print("   📤 Messages: Every hour at :00 (e.g., 3:00, 4:00, 5:00...)")
+    print("   📤 Messages: Every 30 minutes (e.g., 3:00, 3:30, 4:00, 4:30...)")
     print("   🌱 Growth:   Every 6 hours at :00 (e.g., 0:00, 6:00, 12:00, 18:00)")
     print()
 
 if __name__ == "__main__":
     main()
+

@@ -1,0 +1,310 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: web-v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Python dependencies
+        run: |
+          cd backend
+          # Filter out Windows-specific packages
+          grep -v "pywin32" requirements.txt > requirements-mac.txt || cp requirements.txt requirements-mac.txt
+          pip install -r requirements-mac.txt
+          pip install pyinstaller
+
+      - name: Install Node dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build Frontend (Static Export)
+        run: |
+          cd frontend
+          npm run build
+          echo "Frontend build complete. Contents of 'out' directory:"
+          ls -la out/ || echo "No 'out' directory - checking for other build output"
+          ls -la .next/ || true
+
+      - name: Prepare App Bundle
+        run: |
+          # Create app structure
+          mkdir -p dist/InterviewAssistant/backend
+          mkdir -p dist/InterviewAssistant/frontend
+          
+          # Copy backend
+          cp -r backend/* dist/InterviewAssistant/backend/
+          
+          # Copy frontend static files
+          if [ -d "frontend/out" ]; then
+            cp -r frontend/out dist/InterviewAssistant/frontend/
+          else
+            echo "Warning: No static frontend build found"
+          fi
+          
+          # Copy launcher
+          cp desktop_launcher.py dist/InterviewAssistant/
+          
+          # Create launch script for Mac
+          cat > dist/InterviewAssistant/start.command << 'EOF'
+          #!/bin/bash
+          cd "$(dirname "$0")"
+          python3 desktop_launcher.py
+          EOF
+          chmod +x dist/InterviewAssistant/start.command
+          
+          # Create requirements for the app
+          cp backend/requirements.txt dist/InterviewAssistant/
+
+      - name: Create Mac App Bundle
+        run: |
+          cd dist
+          # Create a proper .app bundle structure
+          mkdir -p "Interview Assistant.app/Contents/MacOS"
+          mkdir -p "Interview Assistant.app/Contents/Resources"
+          
+          # Copy app files
+          cp -r InterviewAssistant/* "Interview Assistant.app/Contents/Resources/"
+          
+          # Create launcher script
+          cat > "Interview Assistant.app/Contents/MacOS/Interview Assistant" << 'EOF'
+          #!/bin/bash
+          SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+          RESOURCES_DIR="$SCRIPT_DIR/../Resources"
+          cd "$RESOURCES_DIR"
+          
+          # Check if Python is available
+          if command -v python3 &> /dev/null; then
+            python3 desktop_launcher.py
+          else
+            osascript -e 'display alert "Python 3 Required" message "Please install Python 3 to run Interview Assistant.\n\nDownload from: https://www.python.org/downloads/"'
+            open "https://www.python.org/downloads/"
+          fi
+          EOF
+          chmod +x "Interview Assistant.app/Contents/MacOS/Interview Assistant"
+          
+          # Create Info.plist
+          cat > "Interview Assistant.app/Contents/Info.plist" << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>
+            <string>Interview Assistant</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.techyera.interview-assistant</string>
+            <key>CFBundleName</key>
+            <string>Interview Assistant</string>
+            <key>CFBundleDisplayName</key>
+            <string>Interview Assistant</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0.0</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>10.15</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+            <key>NSMicrophoneUsageDescription</key>
+            <string>Interview Assistant needs microphone access for voice recording.</string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Create DMG
+        run: |
+          cd dist
+          # Create a zip for now (DMG requires more setup)
+          zip -r InterviewAssistant-mac.zip "Interview Assistant.app" InterviewAssistant/
+          ls -la
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: InterviewAssistant-mac
+          path: dist/InterviewAssistant-mac.zip
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: web-v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Python dependencies
+        run: |
+          cd backend
+          # Filter out macOS-specific packages
+          Get-Content requirements.txt | Where-Object { $_ -notmatch 'pyobjc' } | Set-Content requirements-win.txt
+          pip install -r requirements-win.txt
+        shell: pwsh
+
+      - name: Install Node dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build Frontend (Static Export)
+        run: |
+          cd frontend
+          npm run build
+        shell: cmd
+
+      - name: Prepare App Bundle
+        run: |
+          # Create app structure
+          mkdir dist\InterviewAssistant\backend
+          mkdir dist\InterviewAssistant\frontend
+          
+          # Copy backend
+          xcopy /E /I backend dist\InterviewAssistant\backend
+          
+          # Copy frontend static files
+          if exist frontend\out (
+            xcopy /E /I frontend\out dist\InterviewAssistant\frontend\out
+          )
+          
+          # Copy launcher
+          copy desktop_launcher.py dist\InterviewAssistant\
+          
+          # Create batch launcher
+          echo @echo off > dist\InterviewAssistant\start.bat
+          echo cd /d "%%~dp0" >> dist\InterviewAssistant\start.bat
+          echo python desktop_launcher.py >> dist\InterviewAssistant\start.bat
+          
+          # Copy requirements
+          copy backend\requirements.txt dist\InterviewAssistant\
+        shell: cmd
+
+      - name: Create Windows zip
+        run: |
+          cd dist
+          Compress-Archive -Path InterviewAssistant -DestinationPath InterviewAssistant-windows.zip
+        shell: pwsh
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: InterviewAssistant-windows
+          path: dist/InterviewAssistant-windows.zip
+
+  create-release:
+    needs: [build-mac, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: |
+          echo "=== Downloaded artifacts ==="
+          find artifacts -type f -name "*.zip"
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Interview Assistant v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/*.zip
+          body: |
+            ## 🎉 Interview Assistant v${{ steps.version.outputs.version }}
+            
+            AI-powered interview preparation tool with real-time transcription.
+            
+            ### 📥 Downloads
+            
+            | Platform | Download |
+            |----------|----------|
+            | 🍎 macOS | `InterviewAssistant-mac.zip` |
+            | 🪟 Windows | `InterviewAssistant-windows.zip` |
+            
+            ### 🚀 Installation
+            
+            **macOS:**
+            1. Download `InterviewAssistant-mac.zip`
+            2. Extract the zip file
+            3. Double-click `Interview Assistant.app` (or use `start.command`)
+            4. If blocked: Right-click → Open → Open
+            5. Grant microphone permissions when prompted
+            
+            **Windows:**
+            1. Download `InterviewAssistant-windows.zip`
+            2. Extract to a folder
+            3. Double-click `start.bat`
+            4. Allow through Windows Firewall if prompted
+            
+            ### ⚠️ Requirements
+            - **Python 3.9+** must be installed
+            - **OpenAI API key** (set in the app or as environment variable)
+            - Download Python: https://www.python.org/downloads/
+            
+            ### 🔧 First Time Setup
+            1. Install Python dependencies: `pip install -r requirements.txt`
+            2. Set your OpenAI API key in the backend/.env file
+            3. Run the app!
+            
+            ### ✨ Features
+            - 🎤 Real-time audio transcription (Whisper API)
+            - 🤖 AI-powered interview assistance (GPT-4)
+            - 📝 Customizable prompt templates
+            - 💾 Auto-save chat sessions
+            - ⌨️ Global hotkeys (` to record, PgUp/PgDn to scroll)
+            - 📄 Resume & JD document upload
+

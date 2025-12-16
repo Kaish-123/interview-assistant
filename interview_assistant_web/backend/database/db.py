@@ -108,4 +108,3 @@ def get_db():
 
 # Initialize database on import
 init_db()
-

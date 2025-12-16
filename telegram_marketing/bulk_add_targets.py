@@ -65,3 +65,4 @@ if __name__ == "__main__":
         add_targets_bulk(targets)
     else:
         print("No targets entered.")
+

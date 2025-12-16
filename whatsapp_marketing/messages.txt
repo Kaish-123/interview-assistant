@@ -1,0 +1,32 @@
+# WhatsApp Marketing Messages
+# Separate each message with a line containing only: ---
+# Messages will be rotated automatically
+
+Hello! 👋
+
+Please refer me to your known friends and consultancies for:
+📊 Data Engineering
+📈 Data Analyst  
+💻 Amazon SDE Interview Proxy
+📝 Technical Assessments
+
+Your referral is highly appreciated!
+
+Thanks!
+---
+🎯 Special Opportunity!
+
+Looking for data engineering and analytics roles.
+Can help with interview preparation and proxy interviews.
+
+Reply if interested!
+---
+Hi there! 
+
+Quick update - I'm available for:
+✅ Data Engineering projects
+✅ Interview assistance
+✅ Technical assessments
+
+Let me know if you have any leads!
+

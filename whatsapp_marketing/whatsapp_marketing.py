@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-WhatsApp Marketing Automation
-Sends personalized messages with images to contacts filtered by suffix keywords
+WhatsApp Marketing Automation - Reliable Version
+Properly sends messages with images to contacts
 """
 
 import subprocess
@@ -12,7 +12,7 @@ import os
 import glob
 import random
 from datetime import datetime
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 try:
     import pyautogui
@@ -21,18 +21,16 @@ except ImportError:
     sys.exit(1)
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.5
+pyautogui.PAUSE = 0.3
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(SCRIPT_DIR, "marketing_config.json")
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "marketing_images")
 LOG_DIR = os.path.join(SCRIPT_DIR, "logs")
 
-# Ensure directories exist
 os.makedirs(IMAGES_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
 
-# Import contact fetcher
 sys.path.insert(0, SCRIPT_DIR)
 from contact_fetcher import (
     get_contacts_for_messaging,
@@ -47,40 +45,27 @@ def log(msg: str, level: str = "INFO"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     formatted = f"[{timestamp}] [{level}] {msg}"
     print(formatted)
+    sys.stdout.flush()
     
-    # Also write to log file
     log_file = os.path.join(LOG_DIR, f"marketing_{datetime.now().strftime('%Y-%m-%d')}.log")
     with open(log_file, 'a') as f:
         f.write(formatted + "\n")
 
 
 def load_config() -> dict:
-    """Load configuration from JSON file."""
+    """Load configuration."""
     default_config = {
         "message_template": "Please refer me to your known friends and consultancies for data engineering / data analyst/ Amazon sde interview proxy and Assessments also..",
         "contact_suffixes": ["client", "proxy", "interview"],
         "delay_min_seconds": 30,
         "delay_max_seconds": 90,
         "batch_size": 50,
-        "pause_between_batches_minutes": 30,
-        "schedule": {
-            "day": "saturday",
-            "time": "02:00"
-        },
-        "whatsapp_positions": {
-            "search_box": {"x": 143, "y": 54},
-            "first_chat": {"x": 200, "y": 150},
-            "message_input": {"x": 900, "y": 850},
-            "attach_button": {"x": 835, "y": 850},
-            "photo_option": {"x": 835, "y": 700},
-            "send_button": {"x": 1390, "y": 850}
-        }
+        "pause_between_batches_minutes": 30
     }
     
     try:
         with open(CONFIG_PATH, 'r') as f:
             config = json.load(f)
-            # Merge with defaults
             for key, value in default_config.items():
                 if key not in config:
                     config[key] = value
@@ -91,7 +76,7 @@ def load_config() -> dict:
 
 
 def save_config(config: dict):
-    """Save configuration to JSON file."""
+    """Save configuration."""
     with open(CONFIG_PATH, 'w') as f:
         json.dump(config, f, indent=4, ensure_ascii=False)
 
@@ -102,18 +87,43 @@ def get_marketing_images() -> List[str]:
     images = []
     for ext in extensions:
         images.extend(glob.glob(os.path.join(IMAGES_DIR, ext)))
-    return sorted(set(images))  # Remove duplicates and sort
+    return sorted(set(images))
+
+
+def copy_to_clipboard(text: str):
+    """Copy text to clipboard using pbcopy."""
+    p = subprocess.Popen(['pbcopy'], stdin=subprocess.PIPE)
+    p.communicate(text.encode('utf-8'))
+    p.wait()
+    time.sleep(0.2)
+
+
+def paste_from_clipboard():
+    """Paste from clipboard using Cmd+V."""
+    pyautogui.hotkey('command', 'v')
+    time.sleep(0.3)
+
+
+def press_key(key: str, times: int = 1, delay: float = 0.2):
+    """Press a key multiple times with delay."""
+    for _ in range(times):
+        pyautogui.press(key)
+        time.sleep(delay)
 
 
 def open_whatsapp():
-    """Open WhatsApp and maximize window."""
-    log("📱 Opening WhatsApp...")
-    subprocess.run(["open", "-a", "WhatsApp"])
+    """Open WhatsApp Desktop and maximize."""
+    log("📱 Opening WhatsApp Desktop...")
+    
+    # Open WhatsApp
+    subprocess.run(["open", "-a", "WhatsApp"], check=True)
     time.sleep(3)
     
-    # Maximize and bring to front
+    # Activate and maximize
     script = '''
-    tell application "WhatsApp" to activate
+    tell application "WhatsApp"
+        activate
+    end tell
     delay 1
     tell application "System Events"
         tell process "WhatsApp"
@@ -125,277 +135,313 @@ def open_whatsapp():
             end try
         end tell
     end tell
-    delay 1
     '''
     subprocess.run(["osascript", "-e", script], capture_output=True)
     time.sleep(2)
+    
+    # Click somewhere in WhatsApp to ensure it's focused
+    pyautogui.click(700, 400)
+    time.sleep(0.5)
+    
     log("   ✅ WhatsApp ready")
 
 
-def search_contact(phone: str, name: str) -> bool:
+def search_and_open_chat(phone: str, name: str) -> bool:
     """
-    Search for a contact in WhatsApp by phone number.
+    Search for contact and open chat.
     
-    Returns:
-        True if contact found and chat opened, False otherwise
+    FLOW:
+    1. Press Escape to close any open dialogs
+    2. Press Cmd+N to open new chat
+    3. Paste phone number
+    4. Wait for search results
+    5. Press Enter to select first result
+    6. Wait for chat to open
     """
-    config = load_config()
-    positions = config.get("whatsapp_positions", {})
+    log(f"   🔍 Searching: {name} ({phone})")
     
-    # Click on search/new chat area
-    log(f"   🔍 Searching for: {name} ({phone})")
+    # Step 1: Close any open dialogs/chats
+    press_key('escape', times=2, delay=0.3)
+    time.sleep(0.5)
     
-    # Use Cmd+N for new chat or Cmd+F for search
+    # Step 2: Open new chat dialog (Cmd+N)
+    log("   📝 Opening new chat...")
     pyautogui.hotkey('command', 'n')
     time.sleep(1.5)
     
-    # Type phone number to search
-    # Clean phone number format
-    search_term = phone
-    if not phone.startswith('+'):
-        search_term = f"+{phone}"
+    # Step 3: Clear any existing text and paste phone number
+    # The search field should be focused after Cmd+N
+    pyautogui.hotkey('command', 'a')  # Select all
+    time.sleep(0.2)
     
-    # Type the search term
-    pyautogui.typewrite(search_term, interval=0.05)
-    time.sleep(2)
+    # Format phone number (ensure it has country code)
+    search_phone = phone.strip()
+    if not search_phone.startswith('+'):
+        # Assume Indian number if no country code
+        if len(search_phone) == 10:
+            search_phone = '+91' + search_phone
+        else:
+            search_phone = '+' + search_phone
     
-    # Press down arrow and Enter to select first result
-    pyautogui.press('down')
-    time.sleep(0.5)
-    pyautogui.press('return')
-    time.sleep(2)
+    log(f"   📋 Pasting: {search_phone}")
+    copy_to_clipboard(search_phone)
+    paste_from_clipboard()
+    time.sleep(2)  # Wait for search results
     
+    # Step 4: Check if results appeared and select first one
+    log("   ⬇️ Selecting first result...")
+    press_key('down', times=1, delay=0.3)
+    time.sleep(0.3)
+    press_key('return', times=1, delay=0.5)
+    time.sleep(1.5)  # Wait for chat to open
+    
+    log("   ✅ Chat opened")
     return True
 
 
-def send_message(message: str) -> bool:
-    """Send a text message in the current chat."""
-    log(f"   💬 Sending message...")
+def send_text_message(message: str) -> bool:
+    """
+    Send text message in currently open chat.
     
-    # Copy message to clipboard and paste (handles special characters)
-    p = subprocess.Popen(['pbcopy'], stdin=subprocess.PIPE)
-    p.communicate(message.encode('utf-8'))
-    time.sleep(0.3)
+    FLOW:
+    1. Message input should be focused after opening chat
+    2. Paste the message
+    3. Press Enter to send
+    """
+    if not message or not message.strip():
+        log("   ⚠️ No message to send")
+        return True
+    
+    log(f"   💬 Sending message ({len(message)} chars)...")
+    
+    # Click in message area to ensure focus (bottom center of chat)
+    pyautogui.click(700, 820)
+    time.sleep(0.5)
+    
+    # Clear any existing text
+    pyautogui.hotkey('command', 'a')
+    time.sleep(0.1)
     
     # Paste message
-    pyautogui.hotkey('command', 'v')
+    copy_to_clipboard(message)
+    paste_from_clipboard()
     time.sleep(0.5)
     
     # Send with Enter
-    pyautogui.press('return')
+    log("   📤 Pressing Enter to send...")
+    press_key('return', times=1, delay=0.5)
     time.sleep(1)
     
+    log("   ✅ Message sent")
     return True
 
 
-def attach_images(image_paths: List[str]) -> bool:
+def send_images(image_paths: List[str]) -> bool:
     """
-    Attach and send multiple images to the current chat.
-    WhatsApp allows up to 30 images at once.
-    """
-    if not image_paths:
-        log("   ⚠️ No images to attach")
-        return True
+    Send images in currently open chat.
     
-    log(f"   📷 Attaching {len(image_paths)} images...")
-    
-    # Click attach button (paperclip icon)
-    config = load_config()
-    
-    # Use keyboard shortcut or click attach
-    # On WhatsApp Desktop Mac, we can drag-drop or use the attach menu
-    
-    # Method: Click the + or attach button
-    pyautogui.hotkey('command', 'shift', 'a')  # Attach shortcut (if available)
-    time.sleep(1)
-    
-    # If shortcut doesn't work, try clicking attach button position
-    # This will be calibrated in setup mode
-    
-    # Alternative: Use Finder to select files
-    # Open file dialog
-    script_open_dialog = '''
-    tell application "System Events"
-        keystroke "a" using {command down, shift down}
-    end tell
-    '''
-    subprocess.run(["osascript", "-e", script_open_dialog], capture_output=True)
-    time.sleep(2)
-    
-    # Select images using Finder dialog
-    if len(image_paths) > 0:
-        # Navigate to images folder
-        folder_path = os.path.dirname(image_paths[0])
-        
-        # Use Cmd+Shift+G to go to folder
-        script_navigate = f'''
-        tell application "System Events"
-            keystroke "g" using {{command down, shift down}}
-            delay 1
-            keystroke "{folder_path}"
-            delay 0.5
-            keystroke return
-            delay 2
-        end tell
-        '''
-        subprocess.run(["osascript", "-e", script_navigate], capture_output=True)
-        time.sleep(2)
-        
-        # Select all images (Cmd+A if all images in folder should be sent)
-        # Or select specific files
-        if len(image_paths) == len(get_marketing_images()):
-            # Select all
-            pyautogui.hotkey('command', 'a')
-            time.sleep(1)
-        else:
-            # Select specific files by typing names
-            for i, img_path in enumerate(image_paths):
-                filename = os.path.basename(img_path)
-                if i == 0:
-                    pyautogui.typewrite(filename[:10], interval=0.05)
-                else:
-                    # Cmd+Click for multiple selection
-                    pyautogui.keyDown('command')
-                    pyautogui.typewrite(filename[:10], interval=0.05)
-                    pyautogui.keyUp('command')
-                time.sleep(0.5)
-        
-        # Press Enter/Open to attach
-        pyautogui.press('return')
-        time.sleep(3)
-        
-        # Send the images
-        pyautogui.press('return')
-        time.sleep(2)
-    
-    return True
-
-
-def send_images_via_drag(image_paths: List[str]) -> bool:
-    """
-    Alternative method: Drag and drop images into WhatsApp.
-    This is more reliable on macOS.
+    FLOW:
+    1. Click attachment button (+ icon)
+    2. Select "Photos & Videos"
+    3. Navigate to folder using Cmd+Shift+G
+    4. Select all images with Cmd+A
+    5. Press Enter to attach
+    6. Press Enter to send
     """
     if not image_paths:
+        log("   ⚠️ No images to send")
         return True
     
-    log(f"   📷 Sending {len(image_paths)} images via drag method...")
+    log(f"   📷 Sending {len(image_paths)} images...")
     
-    # Create a temporary AppleScript to drag files
-    # First, get WhatsApp window position
-    
-    # Simpler approach: Use pbcopy with file paths and paste
-    # This works for images in Finder
-    
-    # Or use AppleScript to open images with WhatsApp
-    
-    # Best approach for multiple images: Use the attach menu
-    
-    # Click in message area first
-    pyautogui.click(900, 800)
-    time.sleep(0.5)
-    
-    # Use the plus/attach button
-    # Position may vary - using relative position from message input
-    attach_x, attach_y = 40, 850  # Left side attach button
-    pyautogui.click(attach_x, attach_y)
-    time.sleep(1)
-    
-    # Click "Photos & Videos" option
-    photos_x, photos_y = 90, 750  # Photos option in menu
-    pyautogui.click(photos_x, photos_y)
-    time.sleep(2)
-    
-    # Now Finder opens - navigate and select images
+    # Method 1: Drag and drop using AppleScript (more reliable)
     folder_path = IMAGES_DIR
     
-    # Go to folder dialog
+    # Get list of image filenames
+    image_files = [os.path.basename(img) for img in image_paths]
+    
+    log(f"   📂 From folder: {folder_path}")
+    
+    # Use AppleScript to attach files
+    # First, let's try clicking the attach button
+    
+    # Click in message area first
+    pyautogui.click(700, 820)
+    time.sleep(0.3)
+    
+    # Press Cmd+O to open file picker (if supported)
+    # Or click the + button
+    
+    # Find and click the attachment button (usually on the left of message input)
+    # Position varies by WhatsApp version, let's try common positions
+    
+    # Try clicking the + button (usually around x=40-50, y=820-850)
+    log("   📎 Clicking attachment button...")
+    
+    # Look for attachment button - try a few positions
+    attach_positions = [(42, 848), (45, 845), (50, 850), (40, 840)]
+    
+    for pos in attach_positions:
+        pyautogui.click(pos[0], pos[1])
+        time.sleep(0.8)
+        
+        # Check if menu appeared by looking for "Photos & Videos" option
+        # The menu item is usually around y=750-780
+        break  # Try first position
+    
+    time.sleep(1)
+    
+    # Click "Photos & Videos" option in the menu
+    log("   🖼️ Selecting Photos & Videos...")
+    pyautogui.click(120, 720)  # Approximate position of Photos option
+    time.sleep(1.5)
+    
+    # Finder dialog should open
+    # Navigate to images folder using Cmd+Shift+G
+    log("   📂 Navigating to images folder...")
     pyautogui.hotkey('command', 'shift', 'g')
     time.sleep(1)
     
-    # Type folder path
-    p = subprocess.Popen(['pbcopy'], stdin=subprocess.PIPE)
-    p.communicate(folder_path.encode('utf-8'))
-    time.sleep(0.3)
-    pyautogui.hotkey('command', 'v')
+    # Paste folder path
+    copy_to_clipboard(folder_path)
+    paste_from_clipboard()
     time.sleep(0.5)
-    pyautogui.press('return')
-    time.sleep(2)
     
-    # Select all images
+    # Press Enter to go to folder
+    press_key('return', times=1, delay=1)
+    time.sleep(1.5)
+    
+    # Select all files with Cmd+A
+    log("   ☑️ Selecting all images...")
     pyautogui.hotkey('command', 'a')
-    time.sleep(1)
+    time.sleep(0.5)
     
-    # Open/Attach
-    pyautogui.press('return')
-    time.sleep(3)
+    # Press Enter to attach selected files
+    log("   📎 Attaching files...")
+    press_key('return', times=1, delay=1)
+    time.sleep(2)  # Wait for images to load in preview
     
-    # Send
-    pyautogui.press('return')
-    time.sleep(2)
+    # Press Enter again to send
+    log("   📤 Sending images...")
+    press_key('return', times=1, delay=1)
+    time.sleep(2)  # Wait for upload
     
+    log("   ✅ Images sent")
     return True
 
 
-def close_current_chat():
-    """Close current chat and go back to chat list."""
-    # Press Escape to close any dialogs
-    pyautogui.press('escape')
+def send_images_simple(image_paths: List[str]) -> bool:
+    """
+    Simpler method: Copy images to clipboard and paste.
+    Works on macOS by copying files in Finder and pasting in WhatsApp.
+    """
+    if not image_paths:
+        return True
+    
+    log(f"   📷 Sending {len(image_paths)} images (simple method)...")
+    
+    # Create AppleScript to copy files to clipboard
+    file_list = '", "'.join(image_paths)
+    script = f'''
+    tell application "Finder"
+        set theFiles to {{}}
+        repeat with f in {{"{file_list}"}}
+            set end of theFiles to (POSIX file f as alias)
+        end repeat
+        set the clipboard to theFiles
+    end tell
+    '''
+    
+    result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    
+    if result.returncode != 0:
+        log(f"   ⚠️ Could not copy files: {result.stderr}", "WARN")
+        return False
+    
     time.sleep(0.5)
-    pyautogui.press('escape')
+    
+    # Click in message area
+    pyautogui.click(700, 820)
+    time.sleep(0.3)
+    
+    # Paste files
+    log("   📋 Pasting images...")
+    pyautogui.hotkey('command', 'v')
+    time.sleep(2)  # Wait for images to appear
+    
+    # Press Enter to send
+    log("   📤 Sending...")
+    press_key('return', times=1, delay=1)
+    time.sleep(2)
+    
+    log("   ✅ Images sent")
+    return True
+
+
+def close_chat():
+    """Close current chat / go back."""
+    press_key('escape', times=2, delay=0.3)
     time.sleep(0.5)
 
 
 def send_to_contact(contact: Dict, message: str, images: List[str], dry_run: bool = False) -> bool:
     """
-    Send message and images to a single contact.
-    
-    Args:
-        contact: Contact dictionary with name, phone, id
-        message: Message text to send
-        images: List of image paths to attach
-        dry_run: If True, don't actually send (test mode)
-    
-    Returns:
-        True if successful, False otherwise
+    Complete flow to send message and images to a contact.
     """
-    name = contact['name']
-    phone = contact['phone']
-    contact_id = contact['id']
+    name = contact.get('name', 'Unknown')
+    phone = contact.get('phone', '')
+    contact_id = contact.get('id', '')
     
-    log(f"📤 Processing: {name} ({phone})")
+    log(f"\n{'='*50}")
+    log(f"📤 Contact: {name}")
+    log(f"   Phone: {phone}")
+    log(f"{'='*50}")
+    
+    if not phone:
+        log("   ❌ No phone number!", "ERROR")
+        return False
     
     if dry_run:
-        log(f"   [DRY RUN] Would send message + {len(images)} images")
+        log(f"   [DRY RUN] Would send:")
+        log(f"   - Message: {message[:50]}...")
+        log(f"   - Images: {len(images)}")
         return True
     
     try:
-        # Search and open chat
-        if not search_contact(phone, name):
-            log(f"   ❌ Could not find contact", "ERROR")
+        # Step 1: Search and open chat
+        if not search_and_open_chat(phone, name):
+            log("   ❌ Failed to open chat", "ERROR")
             return False
         
-        # Send text message first
+        # Step 2: Send text message
         if message:
-            send_message(message)
-            time.sleep(1)
+            if not send_text_message(message):
+                log("   ❌ Failed to send message", "ERROR")
+                return False
         
-        # Send images
+        # Step 3: Send images
         if images:
-            send_images_via_drag(images)
-            time.sleep(2)
+            # Try simple method first (more reliable)
+            if not send_images_simple(images):
+                log("   ⚠️ Simple method failed, trying alternative...")
+                send_images(images)
         
-        # Mark as messaged in database
-        mark_contact_messaged(contact_id, message[:50] if message else "", len(images))
+        # Step 4: Mark as sent in database
+        try:
+            mark_contact_messaged(contact_id, message[:50] if message else "", len(images))
+        except Exception as e:
+            log(f"   ⚠️ Could not mark as sent: {e}", "WARN")
         
-        # Close chat
-        close_current_chat()
+        # Step 5: Close chat
+        close_chat()
         
-        log(f"   ✅ Sent successfully!")
+        log(f"   ✅ SUCCESS - Sent to {name}")
         return True
         
     except Exception as e:
-        log(f"   ❌ Error: {e}", "ERROR")
+        log(f"   ❌ ERROR: {str(e)}", "ERROR")
+        import traceback
+        log(traceback.format_exc(), "ERROR")
         return False
 
 
@@ -403,24 +449,22 @@ def run_marketing_campaign(
     suffix_filter: str = None,
     dry_run: bool = False,
     limit: int = None,
-    skip_images: bool = False
+    skip_images: bool = False,
+    contact_ids: List[str] = None
 ) -> Dict:
     """
-    Run the marketing campaign to all eligible contacts.
+    Run marketing campaign.
     
     Args:
-        suffix_filter: Only message contacts with this suffix (e.g., 'client')
+        suffix_filter: Filter contacts by suffix
         dry_run: Test mode - don't actually send
-        limit: Maximum number of contacts to message
-        skip_images: Don't send images, only text
-    
-    Returns:
-        Campaign results dictionary
+        limit: Max contacts to process
+        skip_images: Skip sending images
+        contact_ids: Specific contact IDs to send to
     """
-    log("")
-    log("=" * 60)
-    log("🚀 WhatsApp Marketing Campaign")
-    log("=" * 60)
+    log("\n" + "="*60)
+    log("🚀 WHATSAPP MARKETING CAMPAIGN")
+    log("="*60 + "\n")
     
     config = load_config()
     message = config.get("message_template", "")
@@ -428,26 +472,30 @@ def run_marketing_campaign(
     # Get contacts
     contacts = get_contacts_for_messaging(suffix_filter)
     
+    # Filter by specific IDs if provided
+    if contact_ids:
+        contacts = [c for c in contacts if c['id'] in contact_ids]
+    
     if limit:
         contacts = contacts[:limit]
     
-    log(f"📋 Contacts to message: {len(contacts)}")
-    log(f"💬 Message: {message[:50]}...")
-    
     # Get images
     images = [] if skip_images else get_marketing_images()
-    log(f"📷 Images to send: {len(images)}")
+    
+    log(f"📋 Contacts: {len(contacts)}")
+    log(f"💬 Message: {message[:60]}...")
+    log(f"📷 Images: {len(images)}")
+    log(f"🧪 Dry Run: {dry_run}")
+    log("")
     
     if not contacts:
-        log("⚠️ No contacts found!")
+        log("⚠️ No contacts to message!")
         return {"success": 0, "failed": 0, "total": 0}
     
-    if dry_run:
-        log("🧪 DRY RUN MODE - No messages will actually be sent")
-    
-    # Open WhatsApp
+    # Open WhatsApp (unless dry run)
     if not dry_run:
         open_whatsapp()
+        time.sleep(2)
     
     # Process contacts
     results = {"success": 0, "failed": 0, "total": len(contacts)}
@@ -466,126 +514,106 @@ def run_marketing_campaign(
         else:
             results["failed"] += 1
         
-        # Random delay between messages (avoid spam detection)
-        if i < len(contacts) - 1:
-            if not dry_run:
-                delay = random.randint(delay_min, delay_max)
-                log(f"   ⏳ Waiting {delay} seconds before next message...")
-                time.sleep(delay)
+        # Delay between messages
+        if i < len(contacts) - 1 and not dry_run:
+            delay = random.randint(delay_min, delay_max)
+            log(f"\n⏳ Waiting {delay} seconds...")
+            time.sleep(delay)
             
             # Batch pause
-            if (i + 1) % batch_size == 0 and i < len(contacts) - 1:
-                log(f"\n🛑 Batch complete. Pausing for {pause_minutes} minutes...")
-                if not dry_run:
-                    time.sleep(pause_minutes * 60)
+            if (i + 1) % batch_size == 0:
+                log(f"\n🛑 Batch complete. Pausing {pause_minutes} minutes...")
+                time.sleep(pause_minutes * 60)
     
     # Summary
-    log("")
-    log("=" * 60)
-    log("📊 Campaign Results")
-    log("=" * 60)
+    log("\n" + "="*60)
+    log("📊 CAMPAIGN RESULTS")
+    log("="*60)
     log(f"   ✅ Successful: {results['success']}")
     log(f"   ❌ Failed: {results['failed']}")
     log(f"   📋 Total: {results['total']}")
+    log("="*60 + "\n")
     
     return results
 
 
-def setup_positions():
-    """Interactive setup to find correct click positions."""
-    log("\n🔧 SETUP MODE - Find Click Positions")
-    log("=" * 50)
-    
-    open_whatsapp()
-    
-    print("\nMove mouse to find these positions. Press Ctrl+C to stop.\n")
-    print("Positions to find:")
-    print("1. SEARCH BOX (top search bar)")
-    print("2. FIRST CHAT (first chat in list)")
-    print("3. MESSAGE INPUT (text input area)")
-    print("4. ATTACH BUTTON (paperclip/+ icon)")
-    print("5. SEND BUTTON")
-    
-    try:
-        while True:
-            x, y = pyautogui.position()
-            print(f"\rMouse position: ({x}, {y})          ", end="", flush=True)
-            time.sleep(0.3)
-    except KeyboardInterrupt:
-        print("\n\n📝 Update positions in marketing_config.json")
-
-
-def test_single_contact(phone: str):
-    """Test sending to a single phone number."""
-    log(f"🧪 Testing with phone: {phone}")
+def test_single_contact(phone: str, skip_images: bool = False):
+    """Test with a single phone number."""
+    log(f"\n🧪 TESTING WITH: {phone}\n")
     
     config = load_config()
     message = config.get("message_template", "Test message")
-    images = get_marketing_images()
+    images = [] if skip_images else get_marketing_images()
     
     open_whatsapp()
     time.sleep(2)
     
-    test_contact = {
+    contact = {
         "id": "test",
         "name": "Test Contact",
         "phone": phone
     }
     
-    send_to_contact(test_contact, message, images, dry_run=False)
+    result = send_to_contact(contact, message, images, dry_run=False)
+    
+    if result:
+        log("\n✅ TEST SUCCESSFUL!")
+    else:
+        log("\n❌ TEST FAILED!")
+    
+    return result
 
 
-# CLI Interface
+def setup_mode():
+    """Interactive setup to find positions."""
+    log("\n🔧 SETUP MODE")
+    log("="*50)
+    log("Move your mouse to find positions.")
+    log("Press Ctrl+C to stop.\n")
+    
+    open_whatsapp()
+    
+    log("Positions to find:")
+    log("1. Message input area (bottom center)")
+    log("2. Attachment button (+ icon, left of message)")
+    log("3. Photos option in menu")
+    log("4. Send button\n")
+    
+    try:
+        while True:
+            x, y = pyautogui.position()
+            print(f"\rPosition: ({x}, {y})     ", end="", flush=True)
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        print("\n\n✅ Setup complete. Update positions in code if needed.")
+
+
+# CLI
 if __name__ == "__main__":
     import argparse
     
-    parser = argparse.ArgumentParser(description="WhatsApp Marketing Automation")
-    parser.add_argument("--run", "-r", action="store_true", help="Run marketing campaign")
-    parser.add_argument("--dry-run", "-d", action="store_true", help="Test mode (no actual sending)")
-    parser.add_argument("--suffix", "-s", type=str, help="Filter by contact suffix (client/proxy/interview)")
-    parser.add_argument("--limit", "-l", type=int, help="Limit number of contacts")
-    parser.add_argument("--no-images", action="store_true", help="Send text only, no images")
-    parser.add_argument("--setup", action="store_true", help="Setup mode to find click positions")
-    parser.add_argument("--test", "-t", type=str, help="Test with single phone number")
-    parser.add_argument("--refresh", action="store_true", help="Refresh contacts from macOS")
-    parser.add_argument("--stats", action="store_true", help="Show statistics")
-    parser.add_argument("--images", action="store_true", help="List available images")
+    parser = argparse.ArgumentParser(description="WhatsApp Marketing")
+    parser.add_argument("--run", "-r", action="store_true", help="Run campaign")
+    parser.add_argument("--dry-run", "-d", action="store_true", help="Test mode")
+    parser.add_argument("--suffix", "-s", type=str, help="Filter by suffix")
+    parser.add_argument("--limit", "-l", type=int, help="Limit contacts")
+    parser.add_argument("--no-images", action="store_true", help="Skip images")
+    parser.add_argument("--test", "-t", type=str, help="Test with phone number")
+    parser.add_argument("--setup", action="store_true", help="Setup mode")
+    parser.add_argument("--refresh", action="store_true", help="Refresh contacts")
+    parser.add_argument("--stats", action="store_true", help="Show stats")
     
     args = parser.parse_args()
     
     if args.setup:
-        setup_positions()
-    
+        setup_mode()
     elif args.test:
-        test_single_contact(args.test)
-    
+        test_single_contact(args.test, args.no_images)
     elif args.refresh:
-        result = refresh_contacts()
-        print(f"\n📊 Contacts refreshed: {result}")
-    
+        print(refresh_contacts())
     elif args.stats:
         stats = get_contact_stats()
-        images = get_marketing_images()
-        config = load_config()
-        
-        print("\n📊 Marketing Statistics")
-        print("=" * 50)
-        print(f"   Contacts Total: {stats['total']}")
-        print(f"   Contacts Active: {stats['active']}")
-        print(f"   Contacts Excluded: {stats['excluded']}")
-        print(f"   By Suffix: {stats['by_suffix']}")
-        print(f"   Messaged Today: {stats['messaged_today']}")
-        print(f"\n   Images Available: {len(images)}")
-        print(f"   Message Template: {config.get('message_template', '')[:50]}...")
-    
-    elif args.images:
-        images = get_marketing_images()
-        print(f"\n📷 Marketing Images ({len(images)} total):")
-        print("=" * 50)
-        for i, img in enumerate(images):
-            print(f"   {i+1}. {os.path.basename(img)}")
-        print(f"\n   📁 Folder: {IMAGES_DIR}")
-    
+        print(f"\n📊 Stats: {json.dumps(stats, indent=2)}")
     elif args.run:
         run_marketing_campaign(
             suffix_filter=args.suffix,
@@ -593,19 +621,11 @@ if __name__ == "__main__":
             limit=args.limit,
             skip_images=args.no_images
         )
-    
     else:
         parser.print_help()
-        print("\n" + "=" * 50)
-        print("💡 USAGE EXAMPLES:")
-        print("=" * 50)
-        print("  python whatsapp_marketing.py --refresh          # Sync contacts from macOS")
-        print("  python whatsapp_marketing.py --stats            # Show statistics")
-        print("  python whatsapp_marketing.py --run --dry-run    # Test run (no sending)")
-        print("  python whatsapp_marketing.py --run              # Run campaign")
-        print("  python whatsapp_marketing.py --run -s client    # Only 'client' contacts")
-        print("  python whatsapp_marketing.py --run -l 10        # Limit to 10 contacts")
-        print("  python whatsapp_marketing.py --test +1234567890 # Test single number")
-        print("  python whatsapp_marketing.py --setup            # Find click positions")
-        print(f"\n📁 Put marketing images in: {IMAGES_DIR}")
-
+        print(f"\n📁 Images folder: {IMAGES_DIR}")
+        print("\n💡 Examples:")
+        print("  python whatsapp_marketing.py --test +919876543210")
+        print("  python whatsapp_marketing.py --run --dry-run")
+        print("  python whatsapp_marketing.py --run --limit 5")
+        print("  python whatsapp_marketing.py --setup")

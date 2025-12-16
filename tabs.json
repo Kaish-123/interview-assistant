@@ -104,6 +104,11 @@
           "text_input": "Tell me the time and space complexity of above code with explanation"
         },
         {
+          "name": "Above question is for this image",
+          "prompt": "Above question is for this image",
+          "text_input": "Above question is for this image"
+        },
+        {
           "name": "Behavioural",
           "prompt": "I am in interview answer me as per my attched resume in previous chats to answer all behavioural question in STAR pattern based on my resume by explainig the clear context of situation alog with project and comany name for next 3 hours",
           "text_input": "I am in interview answer me as per my attched resume in previous chats to answer all behavioural question in STAR pattern based on my resume by explainig the clear context of situation alog with project and comany name for next 3 hours"
@@ -122,11 +127,6 @@
           "name": "Answer above",
           "prompt": "Answer above",
           "text_input": "Answer above"
-        },
-        {
-          "name": "Above question is for this image",
-          "prompt": "Above question is for this image",
-          "text_input": "Above question is for this image"
         },
         {
           "name": "Ask question",

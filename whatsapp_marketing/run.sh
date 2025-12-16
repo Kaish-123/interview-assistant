@@ -12,3 +12,7 @@ fi
 # Pass all arguments to the script
 python whatsapp_marketing.py "$@"
 
+
+
+
+

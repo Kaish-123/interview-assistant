@@ -14,3 +14,4 @@ rm -f "$LAUNCH_AGENTS_DIR/com.techyera.telegram.growth.plist"
 echo "✅ LaunchAgents removed!"
 echo ""
 echo "The automation is now stopped and will not run on restart."
+

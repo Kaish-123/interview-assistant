@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.techyera.telegram.growth</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/Telegram_with_CLI/venv/bin/python</string>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/Telegram_with_CLI/cron_growth.py</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/Telegram_with_CLI</string>
+    
+    <key>StartInterval</key>
+    <integer>21600</integer>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/Telegram_with_CLI/launchd_growth.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/Telegram_with_CLI/launchd_growth_error.log</string>
+</dict>
+</plist>

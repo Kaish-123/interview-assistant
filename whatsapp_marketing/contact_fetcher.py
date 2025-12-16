@@ -512,3 +512,7 @@ if __name__ == "__main__":
         print("   python contact_fetcher.py --list      # List all contacts")
         print("   python contact_fetcher.py --stats     # Show statistics")
 
+
+
+
+

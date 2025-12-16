@@ -204,3 +204,4 @@ if __name__ == "__main__":
     else:
         # Search mode
         asyncio.run(search_groups())
+

@@ -1,0 +1,3 @@
+# WhatsApp Business API Marketing - Requirements
+aiohttp>=3.9.0
+colorama>=0.4.6

@@ -92,3 +92,60 @@
 [2025-12-05 11:58:44] [INFO]    ✅ Successful: 5
 [2025-12-05 11:58:44] [INFO]    ❌ Failed: 0
 [2025-12-05 11:58:44] [INFO]    📋 Total: 5
+[2025-12-05 12:19:45] [INFO] 
+[2025-12-05 12:19:45] [INFO] ============================================================
+[2025-12-05 12:19:45] [INFO] 🚀 WhatsApp Marketing Campaign
+[2025-12-05 12:19:45] [INFO] ============================================================
+[2025-12-05 12:19:45] [INFO] 📋 Contacts to message: 1
+[2025-12-05 12:19:45] [INFO] 💬 Message: Please refer me to your known friends and consulta...
+[2025-12-05 12:19:45] [INFO] 📷 Images to send: 0
+[2025-12-05 12:19:45] [INFO] 📱 Opening WhatsApp...
+[2025-12-05 12:19:54] [INFO]    ✅ WhatsApp ready
+[2025-12-05 12:19:54] [INFO] 
+[1/1] Processing...
+[2025-12-05 12:19:54] [INFO] 📤 Processing: Zindagi Old Proxy Interview Client (+918602046095)
+[2025-12-05 12:19:54] [INFO]    🔍 Searching for: Zindagi Old Proxy Interview Client (+918602046095)
+[2025-12-05 12:20:03] [INFO]    💬 Sending message...
+[2025-12-05 12:20:09] [INFO]    ✅ Sent successfully!
+[2025-12-05 12:20:09] [INFO] 
+[2025-12-05 12:20:09] [INFO] ============================================================
+[2025-12-05 12:20:09] [INFO] 📊 Campaign Results
+[2025-12-05 12:20:09] [INFO] ============================================================
+[2025-12-05 12:20:09] [INFO]    ✅ Successful: 1
+[2025-12-05 12:20:09] [INFO]    ❌ Failed: 0
+[2025-12-05 12:20:09] [INFO]    📋 Total: 1
+[2025-12-05 12:29:46] [INFO] 
+🔧 SETUP MODE
+[2025-12-05 12:29:46] [INFO] ==================================================
+[2025-12-05 12:29:46] [INFO] Move your mouse to find positions.
+[2025-12-05 12:29:46] [INFO] Press Ctrl+C to stop.
+
+[2025-12-05 12:29:46] [INFO] 📱 Opening WhatsApp Desktop...
+[2025-12-05 12:29:55] [INFO]    ✅ WhatsApp ready
+[2025-12-05 12:29:55] [INFO] Positions to find:
+[2025-12-05 12:29:55] [INFO] 1. Message input area (bottom center)
+[2025-12-05 12:29:55] [INFO] 2. Attachment button (+ icon, left of message)
+[2025-12-05 12:29:55] [INFO] 3. Photos option in menu
+[2025-12-05 12:29:55] [INFO] 4. Send button
+
+[2025-12-05 12:31:55] [INFO] 
+🧪 TESTING WITH: +919876543210
+
+[2025-12-05 12:31:55] [INFO] 📱 Opening WhatsApp Desktop...
+[2025-12-05 12:32:02] [INFO]    ✅ WhatsApp ready
+[2025-12-05 12:32:04] [INFO] 
+==================================================
+[2025-12-05 12:32:04] [INFO] 📤 Contact: Test Contact
+[2025-12-05 12:32:04] [INFO]    Phone: +919876543210
+[2025-12-05 12:32:04] [INFO] ==================================================
+[2025-12-05 12:32:04] [INFO]    🔍 Searching: Test Contact (+919876543210)
+[2025-12-05 12:32:06] [INFO]    📝 Opening new chat...
+[2025-12-05 12:32:08] [INFO]    📋 Pasting: +919876543210
+[2025-12-05 12:32:11] [INFO]    ⬇️ Selecting first result...
+[2025-12-05 12:32:15] [INFO]    ✅ Chat opened
+[2025-12-05 12:32:15] [INFO]    💬 Sending message (142 chars)...
+[2025-12-05 12:32:17] [INFO]    📤 Pressing Enter to send...
+[2025-12-05 12:32:19] [INFO]    ✅ Message sent
+[2025-12-05 12:32:21] [INFO]    ✅ SUCCESS - Sent to Test Contact
+[2025-12-05 12:32:21] [INFO] 
+✅ TEST SUCCESSFUL!

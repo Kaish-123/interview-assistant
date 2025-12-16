@@ -112,18 +112,7 @@ case "$1" in
         ;;
     
     groups)
-        echo ""
-        echo "🎯 Target Groups:"
-        echo "════════════════════════════════════════════════════════"
-        $PYTHON -c "
-import json
-c = json.load(open('config.json'))
-print(f'Total: {len(c[\"targets\"])} groups\n')
-for i, t in enumerate(c['targets'], 1):
-    status = '✅' if t.get('enabled', True) else '❌'
-    print(f'{i:2}. {status} {t[\"name\"][:40]:<40} {t.get(\"username\", \"\")}')
-"
-        echo ""
+        $PYTHON show_groups.py
         ;;
     
     config)
@@ -152,3 +141,4 @@ for i, t in enumerate(c['targets'], 1):
         show_help
         ;;
 esac
+

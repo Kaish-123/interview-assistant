@@ -1,6 +1,10 @@
 {
     "message_template": "Please refer me to your known friends and consultancies for data engineering / data analyst/ Amazon sde interview proxy and Assessments also..",
-    "contact_suffixes": ["client", "proxy", "interview"],
+    "contact_suffixes": [
+        "client",
+        "proxy",
+        "interview"
+    ],
     "excluded_contacts": [],
     "delay_min_seconds": 45,
     "delay_max_seconds": 120,
@@ -12,12 +16,30 @@
         "timezone": "Asia/Kolkata"
     },
     "whatsapp_positions": {
-        "search_box": {"x": 143, "y": 54},
-        "first_chat": {"x": 200, "y": 150},
-        "message_input": {"x": 900, "y": 850},
-        "attach_button": {"x": 40, "y": 850},
-        "photo_option": {"x": 90, "y": 750},
-        "send_button": {"x": 1390, "y": 850}
+        "search_box": {
+            "x": 143,
+            "y": 54
+        },
+        "first_chat": {
+            "x": 200,
+            "y": 150
+        },
+        "message_input": {
+            "x": 900,
+            "y": 850
+        },
+        "attach_button": {
+            "x": 40,
+            "y": 850
+        },
+        "photo_option": {
+            "x": 90,
+            "y": 750
+        },
+        "send_button": {
+            "x": 1390,
+            "y": 850
+        }
     },
     "personalization": {
         "use_contact_name": false,
@@ -29,4 +51,6 @@
         "require_confirmation": true
     }
 }
+
+
 

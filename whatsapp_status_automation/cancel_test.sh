@@ -9,3 +9,7 @@ rm -f "$PLIST_PATH"
 sudo pmset schedule cancelall
 echo "✅ Test cancelled!"
 
+
+
+
+

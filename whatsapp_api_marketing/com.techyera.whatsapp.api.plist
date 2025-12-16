@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.techyera.whatsapp.api</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/whatsapp_api_marketing/venv/bin/python</string>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/whatsapp_api_marketing/cron_send_messages.py</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/whatsapp_api_marketing</string>
+    
+    <!-- Run every 60 minutes -->
+    <key>StartInterval</key>
+    <integer>3600</integer>
+    
+    <!-- Or use calendar-based schedule (uncomment to use instead of StartInterval) -->
+    <!--
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict>
+            <key>Hour</key>
+            <integer>9</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key>
+            <integer>12</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key>
+            <integer>15</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key>
+            <integer>18</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+    </array>
+    -->
+    
+    <key>StandardOutPath</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/whatsapp_api_marketing/logs/launchd_output.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/whatsapp_api_marketing/logs/launchd_error.log</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string>/Users/mohammadkaishmanihar</string>
+    </dict>
+    
+    <!-- Don't run at load, wait for schedule -->
+    <key>RunAtLoad</key>
+    <false/>
+    
+    <key>KeepAlive</key>
+    <false/>
+</dict>
+</plist>

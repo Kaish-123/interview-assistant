@@ -358,3 +358,4 @@ if __name__ == "__main__":
     else:
         # Normal mode
         asyncio.run(run_auto_growth(max_search=30, max_join=5))
+

@@ -1,0 +1,307 @@
+{
+    "api_id": "34298736",
+    "api_hash": "3281aec7ae61b330628f4d29c47a4cdf",
+    "phone_number": "+917987460954",
+    "session_name": "web_marketing_session",
+    "settings": {
+        "auto_send_enabled": true,
+        "send_interval_minutes": 30,
+        "delay_between_groups_seconds": 2,
+        "auto_growth_enabled": true,
+        "growth_interval_hours": 6,
+        "max_groups_per_growth": 5,
+        "growth_keywords": [
+            "fullstack developer",
+            "developer jobs",
+            "java developer",
+            "data engineer jobs",
+            "IT jobs USA",
+            "proxy interview",
+            "python jobs",
+            "job support"
+        ]
+    },
+    "targets": [
+        {
+            "name": "Full Stack Web React Dev (5.7K)",
+            "username": "@FullStackWebDeveloper2021",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Java Support/Jobs (4.7K)",
+            "username": "@JavaTechSupport",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Job support UK USA CANADA",
+            "username": "@jobsupportsupport",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Salesforce Proxy Interviews",
+            "username": "@SalesforceProxyIntervies",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Training Proxy Job support",
+            "username": "@usa_IT_Training_Job",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Interview Proxy Discussion",
+            "username": "@interview_proxy_d",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Interview proxy USA Canada",
+            "username": "@interviewproxyservice",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Data scientist proxy",
+            "username": "@Datascienceproxysupport",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "USA Proxy support",
+            "username": "@usaproxysupport",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Proxy Job Interview Support",
+            "username": "@proxyinterviewjobsupport",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Google data Engineer",
+            "username": "@gcp_certificates",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Work support java python",
+            "username": "@interviewsupportworksupportgroup",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "PROXY JOB SUPPORTS",
+            "username": "@ProxyJobSupports",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "ETL testing Support",
+            "username": "@ETLtestingSupport_Proxy",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Freelance job proxy support",
+            "username": "@it_online_job_proxy_support",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Web Developers Group (21669)",
+            "username": "@webdevelopergroups",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Power BI Developer & Jobs (14642)",
+            "username": "@ms_power_bi_thebest",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Fullstack web developers (3918)",
+            "username": "@reactjs2020",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "AWS and Azure Devops Jobs (3179)",
+            "username": "@devopssupportazureaws",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Devops | AWS |Azure training & jobs (3171)",
+            "username": "@azuretra",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "IT Jobs (India & USA) (977)",
+            "username": "@ITJobsIndiaUSA",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Frontend Developer Indonesia (6157)",
+            "username": "@FrontEndID",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Performance Testing Support Group (1731)",
+            "username": "@job_support1",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Java Interview Support/Proxy (1670)",
+            "username": "@java_proxy_interview_support",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Frontend developers React/Next.js (1171)",
+            "username": "@frontenddisussion",
+            "enabled": true,
+            "added_at": "2025-12-11"
+        },
+        {
+            "name": "Salesforce Jobs (1204)",
+            "username": "@sfdc_coding",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Java Interview Support/Jobs (579)",
+            "username": "@java_jobs_inteview_support_proxy",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Only Python Developers (3113)",
+            "username": "@onlypythondevelopers",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Python Developers Bangalore (1555)",
+            "username": "@python_india",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Remote Web developer jobs Chat (1004)",
+            "username": "@lostincode",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Full Stack Developers (new) (1091)",
+            "username": "@bootstraptemplat",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Full stack developer jobs (957)",
+            "username": "@fullstackdevlopermari",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "USA Java Job Support (1171)",
+            "username": "@usa_java_jobs_support",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "Top IT Trainings and Placements (732)",
+            "username": "@USA_Top_IT_Trainings_Placements",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "JOBIT Recruitment Indonesia (704)",
+            "username": "@JOBIT_Recruitment_Indonesia",
+            "enabled": true,
+            "added_at": "2025-12-12"
+        },
+        {
+            "name": "It jobs Usa",
+            "username": "@it_jobs_usa",
+            "enabled": true,
+            "added_at": "2025-12-13 02:31",
+            "source": "growth:IT jobs USA"
+        },
+        {
+            "name": "python developer jobs and support 👍",
+            "username": "@pythonproexpert",
+            "enabled": true,
+            "added_at": "2025-12-16 01:53",
+            "source": "growth:developer jobs"
+        },
+        {
+            "name": "Asp.Net Developers (c#)",
+            "username": "@FullStackDevsGroup",
+            "enabled": true,
+            "added_at": "2025-12-16 01:54",
+            "source": "growth:fullstack developer"
+        },
+        {
+            "name": "SOFTWARE JOB PLACEMENT'S _ JAVA, PYTHON, AWS, DEVOPS, AZURE DATA FACTORY, INFORMATICA IICS, POWER BI,",
+            "username": "@IT_jobs_informatica",
+            "enabled": true,
+            "added_at": "2025-12-16 03:26",
+            "source": "growth:python jobs"
+        },
+        {
+            "name": "Python jobs updates",
+            "username": "@pythonjobsupdates",
+            "enabled": true,
+            "added_at": "2025-12-16 03:26",
+            "source": "growth:python jobs"
+        },
+        {
+            "name": "Python — вакансии и аналитика",
+            "username": "@python_jobs",
+            "enabled": true,
+            "added_at": "2025-12-16 03:26",
+            "source": "growth:python jobs"
+        },
+        {
+            "name": "NETWORKING & DATA CENTRE ENGINEER JOBS",
+            "username": "@Networking_Data_Center_Jobs",
+            "enabled": true,
+            "added_at": "2025-12-16 03:26",
+            "source": "growth:data engineer jobs"
+        },
+        {
+            "name": "Backend Developer",
+            "username": "@java_py_script",
+            "enabled": true,
+            "added_at": "2025-12-16 03:31",
+            "source": "growth:java developer"
+        },
+        {
+            "name": "Java Developers",
+            "username": "@LearnJavaCodingDisussionGroup",
+            "enabled": true,
+            "added_at": "2025-12-16 03:31",
+            "source": "growth:java developer"
+        }
+    ],
+    "messages": [
+        {
+            "id": "techyera_promo",
+            "text": "📢 (PING ME DIRECTLY on WHATSAPP)\n\nI am the direct person as senior data engineer/ data analyst/ Full stack developer and I provide the proxy interview support and assessment support to data engineer/data analyst/ full stack developer.\n\nPlease let me know if anyone wants my services.\n\nAny Consultantancy/Organization can also connect with me.\n\n📲 Ping me on WhatsApp for quick reply: 7987460954\n\n🔗 https://wa.link/5vevla\n\n🌐 Below is my company (TechyEra) website:\nhttps://techyera.co\n\n📢 (PING ME DIRECTLY on WHATSAPP)",
+            "enabled": true,
+            "created_at": "2025-12-11"
+        }
+    ]
+}

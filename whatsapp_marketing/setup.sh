@@ -34,3 +34,7 @@ echo "   5. Click 'Refresh Contacts' to sync from macOS Contacts"
 echo ""
 echo "🎉 Happy Marketing!"
 
+
+
+
+

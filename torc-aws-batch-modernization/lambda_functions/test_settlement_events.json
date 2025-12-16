@@ -1,0 +1,32 @@
+{
+  "urgent_settlement_event": {
+    "request_type": "SAME_DAY_SETTLEMENT",
+    "trade_ids": ["T456", "T457"],
+    "counterparty": "HEDGE_FUND_X",
+    "requested_by": "ops@hedgefund.com",
+    "reason": "Urgent portfolio rebalancing"
+  },
+  "invalid_counterparty_event": {
+    "request_type": "SAME_DAY_SETTLEMENT",
+    "trade_ids": ["T001", "T002"],
+    "counterparty": "UNKNOWN_COUNTERPARTY",
+    "requested_by": "test@example.com",
+    "reason": "Testing invalid counterparty"
+  },
+  "credit_limit_exceeded_event": {
+    "request_type": "SAME_DAY_SETTLEMENT",
+    "trade_ids": ["T001", "T002", "T003", "T004", "T005"],
+    "counterparty": "BROKER_A",
+    "requested_by": "ops@broker.com",
+    "reason": "Large settlement request"
+  },
+  "missing_trades_event": {
+    "request_type": "SAME_DAY_SETTLEMENT",
+    "trade_ids": ["T999", "T888"],
+    "counterparty": "BROKER_A",
+    "requested_by": "ops@broker.com",
+    "reason": "Testing missing trades"
+  }
+}
+
+

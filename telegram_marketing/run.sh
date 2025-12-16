@@ -10,3 +10,4 @@ source venv/bin/activate
 
 # Run the marketer with all arguments passed
 python telegram_marketer.py "$@"
+

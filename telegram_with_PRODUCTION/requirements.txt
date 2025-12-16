@@ -1,0 +1,40 @@
+# FastAPI & Server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Database
+sqlalchemy==2.0.23
+asyncpg==0.29.0
+alembic==1.12.1
+psycopg2-binary==2.9.9
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+pydantic[email]==2.5.2
+pydantic-settings==2.1.0
+
+# Stripe Payment
+stripe==7.8.0
+
+# Telegram
+telethon==1.33.1
+cryptg==0.4.0
+
+# Redis & Background Jobs
+redis==5.0.1
+celery==5.3.4
+
+# Templating
+jinja2==3.1.2
+aiofiles==23.2.1
+
+# Utils
+python-dotenv==1.0.0
+httpx==0.25.2
+email-validator==2.1.0
+
+# Security
+itsdangerous==2.1.2
+

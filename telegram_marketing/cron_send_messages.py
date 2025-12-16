@@ -99,9 +99,9 @@ async def send_messages():
                 logger.error(f"Error {target['name']}: {str(e)[:50]}")
                 failed += 1
             
-            # Delay between messages
+            # Minimal delay between messages (fast mode)
             if i < len(targets) - 1:
-                await asyncio.sleep(delay + random.randint(0, 10))
+                await asyncio.sleep(delay)
         
         logger.info(f"Completed: {success}/{len(targets)} successful, {failed} failed")
         
@@ -114,3 +114,4 @@ async def send_messages():
 
 if __name__ == "__main__":
     asyncio.run(send_messages())
+

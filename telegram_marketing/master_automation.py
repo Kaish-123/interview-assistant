@@ -165,7 +165,7 @@ class TelegramMasterBot:
                 print(f"{Fore.RED}✗ Error: {target['name'][:30]} - {str(e)[:30]}{Style.RESET_ALL}")
             
             if i < len(enabled_targets) - 1:
-                await asyncio.sleep(delay + random.randint(0, 15))
+                await asyncio.sleep(delay)
         
         self.state['last_message_batch'] = datetime.now().isoformat()
         self.state['messages_sent_today'] += success
@@ -218,11 +218,12 @@ class TelegramMasterBot:
                 await self.client(JoinChannelRequest(entity))
                 print(f"{Fore.GREEN}✅ Joined!{Style.RESET_ALL}")
                 
-                # Add to config
+                # Add to config with timestamp
                 self.config['targets'].append({
                     'name': f"{group['title'][:35]} ({group.get('members', '?')})",
                     'username': group['username'],
-                    'enabled': True
+                    'enabled': True,
+                    'added_at': datetime.now().strftime('%Y-%m-%d %H:%M')
                 })
                 joined += 1
                 
@@ -330,3 +331,4 @@ async def main():
 if __name__ == "__main__":
     print(f"{Fore.GREEN}Starting TechyEra Master Automation...{Style.RESET_ALL}")
     asyncio.run(main())
+

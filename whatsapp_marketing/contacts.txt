@@ -1,0 +1,11 @@
+# WhatsApp Marketing Contacts
+# Add one phone number per line (with country code)
+# Lines starting with # are ignored
+# Format: PHONE,NAME (name is optional)
+
+# Example (uncomment and edit):
+# 919876543210,John Client
+# 919876543211,Jane Proxy
+# 919876543212,Bob Interview
+
+

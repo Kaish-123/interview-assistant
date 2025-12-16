@@ -142,7 +142,23 @@ open ~/Downloads/chatgpt_gui_mac/telegram_marketing/config.json
 ```
 Or use any text editor
 
-### See All Target Groups
+### See All Target Groups with Added Date ⭐
+```bash
+cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && ./techyera.sh groups
+```
+This shows:
+- Total groups count
+- Each group name & username
+- ✅ Enabled / ❌ Disabled status
+- 📅 Date when group was added
+- Summary by date
+
+### See Groups + Next Run Time
+```bash
+cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && ./techyera.sh next
+```
+
+### Alternative Command (Python)
 ```bash
 cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && python3 -c "import json; c=json.load(open('config.json')); print(f'Total Groups: {len(c[\"targets\"])}'); [print(f\"  {t['name'][:40]} - {t['username']}\") for t in c['targets']]"
 ```
@@ -262,3 +278,4 @@ cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && source venv/bin/activate &&
 
 Created: December 11, 2025
 Location: ~/Downloads/chatgpt_gui_mac/telegram_marketing/COMMANDS.md
+

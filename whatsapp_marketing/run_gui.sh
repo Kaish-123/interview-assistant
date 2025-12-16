@@ -12,3 +12,7 @@ fi
 # Run GUI
 python marketing_gui.py
 
+
+
+
+

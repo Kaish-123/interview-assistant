@@ -1,0 +1,11 @@
+{
+    "delay_min_seconds": 30,
+    "delay_max_seconds": 60,
+    "schedule_interval_minutes": 60,
+    "active_hours": {
+        "start": 9,
+        "end": 21
+    },
+    "max_per_run": 50
+}
+

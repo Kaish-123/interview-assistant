@@ -126,3 +126,4 @@ if __name__ == "__main__":
     print("=" * 60)
     print()
     asyncio.run(join_groups_slowly())
+
