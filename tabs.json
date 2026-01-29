@@ -129,6 +129,11 @@
           "text_input": "Ask any questions to the interviewer as per the JD and resume as interview is finished now"
         },
         {
+          "name": "Above question",
+          "prompt": "Above question is for this image",
+          "text_input": "Above question is for this image"
+        },
+        {
           "name": "Text",
           "prompt": "Give me text of this image",
           "text_input": "Give me text of this image"

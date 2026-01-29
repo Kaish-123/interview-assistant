@@ -488,7 +488,7 @@ class ChatGPTAssistant:
         
         # ====== OPTIMIZATION SETTINGS ======
         # These control how we send context to GPT while keeping FULL history locally
-        self.optimization_mode = False         # Default: Full context; True = Fast (optimized)
+        self.optimization_mode = True          # Toggle for speed optimization
         self.max_rounds_for_model = 4          # Recent Q&A pairs to send (reduced from 6)
         self.summary_message = None            # Synthetic summary of older conversation
         self.summary_threshold_rounds = 5      # When to start summarizing (reduced from 8)
@@ -1967,8 +1967,8 @@ class Application(tk.Tk):
         self.answer_mode_btn = ttk.Button(row2, text="🔘 Default", command=self.toggle_answer_mode, width=10)
         self.answer_mode_btn.pack(side="left", padx=2)
         
-        # Fast/Full mode (default: Full)
-        self.optimize_btn = ttk.Button(row2, text="🐢 Full", command=self.toggle_optimization_mode, width=7)
+        # Fast mode
+        self.optimize_btn = ttk.Button(row2, text="⚡ Fast", command=self.toggle_optimization_mode, width=7)
         self.optimize_btn.pack(side="left", padx=2)
         
         # Separator
@@ -3378,8 +3378,8 @@ class Application(tk.Tk):
         """
         Toggle Fast Mode (optimization) on/off.
         
-        ON: Faster responses, compresses images, summarizes old chat
-        OFF (default): Full context sent every time (slower but 100% complete)
+        ON (default): Faster responses, compresses images, summarizes old chat
+        OFF: Full context sent every time (slower but 100% complete)
         
         Your full chat history is ALWAYS preserved locally either way!
         """
