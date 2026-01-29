@@ -1,0 +1,11 @@
+employee_id,full_name,department,hire_date,employment_status
+10001,Sarah Johnson,Engineering,2019-05-10,Active
+10002,Michael Brown,Finance,2020-08-15,Active
+10003,Jennifer Davis,Marketing,2021-03-20,Active
+10004,Robert Wilson,Engineering,2018-11-05,Active
+10005,Amanda Martinez,HR,2022-01-15,Active
+10006,David Lee,Finance,2019-09-25,Active
+10007,Lisa Anderson,Sales,2020-06-30,Inactive
+10008,James Taylor,Engineering,2021-07-12,Active
+10009,Emily White,Marketing,2020-02-18,Active
+10010,Christopher Moore,Sales,2019-12-03,Active

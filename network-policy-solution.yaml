@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mynetpol
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      type: sample-test
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              project: myapp
+    - from:
+        - ipBlock:
+            cidr: 172.10.0.0/16
+            except:
+              - 172.10.1.0/24
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 5687

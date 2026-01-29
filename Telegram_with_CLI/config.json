@@ -1,0 +1,53 @@
+{
+  "api_id": 34298736,
+  "api_hash": "3281aec7ae61b330628f4d29c47a4cdf",
+  "phone": "+917987460954",
+  "session_name": "techyera_session",
+  "messages": [
+    "(PING ME DIRECTLY on WHATSAPP)\n\nI am the direct person as senior data engineer/ data analyst/ Full stack developer and I provide the proxy interview support and assessment support to data engineer/data analyst/ full stack developer.\n\nPlease let me know if anyone wants my services.\n\nAny Consultantancy/Organization can also connect with me.\n\nPing me on WhatsApp for quick reply: 7987460954\nhttps://wa.link/5vevla\n\nBelow is my company (TechyEra) website:\nhttps://techyera.co\n\n(PING ME DIRECTLY on WHATSAPP)"
+  ],
+  "targets": [
+    {"username": "interaborad", "enabled": true},
+    {"username": "freelancerworkhub", "enabled": true},
+    {"username": "proxyaborad", "enabled": true},
+    {"username": "proxy_interview_remote_jobs", "enabled": true},
+    {"username": "proxyinterviewsupport786", "enabled": true},
+    {"username": "proxysupportglobal", "enabled": true},
+    {"username": "techyera_channel", "enabled": true},
+    {"username": "aborad_interview_help", "enabled": true},
+    {"username": "proxyinterview_help", "enabled": true},
+    {"username": "remote_jobs_proxy", "enabled": true},
+    {"username": "dataengineer_jobs", "enabled": true},
+    {"username": "fullstack_remote_work", "enabled": true},
+    {"username": "consultant_network_global", "enabled": true},
+    {"username": "tech_interview_support", "enabled": true},
+    {"username": "proxy_support_community", "enabled": true}
+  ],
+  "schedule": {
+    "interval_minutes": 20,
+    "active_hours": {
+      "start": 0,
+      "end": 24
+    }
+  },
+  "settings": {
+    "delay_between_groups_seconds": 45,
+    "max_messages_per_day": 150,
+    "randomize_message": false
+  },
+  "growth": {
+    "enabled": true,
+    "keywords": [
+      "proxy interview",
+      "remote jobs",
+      "data engineer jobs",
+      "fullstack developer",
+      "IT consultancy",
+      "tech support jobs",
+      "interview help",
+      "job support"
+    ],
+    "max_groups_per_day": 10,
+    "check_interval_hours": 6
+  }
+}

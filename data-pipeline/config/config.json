@@ -1,0 +1,22 @@
+{
+  "database": {
+    "path": "data/transactions.db"
+  },
+  "spark": {
+    "app_name": "CustomerTransactionPipeline",
+    "master": "local[*]"
+  },
+  "sftp": {
+    "host": "localhost",
+    "port": 2222,
+    "username": "testuser",
+    "password": "testpass",
+    "remote_dir": "/uploads",
+    "retry_attempts": 3,
+    "retry_backoff_base": 1
+  },
+  "output": {
+    "path": "output/customer_summary",
+    "format": "parquet"
+  }
+}

@@ -5,7 +5,7 @@
     "session_name": "web_marketing_session",
     "settings": {
         "auto_send_enabled": true,
-        "send_interval_minutes": 30,
+        "send_interval_minutes": 20,
         "delay_between_groups_seconds": 4,
         "auto_growth_enabled": true,
         "growth_interval_hours": 6,
