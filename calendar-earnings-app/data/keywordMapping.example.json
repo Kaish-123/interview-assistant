@@ -1,0 +1,6 @@
+[
+  { "keyword": "vamshi", "price": 5000, "startEffectiveDate": null },
+  { "keyword": "vamshi", "price": 8000, "startEffectiveDate": "2026-01-01" },
+  { "keyword": "Ram", "price": 9750, "startEffectiveDate": null },
+  { "keyword": "Ram", "price": 10000, "startEffectiveDate": "2026-01-01" }
+]

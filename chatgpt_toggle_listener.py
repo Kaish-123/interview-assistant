@@ -7,7 +7,7 @@ import wave
 import threading
 from openai import OpenAI
 import tkinter as tk
-from tkinter import ttk, font, filedialog
+from tkinter import ttk, font, filedialog, simpledialog, messagebox
 import re
 import time
 import queue
@@ -20,18 +20,10 @@ import pyperclip
 from PIL import ImageGrab
 from pynput import keyboard
 import tempfile
-
-
-from pynput import keyboard
-import Quartz
-import Quartz
-import pyautogui
 import json
 import os
-import tkinter as tk
-from tkinter import ttk, simpledialog, messagebox
+import Quartz
 from dotenv import load_dotenv
-import os
 
 
 # ============================================================================
@@ -211,29 +203,6 @@ class PromptManager:
             self.data["tabs"][tab_index]["subTabs"][subtab_index]["prompt"] = prompt
             self.data["tabs"][tab_index]["subTabs"][subtab_index]["text_input"] = text_input
             self.save_tabs()  # Save the changes
-            return True
-        return False
-
-
-
-    
-    def get_subtab_name(self, tab_index, subtab_index):
-        if (0 <= tab_index < len(self.data["tabs"]) and 
-            0 <= subtab_index < len(self.data["tabs"][tab_index]["subTabs"])):
-            return self.data["tabs"][tab_index]["subTabs"][subtab_index]["name"]
-        return ""
-    
-    def get_subtab_prompt(self, tab_index, subtab_index):
-        if (0 <= tab_index < len(self.data["tabs"]) and 
-            0 <= subtab_index < len(self.data["tabs"][tab_index]["subTabs"])):
-            return self.data["tabs"][tab_index]["subTabs"][subtab_index]["prompt"]
-        return ""
-    
-    def update_subtab_prompt(self, tab_index, subtab_index, prompt):
-        if (0 <= tab_index < len(self.data["tabs"]) and 
-            0 <= subtab_index < len(self.data["tabs"][tab_index]["subTabs"])):
-            self.data["tabs"][tab_index]["subTabs"][subtab_index]["prompt"] = prompt
-            self.save()
             return True
         return False
 
@@ -972,7 +941,7 @@ class ChatGPTAssistant:
         print("="*60 + "\n")
         return diag
 
-    def stream_gpt_response(self, text_widget, status_label, button):
+    def stream_gpt_response(self, text_widget, status_label, button, on_complete=None):
         self.cancel_streaming()  # 🔴 Cancel any ongoing output
 
         
@@ -1101,6 +1070,9 @@ class ChatGPTAssistant:
                     status_label.config(text="✅ Ready")
                     if self.app:
                         self.app.chat_manager.save_current_session(self.messages)
+                        if on_complete is not None:
+                            # Delay so full answer is shown before next prompt (main thread can process UI)
+                            self.app.after(600, on_complete)
 
 
 
@@ -1225,6 +1197,18 @@ class Application(tk.Tk):
         self.bind("<Command-b>", lambda e: self.add_bookmark_at_cursor())
         self.bind("<Control-b>", lambda e: self.add_bookmark_at_cursor())
         self.bind("<F4>", lambda e: self.add_bookmark_at_cursor())
+        # Go to next bookmark one-by-one (cycle): F5
+        self.bind("<F5>", lambda e: self.go_to_next_bookmark())
+
+        # 📌 Default interview: Cmd+Shift+I feeds all default subtab instructions at once
+        self.bind("<Command-Shift-i>", lambda e: self.apply_default_interview_instructions())
+        self.bind("<Control-Shift-i>", lambda e: self.apply_default_interview_instructions())
+
+        # Chat scroll: PgUp = top, PgDn = end, Up/Down = paragraph (when focus not in input)
+        self.bind("<Prior>", lambda e: self._scroll_chat_to_top())
+        self.bind("<Next>", lambda e: self._scroll_chat_to_bottom())
+        self.bind("<Up>", lambda e: self._on_up_key(e))
+        self.bind("<Down>", lambda e: self._on_down_key(e))
 
         # Apply sash (split) after widgets exist
         self.after(0, self.apply_ui_prefs)
@@ -1493,14 +1477,13 @@ class Application(tk.Tk):
         except Exception:
             sidebar_sash = None
 
-        prefs = {
-            "geometry": self.geometry(),
-            "paned_sash": sash,
-            "sidebar_sash": sidebar_sash,  # NEW: tabs/chats split position
-            "response_font_size": int(self.assistant.font_size),
-            # NEW: expanded ("open") items in the tabs/subtasks tree
-            "tab_tree_open": self._get_tree_open_state(self.tab_tree),
-        }
+        # Merge with existing prefs so we keep default_interview_subtabs, ui_mode, etc.
+        prefs = UIPreferences.load()
+        prefs["geometry"] = self.geometry()
+        prefs["paned_sash"] = sash
+        prefs["sidebar_sash"] = sidebar_sash
+        prefs["response_font_size"] = int(self.assistant.font_size)
+        prefs["tab_tree_open"] = self._get_tree_open_state(self.tab_tree)
         UIPreferences.save(prefs)
         self.status.config(text="💾 Saved UI defaults (geometry, splits, font, dropdowns).")
         print("Saved UI Prefs:", prefs)
@@ -1799,6 +1782,26 @@ class Application(tk.Tk):
         tab_scrollbar.pack(side="right", fill="y")
         self.tab_tree.configure(yscrollcommand=tab_scrollbar.set)
 
+        # Saved profiles (same panel as subtabs; double-click to apply)
+        ttk.Label(self.tab_section, text="📋 Saved profiles").pack(anchor="w", pady=(8, 2))
+        profile_list_frame = ttk.Frame(self.tab_section)
+        profile_list_frame.pack(fill="x", pady=(0, 5))
+        self.profile_listbox = tk.Listbox(
+            profile_list_frame, height=4, font=("Arial", 9),
+            selectmode=tk.SINGLE, activestyle="dotbox", highlightthickness=0
+        )
+        self.profile_listbox.pack(side="left", fill="both", expand=True)
+        profile_scroll = ttk.Scrollbar(profile_list_frame, orient="vertical", command=self.profile_listbox.yview)
+        profile_scroll.pack(side="right", fill="y")
+        self.profile_listbox.configure(yscrollcommand=profile_scroll.set)
+        self.profile_listbox.bind("<Double-Button-1>", self._on_profile_double_click)
+        self.profile_listbox.bind("<Button-3>", self._on_profile_right_click)
+        self.profile_listbox.bind("<Control-Button-1>", self._on_profile_right_click)
+        profile_btn_frame = ttk.Frame(self.tab_section)
+        profile_btn_frame.pack(fill="x")
+        ttk.Button(profile_btn_frame, text="Edit order", width=10, command=self._edit_selected_profile_order).pack(side="left", padx=2)
+        self._refresh_profile_list()
+
         # ----- BOTTOM SECTION: Chat History -----
         self.chat_section = ttk.Frame(self.sidebar_paned)
         self.sidebar_paned.add(self.chat_section, weight=1)  # Gets less space by default
@@ -1821,19 +1824,19 @@ class Application(tk.Tk):
         chat_scrollbar.pack(side="right", fill="y")
         self.chat_tabs.configure(yscrollcommand=chat_scrollbar.set)
 
-        # Create buttons frame
+        # Create buttons frame (Default first so it's always visible in small windows)
         btn_frame = ttk.Frame(self.sidebar)
         btn_frame.pack(fill="x", padx=5, pady=5)
+
+        # Quick Setup / Default first: multi-select subtabs + Set as default (hotkey Cmd+Shift+I)
+        self.quick_setup_btn = ttk.Button(btn_frame, text="📌 Default", command=self.open_quick_setup, width=10)
+        self.quick_setup_btn.pack(side="left", padx=2)
 
         self.add_tab_btn = ttk.Button(btn_frame, text="+ Tab", command=self.add_new_tab)
         self.add_tab_btn.pack(side="left", fill="x", expand=True, padx=2)
 
         self.add_subtab_btn = ttk.Button(btn_frame, text="+ Sub", command=self.add_new_subtab, state=tk.DISABLED)
         self.add_subtab_btn.pack(side="left", fill="x", expand=True, padx=2)
-        
-        # Quick Setup button for multi-select subtabs
-        self.quick_setup_btn = ttk.Button(btn_frame, text="🚀", command=self.open_quick_setup, width=3)
-        self.quick_setup_btn.pack(side="left", padx=2)
         
         self.delete_chat_btn = ttk.Button(self.sidebar, text="🗑 Delete Chat", command=self.delete_chat)
         self.delete_chat_btn.pack(side="left", padx=4)
@@ -1901,6 +1904,7 @@ class Application(tk.Tk):
         
         # Store bookmarks: [(line_index, question_preview), ...]
         self.bookmarks = []
+        self._current_bookmark_index = -1  # for "go to next bookmark" hotkey cycling
 
         # Scrollbar - pack second (side=right)
         scrollbar = ttk.Scrollbar(text_frame)
@@ -1922,6 +1926,8 @@ class Application(tk.Tk):
         self.response_box.bind("<Button-2>", self._show_bookmark_menu)  # Middle click on Mac
         self.response_box.bind("<Button-3>", self._show_bookmark_menu)  # Right click
         self.response_box.bind("<Control-Button-1>", self._show_bookmark_menu)  # Ctrl+click on Mac
+
+        # Chat scroll keys (PgUp/PgDn/Up/Down) are bound on the main window above
 
         # ====== MODERN CONTROL PANEL - 2 ROWS ======
         control_container = ttk.Frame(self.main_frame)
@@ -2006,6 +2012,7 @@ class Application(tk.Tk):
         self.input_entry.pack(side="left", fill="x", expand=True, padx=(0, 8))
 
         self.input_entry.bind("<Return>", lambda event: self.submit_text_question())
+        self.input_entry.bind("<KP_Enter>", lambda event: self.submit_text_question())  # Number pad Enter
 
         self.submit_btn = ttk.Button(input_frame, text="Send ➡️", width=8, command=self.submit_text_question)
         self.submit_btn.pack(side="right")
@@ -2253,6 +2260,12 @@ class Application(tk.Tk):
                 )
                 cb.pack(anchor="w", padx=20)
         
+        # Pre-check default interview subtabs if set (so user sees and can edit current default)
+        default_ids = self.ui_prefs.get("default_interview_subtabs") or []
+        for sid in default_ids:
+            if sid in self._setup_checkboxes:
+                self._setup_checkboxes[sid][0].set(True)
+        
         # ---- ACTION BUTTONS ----
         action_frame = ttk.Frame(dialog)
         action_frame.pack(fill="x", padx=10, pady=10)
@@ -2272,6 +2285,19 @@ class Application(tk.Tk):
         
         ttk.Separator(action_frame, orient="vertical").pack(side="left", fill="y", padx=10)
         
+        # Set as default interview (saves current selection as default; used by hotkey until you change it)
+        ttk.Button(
+            action_frame,
+            text="📌 Set as default",
+            command=lambda: self._save_default_interview_subtabs(dialog)
+        ).pack(side="left", padx=2)
+        if default_ids:
+            ttk.Button(
+                action_frame,
+                text="✏️ Edit default order",
+                command=self._open_edit_default_order_dialog
+            ).pack(side="left", padx=2)
+        
         # Save as Profile
         ttk.Button(
             action_frame, 
@@ -2288,8 +2314,10 @@ class Application(tk.Tk):
         )
         apply_btn.pack(side="right", padx=2)
         
-        # Status label
-        self._setup_status = ttk.Label(dialog, text="Select prompts and click Apply to send in ONE message")
+        # Status label (show current default count if set)
+        default_count = len([x for x in (self.ui_prefs.get("default_interview_subtabs") or []) if x in self._setup_checkboxes])
+        status_text = f"Default interview: {default_count} prompts. Select subtabs → Set as default → use hotkey Cmd+Shift+I in interview." if default_count else "Select prompts and click Apply to send in ONE message"
+        self._setup_status = ttk.Label(dialog, text=status_text)
         self._setup_status.pack(pady=5)
         
         # Keyboard shortcut
@@ -2321,6 +2349,17 @@ class Application(tk.Tk):
         except Exception as e:
             print(f"Error saving profiles: {e}")
     
+    def _save_default_interview_subtabs(self, dialog):
+        """Save currently selected subtabs as the default interview set. Hotkey Cmd+Shift+I will use this until you change it."""
+        selected = [sid for sid, (var, _, _) in self._setup_checkboxes.items() if var.get()]
+        if not selected:
+            self._setup_status.config(text="⚠ Select at least one prompt, then click Set as default.")
+            return
+        self.ui_prefs["default_interview_subtabs"] = selected
+        UIPreferences.save(self.ui_prefs)
+        self._setup_status.config(text=f"✅ Default interview set: {len(selected)} prompts. Use Cmd+Shift+I in interview to feed them.")
+        messagebox.showinfo("Default set", f"Default interview set to {len(selected)} prompts.\n\nIn interview: attach resume, paste JD, then press Cmd+Shift+I to feed all instructions at once.")
+
     def _save_current_as_profile(self, dialog):
         """Save currently selected subtabs as a profile."""
         selected = [sid for sid, (var, _, _) in self._setup_checkboxes.items() if var.get()]
@@ -2334,9 +2373,262 @@ class Application(tk.Tk):
             profiles = self._load_setup_profiles()
             profiles[name] = selected
             self._save_setup_profiles(profiles)
+            self._refresh_profile_list()
             self._setup_status.config(text=f"✅ Profile '{name}' saved with {len(selected)} prompts!")
-            messagebox.showinfo("Saved", f"Profile '{name}' saved!\nReopen Quick Setup to use it.")
+            messagebox.showinfo("Saved", f"Profile '{name}' saved!\nIt appears in the sidebar under Saved profiles — double-click to apply.")
     
+    def _refresh_profile_list(self):
+        """Reload the Saved profiles listbox from setup_profiles.json."""
+        if not hasattr(self, "profile_listbox"):
+            return
+        self.profile_listbox.delete(0, tk.END)
+        profiles = self._load_setup_profiles()
+        for name in sorted(profiles.keys()):
+            self.profile_listbox.insert(tk.END, name)
+
+    def _on_profile_double_click(self, event):
+        """Double-click on a saved profile: apply it one-by-one."""
+        sel = self.profile_listbox.curselection()
+        if not sel:
+            return
+        name = self.profile_listbox.get(sel[0])
+        profiles = self._load_setup_profiles()
+        if name not in profiles:
+            self.status.config(text=f"Profile '{name}' not found.")
+            return
+        self.apply_profile_by_ids(profiles[name], profile_name=name)
+
+    def _on_profile_right_click(self, event):
+        """Right-click: show menu Apply / Edit order."""
+        sel = self.profile_listbox.curselection()
+        if not sel:
+            return
+        name = self.profile_listbox.get(sel[0])
+        menu = tk.Menu(self, tearoff=0)
+        menu.add_command(label="Apply (one-by-one)", command=lambda: self._apply_profile_by_name(name))
+        menu.add_command(label="Edit order", command=lambda: self._open_edit_profile_order_dialog(name))
+        menu.tk_popup(event.x_root, event.y_root)
+
+    def _apply_profile_by_name(self, name):
+        profiles = self._load_setup_profiles()
+        if name in profiles:
+            self.apply_profile_by_ids(profiles[name], profile_name=name)
+
+    def _edit_selected_profile_order(self):
+        """Edit order of the selected profile (from Edit order button)."""
+        sel = self.profile_listbox.curselection()
+        if not sel:
+            self.status.config(text="Select a profile first, then click Edit order.")
+            return
+        name = self.profile_listbox.get(sel[0])
+        self._open_edit_profile_order_dialog(name)
+
+    def _open_edit_profile_order_dialog(self, profile_name: str):
+        """Dialog to reorder subtabs in a profile: listbox with Move Up / Move Down / Save."""
+        profiles = self._load_setup_profiles()
+        if profile_name not in profiles:
+            messagebox.showwarning("Not found", f"Profile '{profile_name}' not found.")
+            return
+        subtab_ids = list(profiles[profile_name])
+        if not subtab_ids:
+            messagebox.showinfo("Empty", "Profile has no prompts.")
+            return
+        dialog = tk.Toplevel(self)
+        dialog.title(f"Edit order: {profile_name}")
+        dialog.geometry("320x340")
+        dialog.transient(self)
+        ttk.Label(dialog, text=f"Reorder prompts (top = first sent):").pack(anchor="w", padx=10, pady=5)
+        list_frame = ttk.Frame(dialog)
+        list_frame.pack(fill="both", expand=True, padx=10, pady=5)
+        order_listbox = tk.Listbox(list_frame, height=12, font=("Arial", 10), selectmode=tk.SINGLE)
+        order_listbox.pack(side="left", fill="both", expand=True)
+        scroll = ttk.Scrollbar(list_frame, orient="vertical", command=order_listbox.yview)
+        scroll.pack(side="right", fill="y")
+        order_listbox.configure(yscrollcommand=scroll.set)
+        names_and_ids = []
+        for sid in subtab_ids:
+            _, names = self._get_combined_prompt_for_subtab_ids([sid])
+            name_display = names[0] if names else sid
+            names_and_ids.append((name_display, sid))
+            order_listbox.insert(tk.END, name_display)
+        def refresh_listbox():
+            order_listbox.delete(0, tk.END)
+            for (nm, _) in names_and_ids:
+                order_listbox.insert(tk.END, nm)
+        def move_up():
+            sel = order_listbox.curselection()
+            if not sel or sel[0] == 0:
+                return
+            i = sel[0]
+            names_and_ids[i], names_and_ids[i - 1] = names_and_ids[i - 1], names_and_ids[i]
+            refresh_listbox()
+            order_listbox.selection_set(i - 1)
+        def move_down():
+            sel = order_listbox.curselection()
+            if not sel or sel[0] >= len(names_and_ids) - 1:
+                return
+            i = sel[0]
+            names_and_ids[i], names_and_ids[i + 1] = names_and_ids[i + 1], names_and_ids[i]
+            refresh_listbox()
+            order_listbox.selection_set(i + 1)
+        def save_order():
+            new_ids = [x[1] for x in names_and_ids]
+            profiles = self._load_setup_profiles()
+            profiles[profile_name] = new_ids
+            self._save_setup_profiles(profiles)
+            self._refresh_profile_list()
+            dialog.destroy()
+            self.status.config(text=f"✅ Order saved for '{profile_name}'.")
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(fill="x", padx=10, pady=10)
+        ttk.Button(btn_frame, text="↑ Move up", command=move_up).pack(side="left", padx=2)
+        ttk.Button(btn_frame, text="↓ Move down", command=move_down).pack(side="left", padx=2)
+        ttk.Button(btn_frame, text="Save order", command=save_order).pack(side="right", padx=2)
+        dialog.bind("<Escape>", lambda e: dialog.destroy())
+
+    def _open_edit_default_order_dialog(self):
+        """Dialog to reorder default interview subtabs (hotkey Cmd+Shift+I)."""
+        default_ids = self.ui_prefs.get("default_interview_subtabs") or []
+        if not default_ids:
+            messagebox.showinfo("No default", "Set a default interview first (select subtabs → Set as default).")
+            return
+        dialog = tk.Toplevel(self)
+        dialog.title("Edit default interview order")
+        dialog.geometry("320x340")
+        dialog.transient(self)
+        ttk.Label(dialog, text="Reorder prompts (top = first sent). Hotkey: Cmd+Shift+I").pack(anchor="w", padx=10, pady=5)
+        list_frame = ttk.Frame(dialog)
+        list_frame.pack(fill="both", expand=True, padx=10, pady=5)
+        order_listbox = tk.Listbox(list_frame, height=12, font=("Arial", 10), selectmode=tk.SINGLE)
+        order_listbox.pack(side="left", fill="both", expand=True)
+        scroll = ttk.Scrollbar(list_frame, orient="vertical", command=order_listbox.yview)
+        scroll.pack(side="right", fill="y")
+        order_listbox.configure(yscrollcommand=scroll.set)
+        names_and_ids = []
+        for sid in default_ids:
+            _, names = self._get_combined_prompt_for_subtab_ids([sid])
+            name_display = names[0] if names else sid
+            names_and_ids.append((name_display, sid))
+            order_listbox.insert(tk.END, name_display)
+        def refresh_listbox():
+            order_listbox.delete(0, tk.END)
+            for (nm, _) in names_and_ids:
+                order_listbox.insert(tk.END, nm)
+        def move_up():
+            sel = order_listbox.curselection()
+            if not sel or sel[0] == 0:
+                return
+            i = sel[0]
+            names_and_ids[i], names_and_ids[i - 1] = names_and_ids[i - 1], names_and_ids[i]
+            refresh_listbox()
+            order_listbox.selection_set(i - 1)
+        def move_down():
+            sel = order_listbox.curselection()
+            if not sel or sel[0] >= len(names_and_ids) - 1:
+                return
+            i = sel[0]
+            names_and_ids[i], names_and_ids[i + 1] = names_and_ids[i + 1], names_and_ids[i]
+            refresh_listbox()
+            order_listbox.selection_set(i + 1)
+        def save_order():
+            self.ui_prefs["default_interview_subtabs"] = [x[1] for x in names_and_ids]
+            UIPreferences.save(self.ui_prefs)
+            dialog.destroy()
+            self.status.config(text="✅ Default interview order saved.")
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(fill="x", padx=10, pady=10)
+        ttk.Button(btn_frame, text="↑ Move up", command=move_up).pack(side="left", padx=2)
+        ttk.Button(btn_frame, text="↓ Move down", command=move_down).pack(side="left", padx=2)
+        ttk.Button(btn_frame, text="Save order", command=save_order).pack(side="right", padx=2)
+        dialog.bind("<Escape>", lambda e: dialog.destroy())
+
+    def apply_profile_by_ids(self, subtab_ids: list, profile_name: str = None):
+        """Apply a list of subtab IDs one-by-one: send each prompt to GPT, get answer, then next. Order = subtab_ids order. 'Intro' subtab is always run first if present."""
+        valid_ids = []
+        for sid in subtab_ids:
+            combined, names = self._get_combined_prompt_for_subtab_ids([sid])
+            if combined:
+                valid_ids.append(sid)
+        if not valid_ids:
+            self.status.config(text="No valid prompts in this profile.")
+            return
+        # Put "Intro" first so you can copy it quickly (rest keep original order)
+        intro_ids = []
+        other_ids = []
+        for sid in valid_ids:
+            _, names = self._get_combined_prompt_for_subtab_ids([sid])
+            name = (names[0] or "").strip().lower() if names else ""
+            if name == "intro":
+                intro_ids.append(sid)
+            else:
+                other_ids.append(sid)
+        valid_ids = intro_ids + other_ids
+        self._profile_queue = list(valid_ids)
+        self._profile_name = profile_name or "Profile"
+        self._profile_first = True
+        self.response_box.config(state=tk.NORMAL)
+        self.response_box.insert(
+            tk.END,
+            f"\n\n---------------------------------------------------------------------\n"
+            f"🚀 {self._profile_name}: {len(valid_ids)} prompts (one-by-one)\n"
+        )
+        self.response_box.config(state=tk.DISABLED)
+        self.response_box.see(tk.END)
+        self._send_next_profile_prompt()
+
+    def _send_next_profile_prompt(self):
+        """Send the next prompt in _profile_queue; called after each stream completes."""
+        if not getattr(self, "_profile_queue", None):
+            return
+        if not self._profile_queue:
+            self.status.config(text=f"✅ {getattr(self, '_profile_name', 'Profile')}: all done!")
+            return
+        sid = self._profile_queue.pop(0)
+        combined_prompt, selected_names = self._get_combined_prompt_for_subtab_ids([sid])
+        if not combined_prompt:
+            self.after(0, self._on_profile_stream_complete)
+            return
+        if getattr(self, "_profile_first", False):
+            self._profile_first = False
+            current = self.input_entry.get().strip()
+            if current:
+                combined_prompt = f"{current}\n\n{combined_prompt}"
+            self.input_entry.delete(0, tk.END)
+            if hasattr(self, "pending_attachments") and self.pending_attachments:
+                content = [{"type": "text", "text": combined_prompt}]
+                content.extend(self.pending_attachments)
+                del self.pending_attachments
+                self.assistant.messages.append({"role": "user", "content": content})
+            else:
+                self.assistant.messages.append({"role": "user", "content": combined_prompt})
+        else:
+            self.assistant.messages.append({"role": "user", "content": combined_prompt})
+        name = selected_names[0] if selected_names else sid
+        self.response_box.config(state=tk.NORMAL)
+        self.response_box.insert(tk.END, f"\n\n---- QUESTION ({name}) ----\n")
+        self.response_box.config(state=tk.DISABLED)
+        self.response_box.see(tk.END)
+        self.chat_manager.save_current_session(self.assistant.messages)
+        self.assistant.cancel_streaming()
+        remaining = len(self._profile_queue)
+        self.status.config(text=f"📌 {self._profile_name}: {name} ({(remaining + 1)} left)")
+        self.assistant.stream_gpt_response(
+            self.response_box, self.status, self.record_btn,
+            on_complete=self._on_profile_stream_complete
+        )
+
+    def _on_profile_stream_complete(self):
+        """When one-by-one stream finishes, wait for streaming=False then send next (so full answer is shown)."""
+        def maybe_send_next():
+            if self.assistant.streaming:
+                self.after(400, maybe_send_next)
+                return
+            if getattr(self, "_profile_queue", None) and self._profile_queue:
+                self.after(300, self._send_next_profile_prompt)
+            else:
+                self.status.config(text=f"✅ {getattr(self, '_profile_name', 'Profile')}: all done!")
+        maybe_send_next()
+
     def _apply_profile(self, profile_name: str, subtab_ids: list, dialog):
         """Apply a saved profile - select checkboxes and apply."""
         # First, deselect all
@@ -2351,67 +2643,49 @@ class Application(tk.Tk):
         self._apply_quick_setup(dialog)
     
     def _apply_quick_setup(self, dialog):
-        """Combine selected prompts and send in ONE message."""
-        selected_texts = []
-        selected_names = []
-        
-        for subtab_id, (var, text, name) in self._setup_checkboxes.items():
-            if var.get():
-                selected_texts.append(text)
-                selected_names.append(name)
-        
-        if not selected_texts:
+        """Apply selected prompts one-by-one (ordered as in tree)."""
+        selected_ids = [sid for sid, (var, _, _) in self._setup_checkboxes.items() if var.get()]
+        if not selected_ids:
             messagebox.showwarning("No Selection", "Please select at least one prompt")
             return
-        
-        # Combine all prompts into ONE message
-        combined_prompt = "\n\n---\n\n".join(selected_texts)
-        
-        # Close dialog
         dialog.destroy()
-        
-        # Show confirmation in status
-        self.status.config(text=f"🚀 Applying {len(selected_texts)} prompts in ONE message...")
-        
-        # Add to input entry (in case user wants to add more)
-        current = self.input_entry.get().strip()
-        if current:
-            combined_prompt = f"{current}\n\n{combined_prompt}"
-        
-        self.input_entry.delete(0, tk.END)
-        
-        # Build content array
-        content = [{"type": "text", "text": combined_prompt}]
-        
-        # Include any pending attachments (images)
-        if hasattr(self, 'pending_attachments'):
-            content.extend(self.pending_attachments)
-            del self.pending_attachments
-        
-        # Display in response box
-        display_text = f"[Quick Setup: {', '.join(selected_names[:3])}{'...' if len(selected_names) > 3 else ''}]"
-        self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(
-            tk.END,
-            f"\n\n---------------------------------------------------------------------\n"
-            f"🚀 QUICK SETUP: {display_text}\n"
-            f"Applying {len(selected_texts)} prompts...\n"
-        )
-        self.response_box.config(state=tk.DISABLED)
-        self.response_box.see(tk.END)
-        
-        # Send to GPT
-        if any(c["type"] == "image_url" for c in content):
-            self.assistant.messages.append({"role": "user", "content": content})
-        else:
-            self.assistant.messages.append({"role": "user", "content": combined_prompt})
-        
-        # Save and stream
-        self.chat_manager.save_current_session(self.assistant.messages)
-        self.assistant.cancel_streaming()
-        self.assistant.stream_gpt_response(self.response_box, self.status, self.record_btn)
-        
-        self.status.config(text=f"✅ Applied {len(selected_texts)} prompts!")
+        self.apply_profile_by_ids(selected_ids, profile_name="Quick Setup")
+
+    def _get_combined_prompt_for_subtab_ids(self, subtab_ids):
+        """Build combined text and names for a list of subtab IDs (e.g. ['sub_0_0','sub_0_1']). Skips invalid IDs."""
+        selected_texts = []
+        selected_names = []
+        for sid in subtab_ids:
+            if not isinstance(sid, str) or not sid.startswith("sub_"):
+                continue
+            parts = sid.split("_")
+            if len(parts) != 3:
+                continue
+            try:
+                tab_idx = int(parts[1])
+                sub_idx = int(parts[2])
+            except ValueError:
+                continue
+            if tab_idx < 0 or tab_idx >= self.prompt_manager.get_tab_count():
+                continue
+            if sub_idx < 0 or sub_idx >= self.prompt_manager.get_subtab_count(tab_idx):
+                continue
+            text = self.prompt_manager.get_subtab_text_input(tab_idx, sub_idx) or \
+                   self.prompt_manager.get_subtab_prompt(tab_idx, sub_idx) or ""
+            name = self.prompt_manager.get_subtab_name(tab_idx, sub_idx) or sid
+            selected_texts.append((text or name).strip())
+            selected_names.append(name)
+        combined = "\n\n---\n\n".join(selected_texts) if selected_texts else ""
+        return combined, selected_names
+
+    def apply_default_interview_instructions(self):
+        """Feed default interview subtabs one-by-one. Use after attaching resume and pasting JD; hotkey Cmd+Shift+I."""
+        self.ui_prefs = UIPreferences.load()
+        default_ids = self.ui_prefs.get("default_interview_subtabs") or []
+        if not default_ids:
+            self.status.config(text="📌 No default interview set. Open Quick Setup (🚀) → select subtabs → Set as default.")
+            return
+        self.apply_profile_by_ids(default_ids, profile_name="Default interview")
 
     def on_tab_select(self, event):
         # Reentrancy guard (TreeviewSelect can fire more than once)
@@ -2997,6 +3271,72 @@ class Application(tk.Tk):
         ttk.Button(btn_frame, text="Close", command=dialog.destroy).pack(side="left", padx=5)
     
     # ============================================================================
+    # CHAT SCROLL - PgUp/PgDn and Up/Down paragraph navigation
+    # ============================================================================
+
+    def _scroll_chat_to_top(self):
+        """Scroll chat to top (PgUp hotkey)."""
+        try:
+            self.response_box.see("1.0")
+            return "break"
+        except Exception:
+            return None
+
+    def _scroll_chat_to_bottom(self):
+        """Scroll chat to end (PgDn hotkey)."""
+        try:
+            self.response_box.see(tk.END)
+            return "break"
+        except Exception:
+            return None
+
+    def _scroll_chat_paragraph_up(self):
+        """Scroll chat up by one paragraph (double-newline boundary)."""
+        try:
+            visible = self.response_box.index("@0,0")
+            # Find previous "\n\n" (paragraph start) or go to 1.0
+            prev = self.response_box.search("\n\n", visible, backwards=True, stopindex="1.0", regexp=False)
+            if prev:
+                self.response_box.see(prev)
+            else:
+                self.response_box.see("1.0")
+            return "break"
+        except Exception:
+            return None
+
+    def _scroll_chat_paragraph_down(self):
+        """Scroll chat down by one paragraph (double-newline boundary)."""
+        try:
+            # Start from bottom of visible area to get "next" paragraph
+            visible_bottom = self.response_box.index("@0,%d" % self.response_box.winfo_height())
+            next_para = self.response_box.search("\n\n", visible_bottom, forwards=True, stopindex=tk.END, regexp=False)
+            if next_para:
+                self.response_box.see(next_para)
+            else:
+                self.response_box.see(tk.END)
+            return "break"
+        except Exception:
+            return None
+
+    def _on_up_key(self, event):
+        """Up arrow: scroll chat one paragraph up only when focus is not in input (so typing is unaffected)."""
+        try:
+            if self.focus_get() == self.input_entry:
+                return None  # Let Entry handle (cursor movement)
+            return self._scroll_chat_paragraph_up()
+        except Exception:
+            return None
+
+    def _on_down_key(self, event):
+        """Down arrow: scroll chat one paragraph down only when focus is not in input."""
+        try:
+            if self.focus_get() == self.input_entry:
+                return None
+            return self._scroll_chat_paragraph_down()
+        except Exception:
+            return None
+
+    # ============================================================================
     # BOOKMARK/POINTER SYSTEM - Quick navigation to questions (like debug breakpoints)
     # ============================================================================
     
@@ -3084,6 +3424,22 @@ class Application(tk.Tk):
         except Exception as e:
             print(f"Highlight error: {e}")
     
+    def go_to_next_bookmark(self):
+        """Cycle to the next bookmark (hotkey F5). Jumps and flashes; wraps from last to first."""
+        if not self.bookmarks:
+            self.status.config(text="ℹ️ No bookmarks — add some with 🔖 or F4")
+            return "break"
+        self._current_bookmark_index = (self._current_bookmark_index + 1) % len(self.bookmarks)
+        idx = self._current_bookmark_index
+        line_index, preview = self.bookmarks[idx]
+        self.response_box.see(line_index)
+        self._flash_bookmark(line_index)
+        self.bookmark_listbox.selection_clear(0, tk.END)
+        self.bookmark_listbox.selection_set(idx)
+        self.bookmark_listbox.see(idx)
+        self.status.config(text=f"📍 Bookmark {idx + 1}/{len(self.bookmarks)}: {preview[:40]}...")
+        return "break"
+
     def _on_bookmark_click(self, event=None):
         """Jump to the selected bookmark."""
         selection = self.bookmark_listbox.curselection()
@@ -3092,6 +3448,7 @@ class Application(tk.Tk):
         
         idx = selection[0]
         if idx < len(self.bookmarks):
+            self._current_bookmark_index = idx  # keep hotkey cycle in sync
             line_index, preview = self.bookmarks[idx]
             
             # Jump to that line
@@ -3155,6 +3512,14 @@ class Application(tk.Tk):
             
             # Renumber remaining bookmarks
             self._renumber_bookmarks()
+            # Keep hotkey cycle index in range
+            n = len(self.bookmarks)
+            if n == 0:
+                self._current_bookmark_index = -1
+            elif self._current_bookmark_index >= n:
+                self._current_bookmark_index = n - 1
+            elif self._current_bookmark_index >= idx:
+                self._current_bookmark_index = max(0, self._current_bookmark_index - 1)
             
             self.status.config(text=f"🗑 Bookmark removed: {preview[:30]}...")
     
@@ -3181,7 +3546,8 @@ class Application(tk.Tk):
         # Clear list
         self.bookmarks.clear()
         self.bookmark_listbox.delete(0, tk.END)
-        
+        self._current_bookmark_index = -1
+
         self.status.config(text="🗑 All bookmarks cleared")
     
     def auto_bookmark_question(self, question_text: str):
@@ -3604,6 +3970,7 @@ if __name__ == "__main__":
         combo_decrease_font = {keyboard.Key.cmd, keyboard.Key.ctrl, keyboard.KeyCode(char='-')}   # Cmd + -
         combo_pin_window     = {keyboard.Key.cmd, keyboard.KeyCode(char='p')}  # Cmd + P
         combo_restart = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='z')}
+        combo_default_interview = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char='i')}  # Cmd+Shift+I: feed default interview instructions
 
 
 
@@ -3638,15 +4005,27 @@ if __name__ == "__main__":
             app.input_entry.icursor(tk.END)
 
         def on_press(key):
-            if key not in combo_listen_external:
-                hotkey_listen.press(listener.canonical(key))
-
-            hotkey_stop.press(listener.canonical(key))
-            hotkey_screenshot.press(listener.canonical(key))
+            try:
+                # Ignore Caps Lock to avoid crash (canonical/key handling can fail with it)
+                if getattr(keyboard, 'Key', None) and key == getattr(keyboard.Key, 'caps_lock', None):
+                    return
+                if hasattr(key, 'name') and getattr(key, 'name', '') == 'caps_lock':
+                    return
+            except Exception:
+                pass
+            try:
+                canonical_key = listener.canonical(key)
+                if key not in combo_listen_external:
+                    hotkey_listen.press(canonical_key)
+                hotkey_stop.press(canonical_key)
+                hotkey_screenshot.press(canonical_key)
+            except Exception as e:
+                # Avoid crash on keys that canonical() or HotKey can't handle (e.g. some special keys)
+                pass
 
             if key in (combo_focus_chatbox | combo_upload_resume | combo_toggle_input_mode |
                     combo_listen_external | combo_increase_font | combo_decrease_font |
-                    combo_pin_window | combo_restart):
+                    combo_pin_window | combo_restart | combo_default_interview):
                 current_keys.add(key)
 
                 if combo_focus_chatbox.issubset(current_keys):
@@ -3668,6 +4047,9 @@ if __name__ == "__main__":
                     app.toggle_always_on_top()
                 elif combo_restart.issubset(current_keys):
                     on_activate_restart()
+                elif combo_default_interview.issubset(current_keys):
+                    print("📌 Global hotkey Cmd+Shift+I: Feed default interview instructions")
+                    app.after(0, lambda: app.apply_default_interview_instructions())
 
 
                         
@@ -3709,9 +4091,20 @@ if __name__ == "__main__":
             
 
         def on_release(key):
-            hotkey_listen.release(listener.canonical(key))
-            hotkey_stop.release(listener.canonical(key))
-            hotkey_screenshot.release(listener.canonical(key))
+            try:
+                if getattr(keyboard, 'Key', None) and key == getattr(keyboard.Key, 'caps_lock', None):
+                    return
+                if hasattr(key, 'name') and getattr(key, 'name', '') == 'caps_lock':
+                    return
+            except Exception:
+                pass
+            try:
+                canonical_key = listener.canonical(key)
+                hotkey_listen.release(canonical_key)
+                hotkey_stop.release(canonical_key)
+                hotkey_screenshot.release(canonical_key)
+            except Exception:
+                pass
             current_keys.discard(key)
 
         def on_activate_listen():

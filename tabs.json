@@ -129,11 +129,6 @@
           "text_input": "Ask any questions to the interviewer as per the JD and resume as interview is finished now"
         },
         {
-          "name": "Above question",
-          "prompt": "Above question is for this image",
-          "text_input": "Above question is for this image"
-        },
-        {
           "name": "Text",
           "prompt": "Give me text of this image",
           "text_input": "Give me text of this image"
@@ -157,6 +152,11 @@
           "name": "python coding",
           "prompt": "Give me the python code for this, to pass all possible edge cases and to pass all test casess, for next 3 hours",
           "text_input": "Give me the python code for this, to pass all possible edge cases and to pass all test casess, for next 3 hours"
+        },
+        {
+          "name": "Above question",
+          "prompt": "Above question is for this image",
+          "text_input": "Above question is for this image"
         }
       ]
     },

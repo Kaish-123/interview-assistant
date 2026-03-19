@@ -1,0 +1,11 @@
+# Don't push these to Apps Script (local-only)
+SETUP.md
+RUN_ME.md
+clone.sh
+1_login.sh
+2_clone.sh
+script_id.txt
+SCRIPTS_IN_USE.md
+*.md
+.git
+.gitignore

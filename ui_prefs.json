@@ -1,10 +1,17 @@
 {
-  "geometry": "613x977+-611+25",
+  "geometry": "617x977+-615+25",
   "paned_sash": 119,
   "sidebar_sash": 640,
-  "response_font_size": 16,
+  "response_font_size": 15,
   "tab_tree_open": [
     "tab_0",
-    "tab_1"
+    "tab_1",
+    "tab_2"
+  ],
+  "default_interview_subtabs": [
+    "sub_0_0",
+    "sub_0_3",
+    "sub_0_20",
+    "sub_0_14"
   ]
 }

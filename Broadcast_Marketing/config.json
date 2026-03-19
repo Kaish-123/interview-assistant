@@ -1,0 +1,25 @@
+{
+  "max_contacts_per_list": 256,
+  "default_message_file": "message.txt",
+  "broadcast_lists": [
+    {
+      "name": "Clients",
+      "keywords": ["client", "vip", "customer"],
+      "message_file": null
+    },
+    {
+      "name": "Leads",
+      "keywords": ["lead", "interested", "prospect"],
+      "message_file": null
+    },
+    {
+      "name": "All Marketing",
+      "keywords": ["client", "vip", "lead", "interested", "support"],
+      "message_file": null
+    }
+  ],
+  "send_settings": {
+    "delay_between_contacts_seconds": 15,
+    "wait_after_open_whatsapp_seconds": 10
+  }
+}

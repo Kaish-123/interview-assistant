@@ -1,0 +1,25 @@
+BROADCAST MARKETING – ONE COMMAND TO LOAD CONTACTS
+==================================================
+
+1. Load your Mac contacts and build lists (one command):
+
+   cd Broadcast_Marketing
+   ./run.sh load-contacts
+
+   This exports from the Contacts app, writes to contacts.csv, and rebuilds
+   broadcast lists. Grant Contacts access when macOS asks (System Settings
+   → Privacy & Security → Contacts → enable Terminal).
+
+2. Install sender and set your message:
+
+   ./run.sh setup
+   (Edit message.txt with your WhatsApp message)
+
+3. Preview and send:
+
+   ./run.sh send-dry-run
+   ./run.sh send
+
+If load-contacts times out or fails, grant Contacts access to Terminal,
+then run again. You can also export manually: Contacts → File → Export →
+Export vCard…, then: ./run.sh import-vcard ~/Desktop/contacts.vcf

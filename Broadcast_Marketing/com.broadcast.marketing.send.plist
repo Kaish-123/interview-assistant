@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.broadcast.marketing.send</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>__BROADCAST_MARKETING_DIR__/send_broadcasts.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>__BROADCAST_MARKETING_DIR__</string>
+    <key>StartInterval</key>
+    <integer>1800</integer>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>__BROADCAST_MARKETING_DIR__/send_launchd.log</string>
+    <key>StandardErrorPath</key>
+    <string>__BROADCAST_MARKETING_DIR__/send_launchd_error.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+</dict>
+</plist>
