@@ -37,3 +37,4 @@ Broadcast_Marketing/sync_launchd_error.log
 Broadcast_Marketing/exported_contacts.txt
 Broadcast_Marketing/send_launchd.log
 Broadcast_Marketing/send_launchd_error.log
+.env

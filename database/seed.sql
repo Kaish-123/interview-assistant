@@ -1,0 +1,96 @@
+CREATE TABLE IF NOT EXISTS events (
+    event_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     TEXT NOT NULL,
+    event_type  TEXT NOT NULL,
+    user_segment TEXT NOT NULL,
+    event_date  TEXT NOT NULL
+);
+
+DELETE FROM events;
+
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u01', 'page_view', 'new', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u02', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u03', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u04', 'page_view', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u05', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u06', 'page_view', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u07', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u08', 'page_view', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u09', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u10', 'page_view', 'new', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u11', 'page_view', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u12', 'page_view', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u13', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u14', 'page_view', 'new', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u15', 'page_view', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u16', 'page_view', 'new', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u17', 'page_view', 'new', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u18', 'page_view', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u19', 'page_view', 'new', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u20', 'page_view', 'new', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u01', 'add_to_cart', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u02', 'add_to_cart', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u03', 'add_to_cart', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u04', 'add_to_cart', 'new', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u05', 'add_to_cart', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u06', 'add_to_cart', 'new', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u07', 'add_to_cart', 'new', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u08', 'add_to_cart', 'new', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u09', 'add_to_cart', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u10', 'add_to_cart', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u01', 'checkout', 'new', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u02', 'checkout', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u03', 'checkout', 'new', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u04', 'checkout', 'new', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u05', 'checkout', 'new', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u06', 'checkout', 'new', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u01', 'purchase', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u02', 'purchase', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('new_u03', 'purchase', 'new', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u01', 'page_view', 'returning', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u02', 'page_view', 'returning', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u03', 'page_view', 'returning', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u04', 'page_view', 'returning', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u05', 'page_view', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u06', 'page_view', 'returning', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u07', 'page_view', 'returning', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u08', 'page_view', 'returning', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u09', 'page_view', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u10', 'page_view', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u01', 'add_to_cart', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u02', 'add_to_cart', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u03', 'add_to_cart', 'returning', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u04', 'add_to_cart', 'returning', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u05', 'add_to_cart', 'returning', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u06', 'add_to_cart', 'returning', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u07', 'add_to_cart', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u08', 'add_to_cart', 'returning', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u01', 'checkout', 'returning', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u02', 'checkout', 'returning', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u03', 'checkout', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u04', 'checkout', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u05', 'checkout', 'returning', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u06', 'checkout', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u01', 'purchase', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u02', 'purchase', 'returning', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u03', 'purchase', 'returning', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u04', 'purchase', 'returning', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('ret_u05', 'purchase', 'returning', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u01', 'page_view', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u02', 'page_view', 'vip', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u03', 'page_view', 'vip', '2024-01-10');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u04', 'page_view', 'vip', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u05', 'page_view', 'vip', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u01', 'add_to_cart', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u02', 'add_to_cart', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u03', 'add_to_cart', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u04', 'add_to_cart', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u05', 'add_to_cart', 'vip', '2024-01-12');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u01', 'checkout', 'vip', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u02', 'checkout', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u03', 'checkout', 'vip', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u04', 'checkout', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u01', 'purchase', 'vip', '2024-01-14');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u02', 'purchase', 'vip', '2024-01-13');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u03', 'purchase', 'vip', '2024-01-11');
+INSERT INTO events (user_id, event_type, user_segment, event_date) VALUES ('vip_u04', 'purchase', 'vip', '2024-01-14');

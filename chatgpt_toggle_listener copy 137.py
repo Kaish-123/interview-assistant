@@ -97,175 +97,7 @@ def compress_image_png(image: Image.Image, max_size: int = 1024) -> str:
 
 
 
-
-# ============================================================================
-# ROBUST FILE TEXT EXTRACTION (no textract dependency for common types)
-# ============================================================================
-
-# Extensions that can be read directly as plain text / code
-_TEXT_EXTS = {
-    '.txt', '.py', '.js', '.ts', '.jsx', '.tsx', '.java', '.c', '.cpp', '.h',
-    '.hpp', '.cs', '.go', '.rs', '.rb', '.php', '.swift', '.kt', '.sh', '.bat',
-    '.ps1', '.sql', '.r', '.lua', '.pl', '.yaml', '.yml', '.json', '.xml',
-    '.html', '.htm', '.css', '.scss', '.sass', '.md', '.markdown', '.rst',
-    '.csv', '.tsv', '.ini', '.cfg', '.toml', '.env', '.gitignore', '.makefile',
-    '.log', '.conf', '.properties',
-}
-
-# Extensions to skip entirely (binaries that yield no useful text)
-_SKIP_EXTS = {
-    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.ico', '.webp',
-    '.mp3', '.mp4', '.wav', '.avi', '.mov', '.mkv',
-    '.zip', '.tar', '.gz', '.7z', '.rar',
-    '.exe', '.dll', '.so', '.dylib', '.bin', '.o', '.class',
-    '.pyc', '.pyo',
-    '.DS_Store', '.db', '.sqlite',
-}
-
-
-def extract_text_from_file(file_path: str) -> str:
-    """
-    Robustly extract readable text from any file type.
-    Tries native pure-Python readers first; falls back to textract as last resort.
-    Raises RuntimeError if nothing can read the file.
-    """
-    ext = os.path.splitext(file_path)[1].lower()
-    basename = os.path.basename(file_path)
-
-    # Skip known binary/media files early
-    if ext in _SKIP_EXTS:
-        raise RuntimeError(f"Skipped binary/media file: {basename}")
-
-    # ── Plain text / source code ──────────────────────────────────────────
-    if ext in _TEXT_EXTS or ext == '':
-        for enc in ('utf-8', 'latin-1', 'cp1252'):
-            try:
-                with open(file_path, 'r', encoding=enc) as f:
-                    return f.read()
-            except UnicodeDecodeError:
-                continue
-        # Binary fallback: decode with replacement
-        with open(file_path, 'rb') as fb:
-            return fb.read().decode('utf-8', errors='replace')
-
-    # ── PDF ───────────────────────────────────────────────────────────────
-    if ext == '.pdf':
-        try:
-            import pdfplumber
-            with pdfplumber.open(file_path) as pdf:
-                pages = [page.extract_text() or '' for page in pdf.pages]
-                text = '\n'.join(pages).strip()
-                if text:
-                    return text
-        except Exception:
-            pass
-        try:
-            from pypdf import PdfReader
-            reader = PdfReader(file_path)
-            text = '\n'.join(p.extract_text() or '' for p in reader.pages).strip()
-            if text:
-                return text
-        except Exception:
-            pass
-
-    # ── DOCX (Word) ───────────────────────────────────────────────────────
-    if ext == '.docx':
-        # Primary: python-docx (best paragraph/table handling)
-        try:
-            from docx import Document
-            doc = Document(file_path)
-            return '\n'.join(p.text for p in doc.paragraphs)
-        except ImportError:
-            pass            # python-docx not installed — fall through to stdlib
-        except Exception:
-            pass            # corrupt / edge-case — still try the zipfile path
-
-        # Fallback: pure stdlib zipfile + xml.etree (zero extra dependencies)
-        try:
-            import zipfile
-            import xml.etree.ElementTree as ET
-            WNS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
-            with zipfile.ZipFile(file_path, 'r') as z:
-                with z.open('word/document.xml') as fxml:
-                    root = ET.parse(fxml).getroot()
-            paras = []
-            for para in root.iter(f'{WNS}p'):
-                runs = [t.text for t in para.iter(f'{WNS}t') if t.text]
-                paras.append(''.join(runs))
-            return '\n'.join(paras)
-        except Exception as e:
-            raise RuntimeError(f"DOCX read failed for {basename}: {e}")
-
-    # ── XLSX / XLS (Excel) ────────────────────────────────────────────────
-    if ext in ('.xlsx', '.xlsm', '.xls'):
-        try:
-            import openpyxl
-            wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
-            rows = []
-            for sheet in wb.worksheets:
-                rows.append(f"[Sheet: {sheet.title}]")
-                for row in sheet.iter_rows(values_only=True):
-                    rows.append('\t'.join(str(c) if c is not None else '' for c in row))
-            return '\n'.join(rows)
-        except Exception as e:
-            raise RuntimeError(f"Excel read failed for {basename}: {e}")
-
-    # ── PPTX (PowerPoint) ─────────────────────────────────────────────────
-    if ext == '.pptx':
-        try:
-            from pptx import Presentation
-            prs = Presentation(file_path)
-            lines = []
-            for i, slide in enumerate(prs.slides, 1):
-                lines.append(f"[Slide {i}]")
-                for shape in slide.shapes:
-                    if hasattr(shape, 'text') and shape.text.strip():
-                        lines.append(shape.text)
-            return '\n'.join(lines)
-        except Exception as e:
-            raise RuntimeError(f"PPTX read failed for {basename}: {e}")
-
-    # ── Fallback: textract ────────────────────────────────────────────────
-    try:
-        import textract as _textract
-        result = _textract.process(file_path)
-        return result.decode('utf-8', errors='replace')
-    except Exception as e:
-        raise RuntimeError(f"Could not extract text from {basename}: {e}")
-
-
-def collect_files_from_folder(folder_path: str) -> list:
-    """
-    Recursively collect all readable files from a folder.
-    Skips hidden directories, build artifacts, and known binary extensions.
-    Returns a list of absolute file paths.
-    """
-    SKIP_DIRS = {
-        '.git', '__pycache__', 'node_modules', '.venv', 'venv', 'env',
-        '.idea', '.vscode', 'dist', 'build', '.mypy_cache', '.pytest_cache',
-    }
-    MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB per file
-    paths = []
-    for root, dirs, files in os.walk(folder_path):
-        # Prune dirs in-place to avoid descending into them
-        dirs[:] = sorted(
-            d for d in dirs
-            if d not in SKIP_DIRS and not d.startswith('.')
-        )
-        for fname in sorted(files):
-            if fname.startswith('.'):
-                continue
-            fpath = os.path.join(root, fname)
-            try:
-                if os.path.getsize(fpath) <= MAX_FILE_SIZE:
-                    paths.append(fpath)
-            except OSError:
-                pass
-    return paths
-
-
-# ============================================================================
-
+# ... other imports remain the same ...
 class UIPreferences:
     FILE = "ui_prefs.json"
 
@@ -559,61 +391,52 @@ class AudioRecorder:
 class ChatHistoryManager:
     def __init__(self, file_path="chats.json"):
         self.file_path = file_path
-        self.sessions = []  # Each item: {"title": str, "messages": List[dict], "bookmarks": List}
+        self.sessions = []  # Each item: {"title": str, "messages": List[dict]}
+        self._last_save_time = 0
+        self.min_save_interval = 3.0 
         self.load()
-
+    
     def save(self, force=False):
+        now = time.time()
+        if not force and (now - self._last_save_time) < self.min_save_interval:
+            return
         with open(self.file_path, "w") as f:
             json.dump(self.sessions, f, indent=2)
+        self._last_save_time = now
 
     def load(self):
         if os.path.exists(self.file_path):
             try:
                 with open(self.file_path, "r") as f:
                     self.sessions = json.load(f)
-            except Exception:
+            except:
                 self.sessions = []
-
-    def save_current_session(self, messages, title="AutoSave - Last Session", bookmarks=None):
-        # Preserve any existing bookmarks for index-0 if none are supplied
-        if bookmarks is None and self.sessions:
-            bookmarks = self.sessions[0].get("bookmarks", [])
-        working_session = {
-            "title": title,
-            "messages": messages.copy(),
-            "bookmarks": bookmarks or [],
-        }
+    def save_current_session(self, messages, title="AutoSave - Last Session"):
+        # 🔔 REPLACE this entire method with:
+        working_session = {"title": title, "messages": messages.copy()}
         if self.sessions:
             self.sessions[0] = working_session
         else:
             self.sessions.insert(0, working_session)
         self.save()
 
-    def add_session(self, title, messages, bookmarks=None):
-        self.sessions.append({
-            "title": title,
-            "messages": messages,
-            "bookmarks": bookmarks or [],
-        })
+
+
+
+    def save(self):
+        with open(self.file_path, "w") as f:
+            json.dump(self.sessions, f, indent=2)
+
+    def add_session(self, title, messages):
+        self.sessions.append({"title": title, "messages": messages})
         self.save()
 
     def get_titles(self):
         return [s.get("title", "Untitled") for s in self.sessions]
 
+
     def get_session(self, index):
         return self.sessions[index]["messages"] if 0 <= index < len(self.sessions) else []
-
-    def get_session_bookmarks(self, index):
-        """Return the saved bookmarks list for a session (list of [line_index, preview])."""
-        if 0 <= index < len(self.sessions):
-            return self.sessions[index].get("bookmarks", [])
-        return []
-
-    def update_session_bookmarks(self, index, bookmarks):
-        """Overwrite the bookmarks for a session and persist immediately."""
-        if 0 <= index < len(self.sessions):
-            self.sessions[index]["bookmarks"] = bookmarks
-            self.save()
 
 
 class ChatGPTAssistant:
@@ -947,34 +770,21 @@ class ChatGPTAssistant:
 
 
 
-    def load_document(self, file_path: str) -> tuple:
-        """
-        Load a single file of any type into the assistant's system context.
-        Uses extract_text_from_file() for robust, textract-free extraction.
-        Returns (success: bool, message: str).
-        """
-        base = os.path.basename(file_path)
+    def load_resume(self, file_path):
         try:
-            text = extract_text_from_file(file_path)
-            if not text.strip():
-                return False, f"⚠️ {base} appears empty or has no readable text."
+            text = textract.process(file_path).decode('utf-8')
+            base = os.path.basename(file_path)
+
+            # keep your system context line the same, or change "resume"->"document" if you prefer
             self.messages.append({
                 "role": "system",
-                "content": (
-                    f"Attached document '{base}':\n"
-                    f"{text[:50000]}"          # guard against huge files filling context
-                )
+                "content": f"Use this resume content to contextualize answers (from file: {base}): {text}"
             })
-            size_hint = f"{len(text):,} chars"
-            return True, f"📄 {base} loaded ({size_hint})."
-        except RuntimeError as e:
-            return False, f"❌ {str(e)}"
-        except Exception as e:
-            return False, f"❌ {base}: {str(e)}"
 
-    def load_resume(self, file_path: str) -> tuple:
-        """Legacy shim kept for hotkey / backward-compat. Delegates to load_document()."""
-        return self.load_document(file_path)
+            # ✅ show the actual file name in the status message
+            return True, f"📄 {base} uploaded and processed successfully."
+        except Exception as e:
+            return False, f"❌ Error processing document: {str(e)}"
 
 
     def transcribe_audio(self, filename, prompt: str | None = None):
@@ -1209,14 +1019,10 @@ class ChatGPTAssistant:
                     buffer = ""
                     last_update = time.time()
 
-                    # Insert the ANSWER header on the main thread — never scroll.
-                    def _insert_answer_header():
-                        first_visible = text_widget.index("@0,0")
-                        text_widget.config(state=tk.NORMAL)
-                        text_widget.insert(tk.END, "------------------\nANSWER: ")
-                        text_widget.config(state=tk.DISABLED)
-                        text_widget.see(first_visible)
-                    text_widget.after(0, _insert_answer_header)
+                    text_widget.config(state=tk.NORMAL)
+                    text_widget.insert(tk.END, "------------------\nANSWER: ")
+                    text_widget.config(state=tk.DISABLED)
+                    text_widget.see(tk.END)
 
                     output_chars = 0
                     for chunk in stream:
@@ -1278,26 +1084,20 @@ class ChatGPTAssistant:
 
 
     def update_text_widget(self, text_widget, new_text_part: str):
-        # Called from background streaming thread — schedule on main thread via after().
-        #
-        # Key insight: yview_moveto(fraction) uses a PROPORTIONAL position.
-        # As text is appended and the document grows longer, the same fraction points
-        # to a lower and lower line — so every insert silently scrolls the viewport down.
-        #
-        # Correct fix: save "@0,0" — the absolute text index (e.g. "42.0") of the
-        # character visible at the top-left pixel. Line numbers are absolute; line 42
-        # stays line 42 no matter how many lines are appended after it.
-        # After the insert, see(saved_index) brings that exact line back into view.
-        def _do_insert():
-            # Absolute index of the top-left visible character
-            first_visible = text_widget.index("@0,0")
-            text_widget.config(state=tk.NORMAL)
-            text_widget.insert(tk.END, new_text_part)
-            text_widget.config(state=tk.DISABLED)
-            # Restore that exact line to the top of the viewport
-            text_widget.see(first_visible)
+        # Enable the text widget for editing
+        text_widget.config(state=tk.NORMAL)
 
-        text_widget.after(0, _do_insert)
+        # Append only the new part of the message (delta)
+        text_widget.insert(tk.END, new_text_part)
+
+        # Auto-scroll if the user is already at the bottom
+        # bottom_visible = text_widget.yview()[1] >= 0.99
+        # if bottom_visible:
+        #     text_widget.see(tk.END)
+
+        # Disable the widget to make it read-only again
+        text_widget.config(state=tk.DISABLED)
+        text_widget.update_idletasks()
 
 
 
@@ -1439,9 +1239,7 @@ class Application(tk.Tk):
                 self.response_box.insert(pos, f"Live Question: {text}")
             
             self.response_box.config(state=tk.DISABLED)
-            # Only follow live transcription updates if already at the bottom
-            if self.response_box.yview()[1] >= 0.99:
-                self.response_box.see(tk.END)
+            self.response_box.see(tk.END)
         except Exception as e:
             print(f"Live UI update error: {e}")
 
@@ -1588,31 +1386,28 @@ class Application(tk.Tk):
         """Create a nice title for the current chat, reusing your start_new_chat logic."""
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
 
-        # Look for attached documents in system messages (supports both old and new format)
-        doc_names = []
+        # Look for any resume attachment in system messages
+        resume_name = None
         for msg in self.assistant.messages:
             if not isinstance(msg, dict):
                 continue
             if msg.get("role") != "system":
                 continue
+
             content = msg.get("content", "")
             if not isinstance(content, str):
                 continue
-            # New format: "Attached document 'filename':\n..."
-            m = re.match(r"Attached document '(.+?)':", content)
-            if m:
-                doc_names.append(os.path.splitext(os.path.basename(m.group(1)))[0])
-                continue
-            # Legacy format: "Use this resume content to contextualize answers (from file: name)"
-            m2 = re.search(r'from file:\s*(.+?)\)', content)
-            if m2:
-                doc_names.append(os.path.splitext(os.path.basename(m2.group(1).strip()))[0])
 
-        if doc_names:
-            label = ", ".join(doc_names[:3])          # show up to 3 filenames
-            if len(doc_names) > 3:
-                label += f" +{len(doc_names) - 3} more"
-            return f"{label} - {timestamp}"
+            if "Use this resume content to contextualize answers" in content:
+                match = re.search(r'from file:\s*(.+?)\)', content)
+                if match:
+                    resume_name = os.path.splitext(
+                        os.path.basename(match.group(1).strip())
+                    )[0]
+                break
+
+        if resume_name:
+            return f"{resume_name} - {timestamp}"
         return timestamp
 
 
@@ -1677,9 +1472,8 @@ class Application(tk.Tk):
             sash = None
         
         # Save sidebar internal split (tabs vs chats)
-        # sidebar_paned is tk.PanedWindow — use sash_coord(), not sashpos()
         try:
-            sidebar_sash = self.sidebar_paned.sash_coord(0)[1]  # (x, y) → take y
+            sidebar_sash = self.sidebar_paned.sashpos(0)
         except Exception:
             sidebar_sash = None
 
@@ -1723,20 +1517,13 @@ class Application(tk.Tk):
                 self.after(50, lambda: self.paned.sashpos(0, int(prefs["paned_sash"])))
 
         # Sidebar internal split (tabs vs chats)
-        # Uses tk.PanedWindow.sash_place(index, x, y) — clamp so chat section
-        # always gets at least 150px (can never be hidden again).
         if "sidebar_sash" in prefs and prefs["sidebar_sash"] is not None:
             def apply_sidebar_sash():
                 try:
-                    sidebar_h = self.sidebar_paned.winfo_height()
-                    saved_y = int(prefs["sidebar_sash"])
-                    # Clamp: leave at least 150px for chat section at the bottom
-                    max_y = max(120, sidebar_h - 150)
-                    sash_y = max(120, min(saved_y, max_y))
-                    self.sidebar_paned.sash_place(0, 0, sash_y)
+                    self.sidebar_paned.sashpos(0, int(prefs["sidebar_sash"]))
                 except Exception as e:
                     print("Sidebar sash apply error:", e)
-            self.after(200, apply_sidebar_sash)  # give time for widget to render
+            self.after(100, apply_sidebar_sash)  # Delay to ensure widget is ready
 
         # NEW: tabs/subtabs expanded state
         if "tab_tree_open" in prefs:
@@ -1757,9 +1544,8 @@ class Application(tk.Tk):
         tab_id = selected[0]
         if tab_id.startswith("chat_"):
             index = int(tab_id.split("_")[1])
-            self._current_chat_index = index          # track which session is active
             self.assistant.messages = self.chat_manager.get_session(index)
-            self.display_chat_history()               # restores bookmarks for this session
+            self.display_chat_history()
             self.status.config(text=f"📂 Loaded chat: {self.chat_manager.get_titles()[index]}")
 
     def add_new_tab(self):
@@ -1954,8 +1740,6 @@ class Application(tk.Tk):
         self.response_box.config(state=tk.DISABLED)
         self.response_box.see(tk.END)
 
-        # Re-apply any saved bookmarks for this session
-        self._restore_bookmarks()
 
 
     def setup_ui(self):
@@ -1972,19 +1756,13 @@ class Application(tk.Tk):
         self.toggle_btn.pack(pady=5, fill="x")
 
         # ====== RESIZABLE SIDEBAR SECTIONS ======
-        # Use tk.PanedWindow (not ttk) because it supports per-pane minsize.
-        # ttk.PanedWindow has no minsize — either section can collapse to 0 and
-        # become impossible to recover by dragging.
-        self.sidebar_paned = tk.PanedWindow(
-            self.sidebar, orient=tk.VERTICAL,
-            sashrelief=tk.RIDGE, sashwidth=6, sashpad=2
-        )
+        # Create a vertical PanedWindow inside sidebar for resizable sections
+        self.sidebar_paned = ttk.PanedWindow(self.sidebar, orient=tk.VERTICAL)
         self.sidebar_paned.pack(fill="both", expand=True, padx=5, pady=5)
-
+        
         # ----- TOP SECTION: Tabs/Subtabs -----
         self.tab_section = ttk.Frame(self.sidebar_paned)
-        # minsize=120 → Prompts section can never collapse below 120px
-        self.sidebar_paned.add(self.tab_section, minsize=120, stretch="always")
+        self.sidebar_paned.add(self.tab_section, weight=2)  # Gets more space by default
         
         ttk.Label(self.tab_section, text="📋 Prompts & Subtabs").pack(anchor="w")
         
@@ -2026,8 +1804,7 @@ class Application(tk.Tk):
 
         # ----- BOTTOM SECTION: Chat History -----
         self.chat_section = ttk.Frame(self.sidebar_paned)
-        # minsize=150 → Past Chats section can never collapse below 150px
-        self.sidebar_paned.add(self.chat_section, minsize=150, stretch="always")
+        self.sidebar_paned.add(self.chat_section, weight=1)  # Gets less space by default
         
         ttk.Label(self.chat_section, text="💬 Past Chats").pack(anchor="w")
         
@@ -2128,7 +1905,6 @@ class Application(tk.Tk):
         # Store bookmarks: [(line_index, question_preview), ...]
         self.bookmarks = []
         self._current_bookmark_index = -1  # for "go to next bookmark" hotkey cycling
-        self._current_chat_index = 0       # tracks which session is loaded (0 = AutoSave)
 
         # Scrollbar - pack second (side=right)
         scrollbar = ttk.Scrollbar(text_frame)
@@ -2232,16 +2008,11 @@ class Application(tk.Tk):
         input_frame = ttk.Frame(self.main_frame)
         input_frame.pack(side="bottom", fill="x", padx=10, pady=8)
 
-        self.input_entry = tk.Text(input_frame, font=('Arial', 13), height=2,
-                                   wrap="word", relief="solid", borderwidth=1)
+        self.input_entry = ttk.Entry(input_frame, font=('Arial', 13))
         self.input_entry.pack(side="left", fill="x", expand=True, padx=(0, 8))
 
-        # Enter / Numpad-Enter → send message; return "break" suppresses the
-        # default newline that tk.Text would otherwise insert.
-        self.input_entry.bind("<Return>", self._on_input_enter)
-        self.input_entry.bind("<KP_Enter>", self._on_input_enter)   # Number pad Enter
-        # Shift+Enter → insert a real newline without sending
-        self.input_entry.bind("<Shift-Return>", self._on_input_shift_enter)
+        self.input_entry.bind("<Return>", lambda event: self.submit_text_question())
+        self.input_entry.bind("<KP_Enter>", lambda event: self.submit_text_question())  # Number pad Enter
 
         self.submit_btn = ttk.Button(input_frame, text="Send ➡️", width=8, command=self.submit_text_question)
         self.submit_btn.pack(side="right")
@@ -2802,8 +2573,7 @@ class Application(tk.Tk):
             f"🚀 {self._profile_name}: {len(valid_ids)} prompts (one-by-one)\n"
         )
         self.response_box.config(state=tk.DISABLED)
-        if self.response_box.yview()[1] >= 0.99:
-            self.response_box.see(tk.END)
+        self.response_box.see(tk.END)
         self._send_next_profile_prompt()
 
     def _send_next_profile_prompt(self):
@@ -2820,10 +2590,10 @@ class Application(tk.Tk):
             return
         if getattr(self, "_profile_first", False):
             self._profile_first = False
-            current = self.input_entry.get("1.0", tk.END).strip()
+            current = self.input_entry.get().strip()
             if current:
                 combined_prompt = f"{current}\n\n{combined_prompt}"
-            self.input_entry.delete("1.0", tk.END)
+            self.input_entry.delete(0, tk.END)
             if hasattr(self, "pending_attachments") and self.pending_attachments:
                 content = [{"type": "text", "text": combined_prompt}]
                 content.extend(self.pending_attachments)
@@ -2837,8 +2607,7 @@ class Application(tk.Tk):
         self.response_box.config(state=tk.NORMAL)
         self.response_box.insert(tk.END, f"\n\n---- QUESTION ({name}) ----\n")
         self.response_box.config(state=tk.DISABLED)
-        if self.response_box.yview()[1] >= 0.99:
-            self.response_box.see(tk.END)
+        self.response_box.see(tk.END)
         self.chat_manager.save_current_session(self.assistant.messages)
         self.assistant.cancel_streaming()
         remaining = len(self._profile_queue)
@@ -2958,7 +2727,7 @@ class Application(tk.Tk):
             sub_text = sub_name
 
         # Append sub_text to whatever is already in the entry (do NOT wipe)
-        current = self.input_entry.get("1.0", tk.END).strip()
+        current = self.input_entry.get()
         prefix = "" if (not current or current.endswith((" ", "\n", "\t"))) else " "
         self.input_entry.insert(tk.END, f"{prefix}{sub_text}")
 
@@ -3143,22 +2912,9 @@ class Application(tk.Tk):
         ).start()
 
 
-    def _on_input_enter(self, event=None):
-        """Enter / KP_Enter → send the message. Return 'break' to suppress the
-        newline that tk.Text would insert by default."""
-        self.submit_text_question()
-        return "break"
-
-    def _on_input_shift_enter(self, event=None):
-        """Shift+Enter → insert a real newline so the user can write multi-line
-        questions without accidentally sending. Return 'break' to stop the event
-        reaching the default <Return> binding."""
-        self.input_entry.insert(tk.INSERT, "\n")
-        return "break"
-
     def submit_text_question(self):
-        question = self.input_entry.get("1.0", tk.END).strip()
-        self.input_entry.delete("1.0", tk.END)
+        question = self.input_entry.get().strip()
+        self.input_entry.delete(0, tk.END)
 
         # If nothing to send at all
         if not question and not hasattr(self, 'pending_attachments'):
@@ -3232,136 +2988,11 @@ class Application(tk.Tk):
 
 
 
-    # ------------------------------------------------------------------ #
-    #  Native macOS picker: choose file or folder  (single dialog)      #
-    # ------------------------------------------------------------------ #
-    def _pick_files_or_folders_native(self) -> list:
-        """
-        Open a single native macOS NSOpenPanel (same panel Finder uses) that
-        lets the user select ANY mix of files and folders in one go.
-
-        Strategy (most reliable → least reliable):
-          1. AppKit.NSOpenPanel  – already available because the app imports
-             Quartz (both are part of PyObjC). No extra permissions required.
-          2. osascript fallback  – in case PyObjC import somehow fails.
-          3. tkinter filedialog  – files-only last resort.
-
-        Returns a flat list of individual file paths (folders are expanded
-        recursively). Returns [] on cancel or error.
-        """
-
-        raw_paths = []
-
-        # ── 1. AppKit NSOpenPanel (primary) ──────────────────────────────
-        try:
-            import AppKit  # part of PyObjC, same framework as Quartz
-
-            panel = AppKit.NSOpenPanel.openPanel()
-            panel.setCanChooseFiles_(True)
-            panel.setCanChooseDirectories_(True)
-            panel.setAllowsMultipleSelection_(True)
-            panel.setTitle_("Attach Files or Folders")
-            panel.setPrompt_("Attach")
-            panel.setMessage_("Select files or folders  •  ⌘-click to select multiple")
-
-            # runModal() blocks on the main thread — fine here because this
-            # method is always called from a tkinter button callback (main thread).
-            ok = panel.runModal()
-            if ok == 1:   # NSModalResponseOK
-                raw_paths = [str(url.path()) for url in panel.URLs()]
-            else:
-                return []   # user cancelled
-
-        except Exception:
-            # ── 2. osascript fallback ─────────────────────────────────────
-            try:
-                apple_script = (
-                    'set theItems to choose file or folder '
-                    'with multiple selections allowed\n'
-                    'set output to ""\n'
-                    'repeat with anItem in theItems\n'
-                    '    set output to output & POSIX path of anItem & "\\n"\n'
-                    'end repeat\n'
-                    'return output'
-                )
-                res = subprocess.run(
-                    ['osascript', '-e', apple_script],
-                    capture_output=True, text=True, timeout=120
-                )
-                if res.returncode == 0:
-                    raw_paths = [p.strip() for p in res.stdout.splitlines() if p.strip()]
-                else:
-                    # ── 3. tkinter filedialog (files only, always works) ──
-                    chosen = filedialog.askopenfilenames(
-                        title="Select Files  (⌘-click for multiple)",
-                        filetypes=[("All Files", "*.*")]
-                    )
-                    raw_paths = list(chosen)
-            except Exception:
-                raw_paths = []
-
-        # ── Expand any selected folders recursively ───────────────────────
-        all_files = []
-        for path in raw_paths:
-            if os.path.isdir(path):
-                self.status.config(text=f"🔍 Scanning {os.path.basename(path)}…")
-                self.update_idletasks()
-                all_files.extend(collect_files_from_folder(path))
-            elif os.path.isfile(path):
-                all_files.append(path)
-        return all_files
-
     def upload_resume(self):
-        """
-        Attach files or folders into the assistant context via a single native
-        macOS Finder dialog. The user can select any mix of files and folders
-        — just like a regular Open panel. Folders are walked recursively.
-        Supports all common file types: .py, .pdf, .docx, .xlsx, .pptx, .txt, …
-        """
-        self.status.config(text="📂 Opening file picker…")
-        self.update_idletasks()
-
-        file_paths = self._pick_files_or_folders_native()
-
-        if not file_paths:
-            self.status.config(text="⚠️ No files selected.")
-            return
-
-        # ── Process every collected file ──────────────────────────────────
-        self.status.config(text=f"⏳ Loading {len(file_paths)} file(s)…")
-        self.update_idletasks()
-
-        loaded_msgs, failed_msgs = [], []
-        loaded_names = []                       # track filenames for the status bar
-        for fp in file_paths:
-            success, msg = self.assistant.load_document(fp)
-            if success:
-                loaded_msgs.append(msg)
-                loaded_names.append(os.path.basename(fp))
-            else:
-                failed_msgs.append(msg)
-
-        # ── Status bar — show actual filename(s), not just a count ───────
-        parts = []
-        if loaded_names:
-            if len(loaded_names) == 1:
-                # Single file: show full name
-                parts.append(f"📎 {loaded_names[0]} attached")
-            else:
-                # Multiple files: show first name + how many more
-                parts.append(f"📎 {loaded_names[0]} + {len(loaded_names) - 1} more attached")
-        if failed_msgs:
-            parts.append(f"⚠️ {len(failed_msgs)} skipped/failed")
-        self.status.config(text="  |  ".join(parts) if parts else "Nothing loaded.")
-
-        # Only pop a warning for genuine failures (not cleanly-skipped binaries)
-        if failed_msgs:
-            real_failures = [m for m in failed_msgs if not m.startswith("⚠️ Skipped")]
-            if real_failures:
-                messagebox.showwarning(
-                    "Some files could not be loaded",
-                    "\n".join(real_failures[:20])
-                )
+        file_path = filedialog.askopenfilename(title="Select Resume File", filetypes=[("All Files", "*.*")])
+        if file_path:
+            success, message = self.assistant.load_resume(file_path)
+            self.status.config(text=message)
 
     def toggle_recording(self):
         with self.toggle_lock:
@@ -3460,9 +3091,33 @@ class Application(tk.Tk):
     def start_new_chat(self):
         # Save current session if not empty
         if any(isinstance(m, dict) and m.get("role") == "user" for m in self.assistant.messages):
-            # _generate_session_title() already handles both the new
-            # "Attached document 'filename':" format and the legacy resume format.
-            session_title = self._generate_session_title()
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+
+            # Look for any resume attachment in system messages
+            resume_name = None
+            for msg in self.assistant.messages:
+                if not isinstance(msg, dict):
+                    continue
+                if msg.get("role") != "system":
+                    continue
+
+                content = msg.get("content", "")
+                if not isinstance(content, str):
+                    continue
+
+                if "Use this resume content to contextualize answers" in content:
+                    match = re.search(r'from file:\s*(.+?)\)', content)
+                    if match:
+                        resume_name = os.path.splitext(
+                            os.path.basename(match.group(1).strip())
+                        )[0]
+                    break
+
+            # Compose title using resume name if available
+            if resume_name:
+                session_title = f"{resume_name} - {timestamp}"
+            else:
+                session_title = timestamp
 
             self.chat_manager.add_session(session_title, self.assistant.messages.copy())
             self.chat_manager.save()
@@ -3734,36 +3389,6 @@ class Application(tk.Tk):
         """Add a bookmark at a specific position (called programmatically)."""
         self._add_bookmark(line_index, preview or f"Q at line {line_index.split('.')[0]}")
     
-    # ── Bookmark persistence helpers ──────────────────────────────────── #
-
-    def _save_current_bookmarks(self):
-        """Persist the current in-memory bookmarks to chats.json immediately."""
-        self.chat_manager.update_session_bookmarks(
-            self._current_chat_index,
-            [[idx, preview] for idx, preview in self.bookmarks]
-        )
-
-    def _restore_bookmarks(self):
-        """
-        Re-apply saved bookmarks after display_chat_history() rebuilds the text.
-        Called at the end of display_chat_history() and on app startup.
-        """
-        # Wipe any stale in-memory state first
-        self.bookmarks.clear()
-        self.bookmark_listbox.delete(0, tk.END)
-        self._current_bookmark_index = -1
-
-        saved = self.chat_manager.get_session_bookmarks(self._current_chat_index)
-        for entry in saved:
-            if len(entry) < 2:
-                continue
-            line_index, preview = str(entry[0]), str(entry[1])
-            self.bookmarks.append((line_index, preview))
-            self.bookmark_listbox.insert(tk.END, f"Q{len(self.bookmarks)}")
-            self._highlight_bookmark(line_index)
-
-    # ─────────────────────────────────────────────────────────────────── #
-
     def _add_bookmark(self, line_index: str, preview: str):
         """Internal method to add a bookmark."""
         # Check if already bookmarked (same line)
@@ -3785,7 +3410,6 @@ class Application(tk.Tk):
         
         self.status.config(text=f"🔖 Bookmark #{bookmark_num} added: {preview[:30]}...")
         print(f"📍 Bookmark #{bookmark_num} at {line_index}: {preview}")
-        self._save_current_bookmarks()   # persist immediately
     
     def _highlight_bookmark(self, line_index: str):
         """Highlight a bookmarked line in the response box."""
@@ -3898,8 +3522,7 @@ class Application(tk.Tk):
                 self._current_bookmark_index = max(0, self._current_bookmark_index - 1)
             
             self.status.config(text=f"🗑 Bookmark removed: {preview[:30]}...")
-            self._save_current_bookmarks()   # persist immediately
-
+    
     def _renumber_bookmarks(self):
         """Renumber bookmarks after deletion."""
         self.bookmark_listbox.delete(0, tk.END)
@@ -3924,7 +3547,6 @@ class Application(tk.Tk):
         self.bookmarks.clear()
         self.bookmark_listbox.delete(0, tk.END)
         self._current_bookmark_index = -1
-        self._save_current_bookmarks()   # persist the empty list
 
         self.status.config(text="🗑 All bookmarks cleared")
     
@@ -3992,15 +3614,7 @@ class Application(tk.Tk):
         
         menu.add_separator()
         menu.add_command(label="📋 Show All Questions", command=self._show_all_questions_dialog)
-
-        # ── Copy question + images for use in other AI tools ─────────────
-        if nearest_q:
-            menu.add_separator()
-            menu.add_command(
-                label="📤 Copy Question + Images  (for Claude / ChatGPT)",
-                command=lambda: self._copy_question_with_images(nearest_q)
-            )
-
+        
         # Show menu at click position
         try:
             menu.tk_popup(event.x_root, event.y_root)
@@ -4021,188 +3635,9 @@ class Application(tk.Tk):
                 
                 del self.bookmarks[i]
                 self._renumber_bookmarks()
-                self._save_current_bookmarks()   # persist immediately
                 self.status.config(text=f"🗑 Bookmark removed")
                 return
     
-    # ------------------------------------------------------------------ #
-    #  Copy question + images  (for re-use in Claude / ChatGPT / etc.)  #
-    # ------------------------------------------------------------------ #
-
-    def _copy_question_with_images(self, question_pos: str):
-        """
-        Copy the CLEAN question text (no placeholders) to clipboard and save
-        attached images to ~/Desktop as numbered PNGs. Then show an action
-        dialog so the user can drag the images into Cursor / Claude.ai.
-
-        question_pos – text-widget index of the 'QUESTION:' line (e.g. '14.0').
-        """
-        import base64, re as _re
-
-        # ── 1. Count which QUESTION this is (1-based) in the response box ─
-        #   We walk from the top and count every "QUESTION:" occurrence up to
-        #   and including question_pos to determine the N-th user turn.
-        q_count = 0
-        search_from = "1.0"
-        while True:
-            found = self.response_box.search("QUESTION:", search_from, stopindex=tk.END)
-            if not found:
-                break
-            q_count += 1
-            # Stop once we reach or pass the target line
-            if self.response_box.compare(found, ">=", question_pos):
-                break
-            search_from = f"{found} +1c"
-
-        # ── 2. Get the N-th user message from self.assistant.messages ──────
-        #   This gives us the raw, placeholder-free text + real image data.
-        user_msgs = [
-            m for m in self.assistant.messages
-            if isinstance(m, dict) and m.get("role") == "user"
-        ]
-        # q_count is 1-based; clamp to available messages
-        msg_index = max(0, min(q_count - 1, len(user_msgs) - 1))
-        matched_msg = user_msgs[msg_index] if user_msgs else None
-
-        # ── 3. Extract CLEAN text directly from the message ───────────────
-        #   Avoids any "[📎 Image X]" or "[Image]" placeholder that the UI
-        #   injects into the response box display.
-        if matched_msg:
-            content = matched_msg.get("content", "")
-            if isinstance(content, str):
-                clean_text = content.strip()
-            elif isinstance(content, list):
-                clean_text = "\n".join(
-                    part.get("text", "").strip()
-                    for part in content
-                    if isinstance(part, dict) and part.get("type") == "text"
-                    and part.get("text", "").strip()
-                )
-            else:
-                clean_text = ""
-        else:
-            # Fallback: scrape from response box and strip placeholders
-            q_line = question_pos.split('.')[0]
-            sep = self.response_box.search("-----", f"{int(q_line)+1}.0", stopindex=tk.END)
-            raw_q = self.response_box.get(
-                f"{q_line}.0", sep if sep else tk.END
-            ).strip()
-            clean_text = _re.sub(r'^QUESTION:\s*', '', raw_q, flags=_re.IGNORECASE)
-            clean_text = _re.sub(r'\[📎 Image \d+\]', '', clean_text)
-            clean_text = _re.sub(r'\[Image\]', '', clean_text)
-            clean_text = clean_text.strip()
-
-        # ── 4. Copy clean text to clipboard ───────────────────────────────
-        self.clipboard_clear()
-        self.clipboard_append(clean_text)
-
-        # ── 5. Extract images → save to ~/Desktop ─────────────────────────
-        saved_paths = []
-        if matched_msg and isinstance(matched_msg.get("content"), list):
-            desktop = os.path.expanduser("~/Desktop")
-            img_num = 1
-            for part in matched_msg["content"]:
-                if not (isinstance(part, dict) and part.get("type") == "image_url"):
-                    continue
-                url = part.get("image_url", {}).get("url", "")
-                if not url.startswith("data:image"):
-                    continue
-                try:
-                    header, b64data = url.split(",", 1)
-                    ext = "png" if "png" in header else "jpg"
-                    img_bytes = base64.b64decode(b64data)
-                    fname = f"copied_question_img_{img_num}.{ext}"
-                    fpath = os.path.join(desktop, fname)
-                    with open(fpath, "wb") as f:
-                        f.write(img_bytes)
-                    saved_paths.append(fpath)
-                    img_num += 1
-                except Exception as e:
-                    print(f"⚠️ Could not save image {img_num}: {e}")
-
-        # ── 6. Show action dialog ──────────────────────────────────────────
-        self._show_copy_result_dialog(clean_text, saved_paths)
-
-    def _show_copy_result_dialog(self, clean_text: str, saved_paths: list):
-        """
-        Show a clear action dialog after copying a question.
-        Tells the user exactly what to do with the text and images in
-        Cursor / Claude.ai / ChatGPT.
-        """
-        dlg = tk.Toplevel(self)
-        dlg.title("📤 Ready to paste into another AI tool")
-        dlg.resizable(False, False)
-        dlg.grab_set()
-        dlg.lift()
-        dlg.attributes('-topmost', True)
-
-        # Centre over main window
-        self.update_idletasks()
-        w, h = 480, 340 if saved_paths else 220
-        x = self.winfo_x() + (self.winfo_width()  - w) // 2
-        y = self.winfo_y() + (self.winfo_height() - h) // 2
-        dlg.geometry(f"{w}x{h}+{x}+{y}")
-
-        pad = dict(padx=16, pady=6)
-
-        # ── Text section ──────────────────────────────────────────────────
-        ttk.Label(dlg, text="✅  Text copied to clipboard",
-                  font=('Arial', 12, 'bold')).pack(anchor="w", **pad)
-        ttk.Label(dlg, text="⌘V to paste in Cursor / Claude.ai / ChatGPT",
-                  font=('Arial', 10), foreground='gray').pack(anchor="w", padx=16, pady=(0,4))
-
-        # Preview of copied text
-        preview_frame = ttk.Frame(dlg)
-        preview_frame.pack(fill="x", padx=16, pady=(0, 8))
-        preview = tk.Text(preview_frame, height=3, font=('Arial', 10),
-                          wrap="word", state=tk.NORMAL,
-                          background='#1e1e1e', foreground='#cccccc',
-                          relief="flat", borderwidth=1)
-        preview.insert("1.0", clean_text[:200] + ("…" if len(clean_text) > 200 else ""))
-        preview.config(state=tk.DISABLED)
-        preview.pack(fill="x")
-
-        ttk.Separator(dlg, orient="horizontal").pack(fill="x", padx=16, pady=6)
-
-        if saved_paths:
-            # ── Images section ─────────────────────────────────────────────
-            ttk.Label(dlg, text=f"🖼  {len(saved_paths)} image(s) saved to Desktop",
-                      font=('Arial', 12, 'bold')).pack(anchor="w", **pad)
-
-            for p in saved_paths:
-                ttk.Label(dlg, text=f"   • {os.path.basename(p)}",
-                          font=('Arial', 10), foreground='#888888').pack(anchor="w", padx=16)
-
-            ttk.Label(dlg,
-                      text="👆 Drag image(s) from Finder into Cursor / Claude.ai to attach",
-                      font=('Arial', 10), foreground='#aaaaaa',
-                      wraplength=440).pack(anchor="w", padx=16, pady=(6, 4))
-
-            ttk.Separator(dlg, orient="horizontal").pack(fill="x", padx=16, pady=6)
-
-            btn_frame = ttk.Frame(dlg)
-            btn_frame.pack(pady=(0, 12))
-
-            def open_finder():
-                try:
-                    subprocess.Popen(["open", "-R", saved_paths[0]])
-                except Exception:
-                    subprocess.Popen(["open", os.path.dirname(saved_paths[0])])
-
-            ttk.Button(btn_frame, text="📂  Open in Finder",
-                       command=open_finder, width=20).pack(side="left", padx=8)
-            ttk.Button(btn_frame, text="✓  Done",
-                       command=dlg.destroy, width=10).pack(side="left", padx=8)
-        else:
-            # Text-only — no images
-            ttk.Button(dlg, text="✓  Done",
-                       command=dlg.destroy, width=12).pack(pady=(0, 12))
-
-        self.status.config(
-            text=f"📋 Copied!  {len(saved_paths)} image(s) on Desktop."
-            if saved_paths else "📋 Question text copied to clipboard!"
-        )
-
     def _show_all_questions_dialog(self):
         """Show a dialog with all questions for easy bookmarking."""
         dialog = tk.Toplevel(self)
@@ -4567,7 +4002,7 @@ if __name__ == "__main__":
             app.attributes('-topmost', True)
             app.attributes('-topmost', False)
             app.input_entry.focus_set()
-            app.input_entry.mark_set(tk.INSERT, tk.END)
+            app.input_entry.icursor(tk.END)
 
         def on_press(key):
             try:

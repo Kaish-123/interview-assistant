@@ -1,7 +1,6 @@
 {
-  "geometry": "617x977+-615+25",
-  "paned_sash": 119,
-  "sidebar_sash": 640,
+  "paned_sash": 95,
+  "sidebar_sash": 710,
   "response_font_size": 15,
   "tab_tree_open": [
     "tab_0",
@@ -13,5 +12,6 @@
     "sub_0_3",
     "sub_0_20",
     "sub_0_14"
-  ]
+  ],
+  "geometry": "618x977+-614+25"
 }

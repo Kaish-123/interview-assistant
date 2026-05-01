@@ -137,6 +137,11 @@
           "name": "LipSync",
           "prompt": "Answer all the personal question from this personal data for next 3 hours in this interview and in this chat.",
           "text_input": "Answer all the personal question from this personal data for next 3 hours in this interview and in this chat."
+        },
+        {
+          "name": "Karat",
+          "prompt": "solve the problem as per question make sure to pass all test cases and dont change anything in methods signature give time and space complxitiy also as per gibven in question",
+          "text_input": "solve the problem as per question make sure to pass all test cases and dont change anything in methods signature give time and space complxitiy also as per gibven in question"
         }
       ]
     },

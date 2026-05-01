@@ -1677,9 +1677,8 @@ class Application(tk.Tk):
             sash = None
         
         # Save sidebar internal split (tabs vs chats)
-        # sidebar_paned is tk.PanedWindow — use sash_coord(), not sashpos()
         try:
-            sidebar_sash = self.sidebar_paned.sash_coord(0)[1]  # (x, y) → take y
+            sidebar_sash = self.sidebar_paned.sashpos(0)
         except Exception:
             sidebar_sash = None
 
@@ -1723,20 +1722,13 @@ class Application(tk.Tk):
                 self.after(50, lambda: self.paned.sashpos(0, int(prefs["paned_sash"])))
 
         # Sidebar internal split (tabs vs chats)
-        # Uses tk.PanedWindow.sash_place(index, x, y) — clamp so chat section
-        # always gets at least 150px (can never be hidden again).
         if "sidebar_sash" in prefs and prefs["sidebar_sash"] is not None:
             def apply_sidebar_sash():
                 try:
-                    sidebar_h = self.sidebar_paned.winfo_height()
-                    saved_y = int(prefs["sidebar_sash"])
-                    # Clamp: leave at least 150px for chat section at the bottom
-                    max_y = max(120, sidebar_h - 150)
-                    sash_y = max(120, min(saved_y, max_y))
-                    self.sidebar_paned.sash_place(0, 0, sash_y)
+                    self.sidebar_paned.sashpos(0, int(prefs["sidebar_sash"]))
                 except Exception as e:
                     print("Sidebar sash apply error:", e)
-            self.after(200, apply_sidebar_sash)  # give time for widget to render
+            self.after(100, apply_sidebar_sash)  # Delay to ensure widget is ready
 
         # NEW: tabs/subtabs expanded state
         if "tab_tree_open" in prefs:
@@ -1972,19 +1964,13 @@ class Application(tk.Tk):
         self.toggle_btn.pack(pady=5, fill="x")
 
         # ====== RESIZABLE SIDEBAR SECTIONS ======
-        # Use tk.PanedWindow (not ttk) because it supports per-pane minsize.
-        # ttk.PanedWindow has no minsize — either section can collapse to 0 and
-        # become impossible to recover by dragging.
-        self.sidebar_paned = tk.PanedWindow(
-            self.sidebar, orient=tk.VERTICAL,
-            sashrelief=tk.RIDGE, sashwidth=6, sashpad=2
-        )
+        # Create a vertical PanedWindow inside sidebar for resizable sections
+        self.sidebar_paned = ttk.PanedWindow(self.sidebar, orient=tk.VERTICAL)
         self.sidebar_paned.pack(fill="both", expand=True, padx=5, pady=5)
-
+        
         # ----- TOP SECTION: Tabs/Subtabs -----
         self.tab_section = ttk.Frame(self.sidebar_paned)
-        # minsize=120 → Prompts section can never collapse below 120px
-        self.sidebar_paned.add(self.tab_section, minsize=120, stretch="always")
+        self.sidebar_paned.add(self.tab_section, weight=2)  # Gets more space by default
         
         ttk.Label(self.tab_section, text="📋 Prompts & Subtabs").pack(anchor="w")
         
@@ -2026,8 +2012,7 @@ class Application(tk.Tk):
 
         # ----- BOTTOM SECTION: Chat History -----
         self.chat_section = ttk.Frame(self.sidebar_paned)
-        # minsize=150 → Past Chats section can never collapse below 150px
-        self.sidebar_paned.add(self.chat_section, minsize=150, stretch="always")
+        self.sidebar_paned.add(self.chat_section, weight=1)  # Gets less space by default
         
         ttk.Label(self.chat_section, text="💬 Past Chats").pack(anchor="w")
         

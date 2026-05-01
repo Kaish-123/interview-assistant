@@ -1209,14 +1209,12 @@ class ChatGPTAssistant:
                     buffer = ""
                     last_update = time.time()
 
-                    # Insert the ANSWER header on the main thread — never scroll.
-                    def _insert_answer_header():
-                        first_visible = text_widget.index("@0,0")
-                        text_widget.config(state=tk.NORMAL)
-                        text_widget.insert(tk.END, "------------------\nANSWER: ")
-                        text_widget.config(state=tk.DISABLED)
-                        text_widget.see(first_visible)
-                    text_widget.after(0, _insert_answer_header)
+                    text_widget.config(state=tk.NORMAL)
+                    text_widget.insert(tk.END, "------------------\nANSWER: ")
+                    text_widget.config(state=tk.DISABLED)
+                    # Only jump to bottom if the user is already there
+                    if text_widget.yview()[1] >= 0.99:
+                        text_widget.see(tk.END)
 
                     output_chars = 0
                     for chunk in stream:
@@ -1278,26 +1276,21 @@ class ChatGPTAssistant:
 
 
     def update_text_widget(self, text_widget, new_text_part: str):
-        # Called from background streaming thread — schedule on main thread via after().
-        #
-        # Key insight: yview_moveto(fraction) uses a PROPORTIONAL position.
-        # As text is appended and the document grows longer, the same fraction points
-        # to a lower and lower line — so every insert silently scrolls the viewport down.
-        #
-        # Correct fix: save "@0,0" — the absolute text index (e.g. "42.0") of the
-        # character visible at the top-left pixel. Line numbers are absolute; line 42
-        # stays line 42 no matter how many lines are appended after it.
-        # After the insert, see(saved_index) brings that exact line back into view.
-        def _do_insert():
-            # Absolute index of the top-left visible character
-            first_visible = text_widget.index("@0,0")
-            text_widget.config(state=tk.NORMAL)
-            text_widget.insert(tk.END, new_text_part)
-            text_widget.config(state=tk.DISABLED)
-            # Restore that exact line to the top of the viewport
-            text_widget.see(first_visible)
+        # Enable the text widget for editing
+        text_widget.config(state=tk.NORMAL)
 
-        text_widget.after(0, _do_insert)
+        # Append only the new part of the message (delta)
+        text_widget.insert(tk.END, new_text_part)
+
+        # Auto-scroll only if the user is already at (or near) the bottom.
+        # If they've scrolled up to read a previous answer, don't yank them back.
+        bottom_visible = text_widget.yview()[1] >= 0.99
+        if bottom_visible:
+            text_widget.see(tk.END)
+
+        # Disable the widget to make it read-only again
+        text_widget.config(state=tk.DISABLED)
+        text_widget.update_idletasks()
 
 
 
@@ -1677,9 +1670,8 @@ class Application(tk.Tk):
             sash = None
         
         # Save sidebar internal split (tabs vs chats)
-        # sidebar_paned is tk.PanedWindow — use sash_coord(), not sashpos()
         try:
-            sidebar_sash = self.sidebar_paned.sash_coord(0)[1]  # (x, y) → take y
+            sidebar_sash = self.sidebar_paned.sashpos(0)
         except Exception:
             sidebar_sash = None
 
@@ -1723,20 +1715,13 @@ class Application(tk.Tk):
                 self.after(50, lambda: self.paned.sashpos(0, int(prefs["paned_sash"])))
 
         # Sidebar internal split (tabs vs chats)
-        # Uses tk.PanedWindow.sash_place(index, x, y) — clamp so chat section
-        # always gets at least 150px (can never be hidden again).
         if "sidebar_sash" in prefs and prefs["sidebar_sash"] is not None:
             def apply_sidebar_sash():
                 try:
-                    sidebar_h = self.sidebar_paned.winfo_height()
-                    saved_y = int(prefs["sidebar_sash"])
-                    # Clamp: leave at least 150px for chat section at the bottom
-                    max_y = max(120, sidebar_h - 150)
-                    sash_y = max(120, min(saved_y, max_y))
-                    self.sidebar_paned.sash_place(0, 0, sash_y)
+                    self.sidebar_paned.sashpos(0, int(prefs["sidebar_sash"]))
                 except Exception as e:
                     print("Sidebar sash apply error:", e)
-            self.after(200, apply_sidebar_sash)  # give time for widget to render
+            self.after(100, apply_sidebar_sash)  # Delay to ensure widget is ready
 
         # NEW: tabs/subtabs expanded state
         if "tab_tree_open" in prefs:
@@ -1972,19 +1957,13 @@ class Application(tk.Tk):
         self.toggle_btn.pack(pady=5, fill="x")
 
         # ====== RESIZABLE SIDEBAR SECTIONS ======
-        # Use tk.PanedWindow (not ttk) because it supports per-pane minsize.
-        # ttk.PanedWindow has no minsize — either section can collapse to 0 and
-        # become impossible to recover by dragging.
-        self.sidebar_paned = tk.PanedWindow(
-            self.sidebar, orient=tk.VERTICAL,
-            sashrelief=tk.RIDGE, sashwidth=6, sashpad=2
-        )
+        # Create a vertical PanedWindow inside sidebar for resizable sections
+        self.sidebar_paned = ttk.PanedWindow(self.sidebar, orient=tk.VERTICAL)
         self.sidebar_paned.pack(fill="both", expand=True, padx=5, pady=5)
-
+        
         # ----- TOP SECTION: Tabs/Subtabs -----
         self.tab_section = ttk.Frame(self.sidebar_paned)
-        # minsize=120 → Prompts section can never collapse below 120px
-        self.sidebar_paned.add(self.tab_section, minsize=120, stretch="always")
+        self.sidebar_paned.add(self.tab_section, weight=2)  # Gets more space by default
         
         ttk.Label(self.tab_section, text="📋 Prompts & Subtabs").pack(anchor="w")
         
@@ -2026,8 +2005,7 @@ class Application(tk.Tk):
 
         # ----- BOTTOM SECTION: Chat History -----
         self.chat_section = ttk.Frame(self.sidebar_paned)
-        # minsize=150 → Past Chats section can never collapse below 150px
-        self.sidebar_paned.add(self.chat_section, minsize=150, stretch="always")
+        self.sidebar_paned.add(self.chat_section, weight=1)  # Gets less space by default
         
         ttk.Label(self.chat_section, text="💬 Past Chats").pack(anchor="w")
         

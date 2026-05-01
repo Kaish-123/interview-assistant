@@ -1,0 +1,76 @@
+[
+  {
+    "user_id": "u1",
+    "timestamp": "2026-01-29T09:00:00Z",
+    "eligible_offers": ["010", "020"]
+  },
+  {
+    "user_id": "u1",
+    "timestamp": "2026-01-29T09:05:00Z",
+    "eligible_offers": ["010", "020", "030"]
+  },
+  {
+    "user_id": "u1",
+    "timestamp": "2026-01-29T09:05:00Z",
+    "eligible_offers": ["010", "020", "030"]
+  },
+  {
+    "user_id": "u1",
+    "timestamp": "2026-01-29T09:02:00Z",
+    "eligible_offers": ["010"]
+  },
+  {
+    "user_id": "u2",
+    "timestamp": "2026-01-29T10:00:00Z",
+    "eligible_offers": []
+  },
+  {
+    "user_id": "u2",
+    "timestamp": "2026-01-29T10:10:00Z",
+    "eligible_offers": ["099"]
+  },
+  {
+    "user_id": "u2",
+    "timestamp": "2026-01-29T10:20:00Z",
+    "eligible_offers": ["099", "050"]
+  },
+  {
+    "user_id": "u2",
+    "timestamp": "2026-01-29T10:30:00Z",
+    "eligible_offers": ["050"]
+  },
+  {
+    "user_id": "u3",
+    "timestamp": "2026-01-29T11:00:00Z",
+    "eligible_offers": "null"
+  },
+  {
+    "user_id": "u3",
+    "timestamp": "2026-01-29T11:05:00Z",
+    "eligible_offers": ["01", "02", "02"]
+  },
+  {
+    "user_id": "u3",
+    "timestamp": "not-a-timestamp",
+    "eligible_offers": ["01"]
+  },
+  {
+    "user_id": "u4",
+    "timestamp": "2026-01-29T12:00:00Z",
+    "eligible_offers": ["07"]
+  },
+  {
+    "user_id": "u4",
+    "timestamp": "2026-01-29T12:10:00Z",
+    "eligible_offers": ["07"]
+  },
+  {
+    "timestamp": "2026-01-29T12:15:00Z",
+    "eligible_offers": ["08"]
+  },
+  {
+    "user_id": "u5",
+    "timestamp": "2026-01-29T12:20:00Z",
+    "eligible_offers": "09"
+  }
+]
