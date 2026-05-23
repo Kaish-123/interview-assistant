@@ -901,20 +901,40 @@ class ChatHistoryManager:
                     self.sessions = json.load(f)
             except Exception:
                 self.sessions = []
+        self._deduplicate_autosave()
+
+    def _deduplicate_autosave(self):
+        """Remove duplicate AutoSave entries keeping only the most complete one."""
+        AUTO_TITLE = "AutoSave - Last Session"
+        auto_entries = [(i, s) for i, s in enumerate(self.sessions)
+                        if s.get("title") == AUTO_TITLE]
+        if len(auto_entries) <= 1:
+            return
+        best_idx, _ = max(auto_entries,
+                          key=lambda t: len(t[1].get("messages", [])))
+        remove = {i for i, _ in auto_entries if i != best_idx}
+        self.sessions = [s for i, s in enumerate(self.sessions) if i not in remove]
+        self.save()
+        print(f"🧹 Removed {len(remove)} duplicate AutoSave entries")
 
     def save_current_session(self, messages, title="AutoSave - Last Session", bookmarks=None):
-        # Preserve any existing bookmarks for index-0 if none are supplied
-        if bookmarks is None and self.sessions:
-            bookmarks = self.sessions[0].get("bookmarks", [])
+        # Find AutoSave by TITLE (not by index 0) — drag-drop reordering
+        # used to move AutoSave off index 0, causing the old code to create duplicates.
+        auto_idx = next(
+            (i for i, s in enumerate(self.sessions) if s.get("title") == title),
+            None
+        )
+        if bookmarks is None and auto_idx is not None:
+            bookmarks = self.sessions[auto_idx].get("bookmarks", [])
         working_session = {
             "title": title,
             "messages": messages.copy(),
             "bookmarks": bookmarks or [],
         }
-        if self.sessions:
-            self.sessions[0] = working_session
+        if auto_idx is not None:
+            self.sessions[auto_idx] = working_session   # update in-place
         else:
-            self.sessions.insert(0, working_session)
+            self.sessions.insert(0, working_session)    # first ever save
         self.save()
 
     def add_session(self, title, messages, bookmarks=None):
@@ -2184,16 +2204,18 @@ class Application(tk.Tk):
         self.setup_ui()
         self.load_chat_tabs()
 
-        # Auto-load autosave session (unchanged)
-        # Auto-load autosave session (unchanged)
-        # Auto-load autosave session (safer)
-        if self.chat_manager.sessions and self.chat_manager.sessions[0].get("title") == "AutoSave - Last Session":
-            msgs = self.chat_manager.sessions[0].get("messages", [])
+        # Auto-load autosave session — search by title so drag-drop reordering
+        # never breaks the resume (old code assumed AutoSave was always at index 0).
+        auto_session = next(
+            (s for s in self.chat_manager.sessions
+             if s.get("title") == "AutoSave - Last Session"),
+            None
+        )
+        if auto_session:
+            msgs = auto_session.get("messages", [])
             if isinstance(msgs, list):
                 self.assistant.messages = msgs
                 self.display_chat_history()
-
-
             self.status.config(text="🕑 Resumed from last auto-save session")
 
         # Bind paste to input_entry directly (not bind_all) to prevent double-paste
@@ -2349,18 +2371,20 @@ class Application(tk.Tk):
         if real_count <= max_chats:
             return  # nothing to do
 
-        # Keep only the MOST RECENT real chat (the last appended),
-        # plus AutoSave if it exists
-        keep_real_idx = real_indices[-1]  # most recent real chat by your append order
+        # Keep only the MOST RECENT real chat + exactly ONE AutoSave.
+        keep_real_idx = real_indices[-1]
         new_sessions = []
         kept_title = None
+        auto_kept = False
 
         for i, s in enumerate(self.chat_manager.sessions):
             title = s.get("title", "Untitled")
-            if i == keep_real_idx or title == AUTO_TITLE:
+            if i == keep_real_idx:
                 new_sessions.append(s)
-                if i == keep_real_idx:
-                    kept_title = title
+                kept_title = title
+            elif title == AUTO_TITLE and not auto_kept:
+                new_sessions.append(s)
+                auto_kept = True
 
         removed_count = len(self.chat_manager.sessions) - len(new_sessions)
         if removed_count > 0:
@@ -3145,13 +3169,18 @@ class Application(tk.Tk):
 
         keep_title = titles[keep_index]
 
-        # Build the new chat list, keeping only the selected chat and the AutoSave session (if present)
+        # Build new list: keep selected chat + exactly ONE AutoSave.
         original_count = len(self.chat_manager.sessions)
         new_sessions = []
+        auto_kept = False
         for i, s in enumerate(self.chat_manager.sessions):
             title = s.get("title", "Untitled")
-            if i == keep_index or title == AUTO_TITLE:
+            if i == keep_index:
                 new_sessions.append(s)
+            elif title == AUTO_TITLE and not auto_kept:
+                new_sessions.append(s)
+                auto_kept = True
+            # else: drop — extra AutoSaves and other chats
 
         removed_count = original_count - len(new_sessions)
         if removed_count <= 0:
