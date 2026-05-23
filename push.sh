@@ -10,7 +10,15 @@ set -e   # exit immediately on any error
 REPO_DIR="/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac"
 cd "$REPO_DIR"
 
+GITHUB_REMOTE="https://github.com/Kaish-123/interview-assistant.git"
+
 echo "📂 Working in: $REPO_DIR"
+
+# ── 0. Ensure remote exists (git-filter-repo removes it) ──────────────────
+if ! git remote get-url origin &>/dev/null; then
+    git remote add origin "$GITHUB_REMOTE"
+    echo "🔗 Remote re-added: $GITHUB_REMOTE"
+fi
 
 # ── 1. Make sure we're on main ─────────────────────────────────────────────
 git checkout main 2>/dev/null || true

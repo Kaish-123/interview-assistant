@@ -50,6 +50,18 @@ Broadcast_Marketing/exported_contacts.txt
 Broadcast_Marketing/send_launchd.log
 Broadcast_Marketing/send_launchd_error.log
 
+# ── Node / frontend ───────────────────────────────────────────────────────────
+node_modules/
+.next/
+.nuxt/
+out/
+*.node
+
+# ── Databases (large binary files) ────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
 # ── IDE ───────────────────────────────────────────────────────────────────────
 .idea/
 .vscode/
