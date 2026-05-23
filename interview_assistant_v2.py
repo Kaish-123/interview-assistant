@@ -4355,39 +4355,155 @@ class Application(tk.Tk):
     # ── v2: VAD Auto-Record ───────────────────────────────────────────────
     def toggle_vad_mode(self):
         self.vad_mode = not self.vad_mode
-        if self.vad_mode and not self._vad_running:
-            self._vad_running = True
-            threading.Thread(target=self._vad_monitor_loop, daemon=True).start()
-        self.vad_btn.config(text="🎙 VAD ON" if self.vad_mode else "🎙 VAD")
+        if self.vad_mode:
+            if not self._vad_running:
+                self._vad_running = True
+                threading.Thread(
+                    target=self._vad_monitor_loop, daemon=True, name="VAD-Monitor"
+                ).start()
+            self.vad_btn.config(text="🎙 VAD ON")
+            dev = self.assistant.recorder.find_device()
+            dev_name = "default"
+            try:
+                dev_name = sd.query_devices(dev)["name"] if dev is not None else "default"
+            except Exception:
+                pass
+            self.status.config(text=f"🎙 VAD active — monitoring: {dev_name}")
+        else:
+            self._vad_running = False   # ← signals the loop to exit cleanly
+            self.vad_mode    = False
+            self.vad_btn.config(text="🎙 VAD")
+            self.status.config(text="🎙 VAD disabled")
 
     def _vad_monitor_loop(self):
-        """Monitor mic energy and auto-start/stop recording when speech is detected."""
-        THRESHOLD = 0.02
-        SILENCE_SECS = 2.0
-        CHUNK = 1600   # 100 ms at 16 kHz
-        silence_start = None
-        speaking = False
-        while self._vad_running and self.vad_mode:
+        """
+        Persistent VAD loop — opens ONE sd.InputStream on the correct device
+        (BlackHole or external mic, matching what AudioRecorder uses) and
+        monitors RMS energy to auto-start/stop recording.
+
+        State machine
+        ─────────────
+        IDLE     → wait for ONSET_CHUNKS consecutive loud chunks (debounce)
+                   → call toggle_recording()  [start]
+        RECORDING → wait for SILENCE_SECS of quiet after MIN_RECORD_SECS
+                   → call toggle_recording()  [stop]
+        """
+        # ── Tuning constants ───────────────────────────────────────────────
+        SPEECH_RMS      = 0.012   # RMS threshold — tune if needed
+        SILENCE_SECS    = 2.2     # silence before auto-stop
+        MIN_RECORD_SECS = 1.5     # don't auto-stop before this many seconds
+        ONSET_CHUNKS    = 3       # consecutive loud chunks to confirm speech start
+        # ──────────────────────────────────────────────────────────────────
+
+        # Resolve the SAME device the main recorder uses
+        device_id = self.assistant.recorder.find_device()
+
+        # Query device's native channel count (BlackHole 2ch → 2 channels)
+        try:
+            dev_info   = sd.query_devices(device_id) if device_id is not None \
+                         else sd.query_devices(sd.default.device[0])
+            n_channels = max(1, min(int(dev_info.get("max_input_channels", 1)), 8))
+            native_sr  = int(dev_info.get("default_samplerate", 48000))
+            dev_name   = dev_info.get("name", str(device_id))
+        except Exception:
+            n_channels, native_sr, dev_name = 1, 48000, str(device_id)
+
+        print(f"🎙 VAD: opening stream on [{device_id}] {dev_name!r} "
+              f"({n_channels}ch @ {native_sr} Hz)")
+
+        rms_q   = queue.Queue(maxsize=200)
+        BLOCK   = max(native_sr // 10, 512)   # ~100 ms per chunk
+
+        def _cb(indata, frames, t, status):
+            # Mix to mono regardless of how many channels the device has
+            mono = indata.mean(axis=1) if indata.ndim > 1 else indata[:, 0]
+            rms  = float(np.sqrt(np.mean(mono.astype(np.float32) ** 2)))
             try:
-                chunk = sd.rec(CHUNK, samplerate=16000, channels=1, dtype='float32', blocking=True)
-                rms = float(np.sqrt(np.mean(chunk ** 2)))
-                if rms > THRESHOLD:
-                    silence_start = None
-                    if not speaking and not self.assistant.recorder.recording:
-                        speaking = True
-                        self.after(0, self.toggle_recording)
-                else:
-                    if speaking:
-                        if silence_start is None:
-                            silence_start = time.time()
-                        elif time.time() - silence_start > SILENCE_SECS:
-                            speaking = False
+                rms_q.put_nowait(rms)
+            except queue.Full:
+                pass  # drop if consumer is too slow
+
+        stream = None
+        try:
+            stream = sd.InputStream(
+                device=device_id,
+                samplerate=native_sr,
+                channels=n_channels,
+                dtype="float32",
+                blocksize=BLOCK,
+                callback=_cb,
+            )
+            stream.start()
+
+            # ── State ──────────────────────────────────────────────────
+            onset_count   = 0
+            speaking      = False
+            silence_start = None
+            rec_start     = None
+
+            while self._vad_running and self.vad_mode:
+                try:
+                    rms = rms_q.get(timeout=0.4)
+                except queue.Empty:
+                    continue
+
+                is_rec  = self.assistant.recorder.is_recording   # ← FIXED (was .recording)
+                is_busy = self.is_processing_audio
+
+                # ── IDLE: looking for speech onset ──────────────────
+                if not speaking:
+                    if rms > SPEECH_RMS:
+                        onset_count += 1
+                        if onset_count >= ONSET_CHUNKS and not is_rec and not is_busy:
+                            speaking      = True
                             silence_start = None
-                            if self.assistant.recorder.recording:
-                                self.after(0, self.toggle_recording)
-            except Exception:
-                time.sleep(0.1)
-        self._vad_running = False
+                            rec_start     = time.time()
+                            self.after(0, self.toggle_recording)
+                            self.after(0, lambda: self.status.config(
+                                text=f"🎙 VAD: speech detected (RMS={rms:.4f}) — recording…"))
+                            print(f"🎙 VAD start  rms={rms:.4f}  onset={onset_count}")
+                    else:
+                        onset_count = max(0, onset_count - 1)  # decay (not hard-reset)
+
+                # ── SPEAKING: looking for end of speech ─────────────
+                else:
+                    if not is_rec:
+                        # Recording stopped externally (user pressed Stop)
+                        speaking = False; onset_count = 0; silence_start = None
+                        continue
+
+                    elapsed = time.time() - (rec_start or time.time())
+
+                    if rms > SPEECH_RMS:
+                        silence_start = None          # reset silence timer on any sound
+                        onset_count   = ONSET_CHUNKS  # keep onset saturated
+                    else:
+                        if elapsed >= MIN_RECORD_SECS:
+                            if silence_start is None:
+                                silence_start = time.time()
+                            elif time.time() - silence_start >= SILENCE_SECS:
+                                speaking      = False
+                                silence_start = None
+                                onset_count   = 0
+                                rec_start     = None
+                                if self.assistant.recorder.is_recording:
+                                    self.after(0, self.toggle_recording)
+                                    self.after(0, lambda: self.status.config(
+                                        text="🎙 VAD: silence detected — processing…"))
+                                    print(f"🎙 VAD stop   silence={SILENCE_SECS}s")
+
+        except Exception as exc:
+            print(f"⚠️ VAD stream error: {exc}")
+            self.after(0, lambda: self.status.config(text=f"⚠️ VAD error: {exc}"))
+        finally:
+            if stream is not None:
+                try:
+                    stream.stop()
+                    stream.close()
+                except Exception:
+                    pass
+            self._vad_running = False
+            print("🎙 VAD loop exited")
 
     # ── v2: Local ASR ─────────────────────────────────────────────────────
     def toggle_local_asr(self):
