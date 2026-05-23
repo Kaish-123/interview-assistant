@@ -46,8 +46,8 @@ GROWTH_PLIST_SRC = SCRIPT_DIR / f"{GROWTH_PLIST_NAME}.plist"
 VENV_PYTHON = SCRIPT_DIR / "venv/bin/python"
 
 # How long without activity before we consider a script "dead"
-SEND_STALE_HOURS = 2       # Send script should run every hour
-GROWTH_STALE_HOURS = 8     # Growth script runs every 6 hours
+SEND_STALE_HOURS = 1       # Send script runs every 30 min — stale if silent for 1h
+GROWTH_STALE_HOURS = 5     # Growth script runs every 4 hours — stale if silent for 5h
 
 # Log files to inspect
 LOG_FILES = {
@@ -377,28 +377,61 @@ def run_watchdog():
         else:
             issues_found.append(f"Could not reload {GROWTH_PLIST_NAME} — check plist path")
 
+    # ── Pull last sent group & recent error count from send log ──────────────
+    last_sent_group = "N/A"
+    last_sent_time = "N/A"
+    recent_errors = 0
+    send_log = LOG_FILES["send"]
+    if send_log.exists():
+        try:
+            with open(send_log, 'r', errors='replace') as f:
+                send_lines = f.readlines()
+            for line in reversed(send_lines[-300:]):
+                if "✓ Sent to:" in line:
+                    m = re.search(r'✓ Sent to:\s*(.+)', line)
+                    ts = re.match(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})', line)
+                    if m:
+                        last_sent_group = m.group(1).strip()
+                    if ts:
+                        last_sent_time = ts.group(1)
+                    break
+            recent_errors = sum(1 for l in send_lines[-200:] if " - ERROR -" in l or " - WARNING - No permission" in l)
+        except Exception:
+            pass
+
     # ── Summary ────────────────────────────────────────────────────────────────
     logger.info("")
     logger.info("=" * 60)
     logger.info("  WATCHDOG SUMMARY")
     logger.info("=" * 60)
 
+    enabled_now = sum(1 for t in config.get('targets', []) if t.get('enabled', True))
+    total_now = len(config.get('targets', []))
+
+    logger.info(f"  📊 Targets         : {enabled_now}/{total_now} enabled")
+    logger.info(f"  📨 Last sent       : {last_sent_group} @ {last_sent_time}")
+    logger.info(f"  ⚠️  Recent errors   : {recent_errors} in last 200 log lines")
+    logger.info(f"  🔁 Send interval   : every 30 min")
+    logger.info(f"  🌱 Growth interval : every 4 hours")
+    logger.info("")
+
     if not issues_found and not fixes_applied:
-        logger.info("  ✅ Everything looks healthy — no action needed.")
+        logger.info("  ✅ HEALTH: Everything looks healthy — no action needed.")
+    elif fixes_applied and not [i for i in issues_found if "Could not reload" in i]:
+        logger.info(f"  ⚠️  HEALTH: Issues found and auto-fixed ({len(fixes_applied)} fix(es) applied).")
+        for fix in fixes_applied:
+            logger.info(f"       🔧 {fix}")
     else:
-        if issues_found:
-            logger.info(f"  ⚠️  Issues detected ({len(issues_found)}):")
-            for issue in issues_found:
-                logger.info(f"       • {issue}")
+        logger.info(f"  ❌ HEALTH: {len(issues_found)} issue(s) — manual attention may be needed.")
+        for issue in issues_found:
+            logger.info(f"       • {issue}")
         if fixes_applied:
-            logger.info(f"  🔧 Fixes applied ({len(fixes_applied)}):")
+            logger.info(f"  🔧 Partial fixes applied:")
             for fix in fixes_applied:
                 logger.info(f"       • {fix}")
 
-    logger.info("")
-    logger.info(f"  Enabled targets: {sum(1 for t in config.get('targets', []) if t.get('enabled', True))}/{len(config.get('targets', []))}")
-
     # Log file sizes (trim if too large)
+    logger.info("")
     for key, log_path in LOG_FILES.items():
         if log_path.exists():
             size_mb = log_path.stat().st_size / 1024 / 1024

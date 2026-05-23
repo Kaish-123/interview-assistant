@@ -27,15 +27,46 @@ SCRIPT_DIR = Path(__file__).parent
 CONFIG_FILE = SCRIPT_DIR / "config.json"
 LOG_FILE = SCRIPT_DIR / "cron_growth.log"
 
-# Search keywords
+# Search keywords — covers proxy/interview, IT jobs, cloud, data, USA work support
 SEARCH_KEYWORDS = [
-    "proxy interview", "interview proxy", "job support", "interview support",
-    "data engineer", "data analyst", "full stack developer", "python developer",
-    "java developer", "devops jobs", "IT jobs USA", "software developer",
-    "tech jobs", "fresher IT jobs", "IT placement", "developer jobs",
-    "aws jobs", "azure jobs", "cloud jobs", "remote developer",
-    "web developer", "backend developer", "frontend developer",
-    "IT recruitment", "coding jobs", "software jobs"
+    # Core business — proxy & interview support
+    "proxy interview", "interview proxy", "proxy job support", "interview support USA",
+    "proxy interview support", "proxy job USA", "interview coaching IT",
+    "remote interview support", "online interview proxy", "live interview support",
+
+    # Data & cloud roles
+    "data engineer", "data analyst", "data science jobs", "data engineering jobs",
+    "big data jobs", "cloud data engineer", "ETL developer", "SQL developer",
+    "database developer", "snowflake developer", "databricks jobs",
+    "machine learning jobs", "AI jobs", "MLOps jobs", "data warehouse jobs",
+
+    # Development roles
+    "full stack developer", "python developer", "java developer",
+    "nodejs developer", "react developer", "angular developer",
+    "backend developer", "frontend developer", "web developer",
+    "mobile developer", "flutter developer", "android developer",
+
+    # Cloud & DevOps
+    "aws jobs", "azure jobs", "cloud jobs", "devops jobs", "kubernetes jobs",
+    "cloud architect", "GCP jobs", "cloud engineer", "terraform jobs",
+    "site reliability engineer", "platform engineer",
+
+    # Salesforce & enterprise
+    "salesforce developer", "salesforce jobs", "salesforce proxy",
+    "SAP jobs", "ServiceNow jobs",
+
+    # IT general & fresher
+    "IT jobs USA", "software developer", "tech jobs", "fresher IT jobs",
+    "IT placement", "developer jobs", "IT recruitment", "coding jobs",
+    "software jobs", "software engineering", "tech interview", "coding interview",
+
+    # USA visa / international workers
+    "H1B jobs", "OPT jobs", "CPT jobs", "L1 visa jobs", "USA work permit IT",
+    "job support H1B", "IT job support", "work from home IT",
+
+    # Community & networking
+    "IT professionals group", "tech community", "developer community",
+    "software engineer group", "remote work IT", "freelance developer",
 ]
 
 # Setup logging
@@ -120,7 +151,7 @@ async def run_growth():
 
         # Search for groups
         found_groups = []
-        keywords = random.sample(SEARCH_KEYWORDS, min(8, len(SEARCH_KEYWORDS)))
+        keywords = random.sample(SEARCH_KEYWORDS, min(15, len(SEARCH_KEYWORDS)))
 
         for keyword in keywords:
             try:
@@ -152,7 +183,7 @@ async def run_growth():
 
         # Join top 3-5 groups
         joined = 0
-        max_joins = random.randint(3, 5)
+        max_joins = random.randint(5, 8)
 
         for group in found_groups[:max_joins]:
             try:

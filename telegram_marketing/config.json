@@ -154,7 +154,7 @@
     ],
     "schedule": {
         "enabled": true,
-        "interval_minutes": 60,
+        "interval_minutes": 30,
         "random_delay_minutes": 5,
         "active_hours": {
             "start": 0,

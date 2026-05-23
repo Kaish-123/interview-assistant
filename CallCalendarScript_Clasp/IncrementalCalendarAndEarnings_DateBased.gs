@@ -5,7 +5,7 @@
  *    New events → add row with blank E,F,G. Existing → update A–D, keep E,F,G. Deleted in calendar → remove row.
  * 2. Sort merged data by Start Time (date/time) ASC.
  * 3. Apply date-based earnings (KeywordMapping + Start Effective Date, exception clients, 10k/12.5k default)
- *    for rows in date range (2024-01-01 to 2026-05-04 end-of-day) and not Manual Update = Yes.
+ *    for rows in date range (2024-01-01 to 2028-12-31 end-of-day) and not Manual Update = Yes.
  * 4. One write to sheet; clear trailing rows if result is shorter.
  *
  * Use from trigger (e.g. Calendar – Changed) or run manually. No sheet clear; minimal reads/writes.
@@ -15,6 +15,9 @@ var EXCEPTION_CLIENT_PHRASES_IL = [
   'acme corp'
 ];
 var EXCEPTION_CLIENT_EARNINGS_IL = 10000;
+
+/** Last inclusive day for calendar sync + earnings (Dec 31, 2028 end-of-day, script TZ). Use end-of-day so last-day events are included. */
+var INCLUSIVE_LAST_DAY_IL = new Date(2028, 11, 31, 23, 59, 59, 999);
 
 function runIncrementalCalendarAndEarnings_DateBased() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -36,7 +39,8 @@ function runIncrementalCalendarAndEarnings_DateBased() {
 
   var calendar = CalendarApp.getDefaultCalendar();
   var calendarStart = new Date(2024, 0, 1);
-  var calendarEnd = new Date(2026, 4, 4);
+  // End-of-day for last inclusive date (midnight on that calendar day skips same-day timed events).
+  var calendarEnd = INCLUSIVE_LAST_DAY_IL;
   var events = calendar.getEvents(calendarStart, calendarEnd);
   if (!events || events.length === 0) return;
 
@@ -59,8 +63,7 @@ function runIncrementalCalendarAndEarnings_DateBased() {
 
   var keywordMap = buildKeywordMapWithEffectiveDate_(mappingSheet);
   var earningsStart = new Date(2024, 0, 1);
-  // End of day so events ON 3/10 and through calendar range get earnings (was midnight 3/10, which excluded 3/10 21:00 and 3/11+)
-  var earningsEnd = new Date(2026, 4, 4, 23, 59, 59, 999);
+  var earningsEnd = INCLUSIVE_LAST_DAY_IL;
 
   for (var r = 0; r < merged.length; r++) {
     var row = merged[r];

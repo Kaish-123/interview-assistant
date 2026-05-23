@@ -1,40 +1,55 @@
+# ── Secrets ───────────────────────────────────────────────────────────────────
 .env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
+*.env
+.env.*
 
-# Broadcast Marketing
+# ── Python generated ──────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+build/
+dist/
+*.egg-info/
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+venv/
+env/
+.venv/
+
+# ── macOS system files ─────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ── Audio / media (runtime recordings) ────────────────────────────────────────
+interviewer.wav
+*.wav
+*.mp3
+*.m4a
+
+# ── Runtime data (regenerated at runtime, not source) ─────────────────────────
+chats.json
+chats_v2.db
+ui_prefs.json
+
+# ── Temp / backup copies ───────────────────────────────────────────────────────
+*copy*.py
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+watchdog.log
+
+# ── Broadcast Marketing generated files ───────────────────────────────────────
 Broadcast_Marketing/sync_and_build.log
 Broadcast_Marketing/sync_launchd.log
 Broadcast_Marketing/sync_launchd_error.log
 Broadcast_Marketing/exported_contacts.txt
 Broadcast_Marketing/send_launchd.log
 Broadcast_Marketing/send_launchd_error.log
-.env
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/

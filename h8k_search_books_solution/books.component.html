@@ -1,0 +1,24 @@
+<div
+  class="layout-row wrap w-100 justify-content-center"
+  data-testid="book-list"
+>
+  <div
+    *ngFor="let book of books"
+    class="card layout-column w-20 ma-10 px-8"
+  >
+    <h5 class="my-2">Name: {{ book.book_name }}</h5>
+    <h5 class="my-2">Author: {{ book.author }}</h5>
+    <h5 class="my-2">Genre: {{ book.genre }}</h5>
+    <h5 class="my-2">
+      Rating: {{ book.rating }}
+      <span>⭐</span>
+    </h5>
+  </div>
+  <div
+    *ngIf="books.length === 0"
+    [ngStyle]="{ color: 'red' }"
+    data-testid="no-results"
+  >
+    No Results Found!
+  </div>
+</div>

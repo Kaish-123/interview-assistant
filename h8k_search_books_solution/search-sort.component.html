@@ -1,0 +1,27 @@
+<div class="w-100 layout-row justify-content-center align-items-end pa-20">
+  <input
+    class="large mt-10 w-50"
+    placeholder="Search for a book genre"
+    data-testid="search"
+    (input)="onSearchInput($event)"
+  />
+  <button
+    class="my-0 h-4 mr-0"
+    data-testid="sort-asc"
+    #sortButton
+    type="button"
+    (click)="sortAsc()"
+  >
+    Sort A to Z
+  </button>
+  <button
+    class="my-0 h-4"
+    data-testid="sort-desc"
+    #sortButton
+    type="button"
+    (click)="sortDesc()"
+  >
+    Sort Z to A
+  </button>
+</div>
+<app-books [books]="displayedBooks"></app-books>
