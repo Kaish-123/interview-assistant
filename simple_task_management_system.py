@@ -6,41 +6,32 @@ class SimpleTaskManagementSystem(ABC):
     `SimpleTaskManagementSystem` interface.
     """
 
-    def create_task(self, timestamp: int, task_id: str, description: str) -> bool:
-        """
-        Creates a new task with the specified `task_id` and
-        `description`.
-        Returns `True` if the task was created successfully, or
-        `False` if a task with the `task_id` already exists.
-        """
-        # default implementation
-        return False
+    def add_task(self, timestamp: int, name: str, priority: int) -> str:
+        return ""
 
-    def update_task(self, timestamp: int, task_id: str, new_description: str) -> bool:
-        """
-        Updates the description of the task with the specified
-        `task_id`.
-        Returns `True` if the task was updated successfully, or
-        `False` if the task does not exist.
-        """
-        # default implementation
+    def update_task(self, timestamp: int, task_id: str, name: str, priority: int) -> bool:
         return False
 
     def get_task(self, timestamp: int, task_id: str) -> str | None:
-        """
-        Retrieves the description of the task with the specified
-        `task_id`.
-        Returns the task description if it exists, or `None`
-        otherwise.
-        """
-        # default implementation
         return None
 
-    def delete_task(self, timestamp: int, task_id: str) -> bool:
-        """
-        Deletes the task with the specified `task_id`.
-        Returns `True` if the task was deleted successfully, or
-        `False` if the task does not exist.
-        """
-        # default implementation
+    def search_tasks(self, timestamp: int, name_filter: str, max_results: int) -> list[str]:
+        return []
+
+    def list_tasks_sorted(self, timestamp: int, limit: int) -> list[str]:
+        return []
+
+    def add_user(self, timestamp: int, user_id: str, quota: int) -> bool:
         return False
+
+    def assign_task(self, timestamp: int, task_id: str, user_id: str, finish_time: int) -> bool:
+        return False
+
+    def get_user_tasks(self, timestamp: int, user_id: str) -> list[str]:
+        return []
+
+    def complete_task(self, timestamp: int, task_id: str, user_id: str) -> bool:
+        return False
+
+    def get_overdue_assignments(self, timestamp: int, user_id: str) -> list[str]:
+        return []

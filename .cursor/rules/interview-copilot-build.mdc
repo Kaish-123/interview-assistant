@@ -1,0 +1,39 @@
+---
+description: Interview Copilot dual-mode rebuild — always follow the build flow
+alwaysApply: true
+---
+
+# Interview Copilot build rules
+
+When designing or implementing interview assistant / copilot work, treat these as source of truth:
+
+1. `INTERVIEW_COPILOT_BUILD_FLOW.md` — architecture, phases, milestones, Parakeet merge
+2. `PRODUCT_PRD_chatgpt_toggle_listener.md` — full feature inventory from the prototype
+
+## Product model
+
+- **One product, two modes:** Studio (full power UI from `chatgpt_toggle_listener.py`) + Live (Parakeet-class floating overlay).
+- Shared packages only: `audio`, `stt`, `llm`, `context`, `session`, `prompts`, `screen`, `notes`, `hotkeys`.
+- Use Protocols (`AudioSource`, `STTProvider`, `LLMProvider`, `SessionStore`, `PromptStore`). No new monolith.
+
+## How to implement
+
+- Work **one milestone at a time** (see build flow §7). Do not rebuild everything in one pass.
+- Keep `chatgpt_toggle_listener.py` as behavior reference until Studio parity is accepted.
+- Preserve persistence contracts: `tabs.json`, `chats.json` (AutoSave by **title**), `ui_prefs.json`, `setup_profiles.json`, `sessions/`.
+
+## Privacy stance
+
+- **OK:** exclude overlay from capture, hide Dock, opacity/click-through.
+- **Do not build:** Task Manager disguise, cursor spoofing, tab-switch deception, or “undetectable cheating” marketing.
+
+## Platform policy
+
+- **macOS is primary.** Ship Mac features fully first. Windows is an enhancement, never a Mac blocker.
+- On OS conflicts: implement Mac path; stub Windows behind `platform/windows/` adapters; track in Windows backlog (build flow §0).
+- OS-specific code only in thin adapters (audio cable, picker, capture-exclude, Dock/taskbar). Core packages stay OS-agnostic.
+- Hotkeys: Cmd on Mac; mirror with Ctrl on Windows when that adapter is built.
+
+## Defaults
+
+- macOS-first, OpenAI-first, local JSON, Python 3.11+, type hints, main-thread UI updates via `after`.

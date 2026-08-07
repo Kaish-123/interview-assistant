@@ -7,8 +7,8 @@
     
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/bin/python</string>
-        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_send_messages.py</string>
+        <string>/bin/bash</string>
+        <string>/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/run_send.sh</string>
     </array>
     
     <key>WorkingDirectory</key>

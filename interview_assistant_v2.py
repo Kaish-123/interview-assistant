@@ -416,7 +416,7 @@ _TEXT_EXTS = {
 _SKIP_EXTS = {
     '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.ico', '.webp',
     '.mp3', '.mp4', '.wav', '.avi', '.mov', '.mkv',
-    '.zip', '.tar', '.gz', '.7z', '.rar',
+    '.tar', '.gz', '.7z', '.rar',
     '.exe', '.dll', '.so', '.dylib', '.bin', '.o', '.class',
     '.pyc', '.pyo',
     '.DS_Store', '.db', '.sqlite',
@@ -467,6 +467,67 @@ def extract_text_from_file(file_path: str) -> str:
                 return text
         except Exception:
             pass
+
+    # ── DOC (legacy Word binary) ──────────────────────────────────────────
+    if ext == '.doc':
+        # Strategy 1: olefile — read the WordDocument OLE stream (best quality)
+        try:
+            import olefile as _olefile
+            ole = _olefile.OleFileIO(file_path)
+            if ole.exists('WordDocument'):
+                raw = ole.openstream('WordDocument').read()
+                # Decode as latin-1 and pull out printable text runs ≥ 4 chars
+                decoded = raw.decode('latin-1', errors='replace')
+                chunks = re.findall(r'[A-Za-z0-9 ,.\-:;\'"@#()/\n\t!?%&*+=<>[\]{}|~`^]{4,}', decoded)
+                text = '\n'.join(c.strip() for c in chunks if c.strip())
+                if len(text) > 100:
+                    return text
+        except Exception:
+            pass
+
+        # Strategy 2: LibreOffice headless convert-to-txt (works if installed)
+        try:
+            import subprocess, tempfile, shutil
+            lo_bin = None
+            for p in ['/Applications/LibreOffice.app/Contents/MacOS/soffice',
+                      '/usr/local/bin/soffice', shutil.which('soffice'),
+                      shutil.which('libreoffice')]:
+                if p and os.path.exists(p):
+                    lo_bin = p
+                    break
+            if lo_bin:
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    subprocess.run(
+                        [lo_bin, '--headless', '--convert-to', 'txt:Text',
+                         '--outdir', tmpdir, file_path],
+                        timeout=30, check=True,
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                    )
+                    txt_path = os.path.join(tmpdir, os.path.splitext(basename)[0] + '.txt')
+                    if os.path.exists(txt_path):
+                        with open(txt_path, 'r', encoding='utf-8', errors='replace') as f:
+                            text = f.read().strip()
+                        if text:
+                            return text
+        except Exception:
+            pass
+
+        # Strategy 3: raw binary UTF-16-LE scan (last resort)
+        try:
+            with open(file_path, 'rb') as f:
+                data = f.read()
+            decoded = data.decode('utf-16-le', errors='replace')
+            chunks = re.findall(r'[A-Za-z0-9 ,.\-:;@#()/\n\t]{10,}', decoded)
+            text = '\n'.join(chunks)
+            if len(text) > 100:
+                return text
+        except Exception:
+            pass
+
+        raise RuntimeError(
+            f"Could not read '{basename}'. "
+            "Try saving it as .docx in Microsoft Word and uploading again."
+        )
 
     # ── DOCX (Word) ───────────────────────────────────────────────────────
     if ext == '.docx':
@@ -524,6 +585,57 @@ def extract_text_from_file(file_path: str) -> str:
             return '\n'.join(lines)
         except Exception as e:
             raise RuntimeError(f"PPTX read failed for {basename}: {e}")
+
+    # ── ZIP archive — unzip and extract all readable files inside ────────
+    if ext == '.zip':
+        import zipfile, tempfile
+        results = []
+        skipped = []
+        try:
+            with zipfile.ZipFile(file_path, 'r') as zf:
+                members = [m for m in zf.infolist()
+                           if not m.filename.startswith('__MACOSX')
+                           and not os.path.basename(m.filename).startswith('.')
+                           and not m.is_dir()]
+                if not members:
+                    raise RuntimeError(f"ZIP '{basename}' is empty or contains only folders.")
+
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    zf.extractall(tmpdir)
+                    for member in members:
+                        inner_path = os.path.join(tmpdir, member.filename)
+                        inner_name = member.filename
+                        inner_ext  = os.path.splitext(inner_name)[1].lower()
+                        # Skip media / binary extensions inside the zip
+                        if inner_ext in (_SKIP_EXTS | {'.zip'}):
+                            skipped.append(inner_name)
+                            continue
+                        try:
+                            text = extract_text_from_file(inner_path)
+                            if text.strip():
+                                results.append(
+                                    f"{'='*60}\n"
+                                    f"FILE: {inner_name}\n"
+                                    f"{'='*60}\n"
+                                    f"{text.strip()}"
+                                )
+                        except Exception as inner_err:
+                            skipped.append(f"{inner_name} ({inner_err})")
+
+            if not results:
+                skipped_list = '\n  '.join(skipped) if skipped else 'none'
+                raise RuntimeError(
+                    f"ZIP '{basename}' had no readable text files.\n"
+                    f"Skipped: {skipped_list}"
+                )
+
+            header = f"[ZIP Archive: {basename} — {len(results)} file(s) extracted]\n\n"
+            if skipped:
+                header += f"[Skipped {len(skipped)} binary/unsupported file(s)]\n\n"
+            return header + '\n\n'.join(results)
+
+        except zipfile.BadZipFile:
+            raise RuntimeError(f"'{basename}' is not a valid ZIP file.")
 
     # ── Fallback: textract ────────────────────────────────────────────────
     try:
@@ -2067,7 +2179,37 @@ class ChatGPTAssistant:
                     lines   = code_content.split('\n')
                     max_len = max((len(l) for l in lines), default=40)
                     h = min(max(len(lines), 2), 30)          # 2-30 lines
-                    w = min(max(max_len + 4, 44), 100)       # 44-100 chars
+
+                    # ── Detect ASCII / box-drawing diagrams ───────────────
+                    _DIAG_RE = re.compile(
+                        r'[┌┐└┘├┤┬┴┼─│]'      # Unicode box chars
+                        r'|\+-+\+'              # +---+
+                        r'|<-+>?'              # <--- or <-->
+                        r'|-->'                # -->
+                        r'|={3,}'              # ===
+                    )
+                    _has_box = (
+                        '+--' in code_content or
+                        (code_content.count('|') >= 2 and
+                         ('-' in code_content or '+' in code_content))
+                    )
+                    is_diagram = bool(_DIAG_RE.search(code_content)) or _has_box
+
+                    # ── Pixel-accurate width for ALL blocks (code + diagrams)
+                    text_widget.update_idletasks()
+                    pix_w = text_widget.winfo_width()
+                    if pix_w < 100:
+                        pix_w = 580
+                    try:
+                        import tkinter.font as _tkfont
+                        _fobj = _tkfont.Font(font=code_font)
+                        char_px = _fobj.measure('M') or 8
+                    except Exception:
+                        char_px = 8
+                    _avail_px = max(200, pix_w - 60)
+                    w_chars   = max(44, _avail_px // char_px)
+                    # Fill the window width; cap only if content is shorter
+                    w = max(w_chars, min(max_len + 4, w_chars))
 
                     # Outer container
                     outer = tk.Frame(
@@ -2099,7 +2241,7 @@ class ChatGPTAssistant:
 
                     ct = tk.Text(
                         inner,
-                        wrap=tk.NONE,           # ← KEY: never wrap lines
+                        wrap=tk.NONE,           # never wrap — horizontal scroll handles overflow
                         font=code_font,
                         bg='#0d1117', fg='#e6edf3',
                         selectbackground='#264f78',

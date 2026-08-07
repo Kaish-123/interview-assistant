@@ -15,6 +15,10 @@ import random
 import logging
 import time
 import os
+import sys
+import shutil
+import sqlite3
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -92,33 +96,85 @@ def save_config(config):
 
 
 def clear_stale_journal(session_path):
-    """Remove stale SQLite journal file that causes 'database is locked' errors."""
+    """Remove or zero-out stale SQLite journal file to prevent 'database is locked' / disk I/O errors."""
     journal = Path(str(session_path) + ".session-journal")
-    if journal.exists():
+    if not journal.exists():
+        return
+    # Try delete first
+    try:
+        journal.unlink()
+        logger.info(f"Cleared stale journal: {journal.name}")
+        return
+    except Exception:
+        pass
+    # Delete failed (mounted FS restriction) — recover via /tmp then zero-out
+    try:
+        tmp_sess = "/tmp/_growth_session_recover.session"
+        tmp_jrnl = "/tmp/_growth_session_recover.session-journal"
+        shutil.copy2(str(session_path) + ".session", tmp_sess)
+        shutil.copy2(str(journal), tmp_jrnl)
+        conn = sqlite3.connect(tmp_sess)
+        conn.execute("PRAGMA integrity_check")
+        conn.commit()
+        conn.close()
+        shutil.copy2(tmp_sess, str(session_path) + ".session")
+        with open(str(journal), "wb") as f:
+            f.write(b"")
+        logger.info("Recovered growth session via /tmp and zeroed journal")
+    except Exception as e:
+        logger.warning(f"Journal recovery failed: {e}")
+
+
+def get_working_session_path(session_path):
+    """Copy session to /tmp to avoid disk I/O errors on mounted filesystems."""
+    src = Path(str(session_path) + ".session")
+    tmp_dir = Path(tempfile.mkdtemp(prefix="tg_growth_"))
+    tmp_sess = tmp_dir / "cron_growth_session"
+    try:
+        if src.exists():
+            shutil.copy2(str(src), str(tmp_sess) + ".session")
+        return tmp_sess, str(src), tmp_dir
+    except Exception as e:
+        logger.warning(f"Could not copy growth session to /tmp: {e}. Using original path.")
+        return session_path, None, None
+
+
+def writeback_session(tmp_sess, original_src, tmp_dir):
+    """Copy session back from /tmp to original location after use."""
+    if original_src is None:
+        return
+    try:
+        tmp_file = Path(str(tmp_sess) + ".session")
+        if tmp_file.exists():
+            shutil.copy2(str(tmp_file), original_src)
+            logger.info("Growth session written back to original location")
+    except Exception as e:
+        logger.warning(f"Could not write growth session back: {e}")
+    finally:
         try:
-            journal.unlink()
-            logger.info(f"Cleared stale journal: {journal.name}")
-        except Exception as e:
-            logger.warning(f"Could not clear journal: {e}")
+            shutil.rmtree(str(tmp_dir), ignore_errors=True)
+        except Exception:
+            pass
 
 
 async def connect_with_retry(session_path, api_id, api_hash, phone, max_retries=3):
-    """Connect to Telegram with retry on database-locked errors."""
+    """Connect to Telegram with retry on database-locked errors, using /tmp session."""
+    clear_stale_journal(session_path)
+    working_sess, original_src, tmp_dir = get_working_session_path(session_path)
     for attempt in range(max_retries):
         try:
-            clear_stale_journal(session_path)
-            client = TelegramClient(str(session_path), api_id, api_hash)
+            client = TelegramClient(str(working_sess), api_id, api_hash)
             await client.start(phone=phone)
-            return client
+            return client, working_sess, original_src, tmp_dir
         except Exception as e:
             err = str(e).lower()
-            if "database is locked" in err or "sqlite" in err:
+            if "database is locked" in err or "sqlite" in err or "disk i/o" in err:
                 wait = 30 * (attempt + 1)
-                logger.warning(f"DB locked on attempt {attempt+1}/{max_retries}, retrying in {wait}s...")
+                logger.warning(f"DB error on attempt {attempt+1}/{max_retries}, retrying in {wait}s...")
                 await asyncio.sleep(wait)
             else:
                 raise
-    raise RuntimeError("Could not acquire session after multiple retries (database locked)")
+    raise RuntimeError("Could not acquire session after multiple retries (database error)")
 
 
 async def run_growth():
@@ -131,9 +187,14 @@ async def run_growth():
     # ── STAGGER DELAY ──────────────────────────────────────────────────────────
     # Both launchd jobs fire at the same time when MacOS boots or jobs are loaded.
     # This delay ensures the send-messages job gets the DB first and we don't collide.
-    stagger = random.randint(90, 150)
-    logger.info(f"Startup stagger: waiting {stagger}s to avoid session collision with send job...")
-    await asyncio.sleep(stagger)
+    # Pass --no-stagger to skip this when running manually / from Cowork scheduler.
+    no_stagger = "--no-stagger" in sys.argv
+    if no_stagger:
+        logger.info("Stagger skipped (--no-stagger flag set)")
+    else:
+        stagger = random.randint(90, 150)
+        logger.info(f"Startup stagger: waiting {stagger}s to avoid session collision with send job...")
+        await asyncio.sleep(stagger)
     # ──────────────────────────────────────────────────────────────────────────
 
     config = load_config()
@@ -142,10 +203,18 @@ async def run_growth():
     existing = {t.get('username', '').lower() for t in config['targets']}
     logger.info(f"Current targets: {len(existing)}")
 
-    session_path = SCRIPT_DIR / "cron_growth_session"
+    # Use cron_session (same as send script) — it's kept fresh by the send job.
+    # The /tmp copy approach in connect_with_retry prevents concurrent-access conflicts.
+    session_path = SCRIPT_DIR / "cron_session"
+    client = None
+    working_sess = None
+    original_src = None
+    tmp_dir = None
 
     try:
-        client = await connect_with_retry(session_path, config['api_id'], config['api_hash'], config['phone_number'])
+        client, working_sess, original_src, tmp_dir = await connect_with_retry(
+            session_path, config['api_id'], config['api_hash'], config['phone_number']
+        )
         me = await client.get_me()
         logger.info(f"Connected as: {me.first_name}")
 
@@ -225,11 +294,13 @@ async def run_growth():
         logger.error(f"Fatal error: {e}")
         raise
     finally:
-        try:
-            await client.disconnect()
-            logger.info("Disconnected")
-        except Exception:
-            pass
+        if client is not None:
+            try:
+                await client.disconnect()
+                logger.info("Disconnected")
+            except Exception:
+                pass
+        writeback_session(working_sess, original_src, tmp_dir)
 
 
 if __name__ == "__main__":

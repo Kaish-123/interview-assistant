@@ -14,6 +14,10 @@ import asyncio
 import json
 import random
 import logging
+import shutil
+import sqlite3
+import tempfile
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -66,14 +70,68 @@ def save_fail_tracker(tracker):
 
 
 def clear_stale_journal(session_path):
-    """Remove stale SQLite journal file that causes 'database is locked' errors."""
+    """Remove or zero-out stale SQLite journal file to prevent 'database is locked' / disk I/O errors."""
     journal = Path(str(session_path) + ".session-journal")
-    if journal.exists():
+    if not journal.exists():
+        return
+    # Try delete first
+    try:
+        journal.unlink()
+        logger.info(f"Cleared stale journal: {journal.name}")
+        return
+    except Exception:
+        pass
+    # Delete failed (mounted FS restriction) — recover via /tmp then zero-out
+    try:
+        tmp_sess = "/tmp/_cron_session_recover.session"
+        tmp_jrnl = "/tmp/_cron_session_recover.session-journal"
+        shutil.copy2(str(session_path) + ".session", tmp_sess)
+        shutil.copy2(str(journal), tmp_jrnl)
+        conn = sqlite3.connect(tmp_sess)
+        conn.execute("PRAGMA integrity_check")
+        conn.commit()
+        conn.close()
+        # Journal consumed by SQLite in /tmp — copy recovered session back
+        shutil.copy2(tmp_sess, str(session_path) + ".session")
+        # Zero-out the original journal so SQLite ignores it
+        with open(str(journal), "wb") as f:
+            f.write(b"")
+        logger.info("Recovered session via /tmp and zeroed journal")
+    except Exception as e:
+        logger.warning(f"Journal recovery failed: {e}")
+
+
+def get_working_session_path(session_path):
+    """Copy session to /tmp to avoid disk I/O errors on mounted filesystems.
+    Returns (tmp_path, needs_writeback) where tmp_path is the path to use with TelegramClient."""
+    src = Path(str(session_path) + ".session")
+    tmp_dir = Path(tempfile.mkdtemp(prefix="tg_session_"))
+    tmp_sess = tmp_dir / "cron_session"
+    try:
+        if src.exists():
+            shutil.copy2(str(src), str(tmp_sess) + ".session")
+        return tmp_sess, str(src), tmp_dir
+    except Exception as e:
+        logger.warning(f"Could not copy session to /tmp: {e}. Using original path.")
+        return session_path, None, None
+
+
+def writeback_session(tmp_sess, original_src, tmp_dir):
+    """Copy session back from /tmp to original location after use."""
+    if original_src is None:
+        return
+    try:
+        tmp_file = Path(str(tmp_sess) + ".session")
+        if tmp_file.exists():
+            shutil.copy2(str(tmp_file), original_src)
+            logger.info("Session written back to original location")
+    except Exception as e:
+        logger.warning(f"Could not write session back: {e}")
+    finally:
         try:
-            journal.unlink()
-            logger.info(f"Cleared stale journal: {journal.name}")
-        except Exception as e:
-            logger.warning(f"Could not clear journal: {e}")
+            shutil.rmtree(str(tmp_dir), ignore_errors=True)
+        except Exception:
+            pass
 
 
 def is_permanent_error(error_str):
@@ -106,8 +164,11 @@ async def send_messages():
     session_path = SCRIPT_DIR / "cron_session"
     clear_stale_journal(session_path)
 
+    # Work from /tmp to avoid mounted-filesystem I/O errors
+    working_sess, original_src, tmp_dir = get_working_session_path(session_path)
+
     client = TelegramClient(
-        str(session_path),
+        str(working_sess),
         config['api_id'],
         config['api_hash']
     )
@@ -220,6 +281,7 @@ async def send_messages():
             logger.info("Disconnected")
         except Exception:
             pass
+        writeback_session(working_sess, original_src, tmp_dir)
 
 
 if __name__ == "__main__":

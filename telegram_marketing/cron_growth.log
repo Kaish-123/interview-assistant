@@ -37,3 +37,578 @@
 2025-12-11 02:58:51,755 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
 2025-12-11 02:58:51,757 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
 2025-12-11 02:58:51,762 - INFO - Disconnected
+2026-06-16 18:30:51,154 - INFO - ==================================================
+2026-06-16 18:30:51,155 - INFO - CRON JOB: Growth Started
+2026-06-16 18:30:51,155 - INFO - ==================================================
+2026-06-16 18:30:51,155 - INFO - Startup stagger: waiting 125s to avoid session collision with send job...
+2026-06-16 22:30:59,580 - INFO - ==================================================
+2026-06-16 22:30:59,581 - INFO - CRON JOB: Growth Started
+2026-06-16 22:30:59,582 - INFO - ==================================================
+2026-06-16 22:30:59,582 - INFO - Startup stagger: waiting 146s to avoid session collision with send job...
+2026-06-17 02:30:58,205 - INFO - ==================================================
+2026-06-17 02:30:58,206 - INFO - CRON JOB: Growth Started
+2026-06-17 02:30:58,206 - INFO - ==================================================
+2026-06-17 02:30:58,206 - INFO - Startup stagger: waiting 100s to avoid session collision with send job...
+2026-06-17 06:30:53,327 - INFO - ==================================================
+2026-06-17 06:30:53,328 - INFO - CRON JOB: Growth Started
+2026-06-17 06:30:53,328 - INFO - ==================================================
+2026-06-17 06:30:53,328 - INFO - Startup stagger: waiting 111s to avoid session collision with send job...
+2026-06-17 10:30:54,608 - INFO - ==================================================
+2026-06-17 10:30:54,609 - INFO - CRON JOB: Growth Started
+2026-06-17 10:30:54,609 - INFO - ==================================================
+2026-06-17 10:30:54,610 - INFO - Startup stagger: waiting 91s to avoid session collision with send job...
+2026-06-17 14:31:02,951 - INFO - ==================================================
+2026-06-17 14:31:02,951 - INFO - CRON JOB: Growth Started
+2026-06-17 14:31:02,952 - INFO - ==================================================
+2026-06-17 14:31:02,952 - INFO - Startup stagger: waiting 134s to avoid session collision with send job...
+2026-06-17 18:31:03,035 - INFO - ==================================================
+2026-06-17 18:31:03,036 - INFO - CRON JOB: Growth Started
+2026-06-17 18:31:03,036 - INFO - ==================================================
+2026-06-17 18:31:03,037 - INFO - Startup stagger: waiting 111s to avoid session collision with send job...
+2026-06-17 22:30:53,419 - INFO - ==================================================
+2026-06-17 22:30:53,420 - INFO - CRON JOB: Growth Started
+2026-06-17 22:30:53,420 - INFO - ==================================================
+2026-06-17 22:30:53,420 - INFO - Startup stagger: waiting 102s to avoid session collision with send job...
+2026-06-18 02:31:01,665 - INFO - ==================================================
+2026-06-18 02:31:01,665 - INFO - CRON JOB: Growth Started
+2026-06-18 02:31:01,666 - INFO - ==================================================
+2026-06-18 02:31:01,666 - INFO - Startup stagger: waiting 109s to avoid session collision with send job...
+2026-06-18 06:30:58,338 - INFO - ==================================================
+2026-06-18 06:30:58,338 - INFO - CRON JOB: Growth Started
+2026-06-18 06:30:58,339 - INFO - ==================================================
+2026-06-18 06:30:58,339 - INFO - Startup stagger: waiting 109s to avoid session collision with send job...
+2026-06-18 10:30:52,948 - INFO - ==================================================
+2026-06-18 10:30:52,949 - INFO - CRON JOB: Growth Started
+2026-06-18 10:30:52,949 - INFO - ==================================================
+2026-06-18 10:30:52,949 - INFO - Startup stagger: waiting 135s to avoid session collision with send job...
+2026-06-18 10:31:41,536 - INFO - ==================================================
+2026-06-18 10:31:41,536 - INFO - CRON JOB: Growth Started
+2026-06-18 10:31:41,536 - INFO - ==================================================
+2026-06-18 10:31:41,536 - INFO - Startup stagger: waiting 99s to avoid session collision with send job...
+2026-06-18 14:30:57,780 - INFO - ==================================================
+2026-06-18 14:30:57,781 - INFO - CRON JOB: Growth Started
+2026-06-18 14:30:57,781 - INFO - ==================================================
+2026-06-18 14:30:57,782 - INFO - Startup stagger: waiting 98s to avoid session collision with send job...
+2026-06-18 18:30:54,815 - INFO - ==================================================
+2026-06-18 18:30:54,816 - INFO - CRON JOB: Growth Started
+2026-06-18 18:30:54,816 - INFO - ==================================================
+2026-06-18 18:30:54,816 - INFO - Startup stagger: waiting 99s to avoid session collision with send job...
+2026-06-18 22:30:54,104 - INFO - ==================================================
+2026-06-18 22:30:54,105 - INFO - CRON JOB: Growth Started
+2026-06-18 22:30:54,105 - INFO - ==================================================
+2026-06-18 22:30:54,105 - INFO - Startup stagger: waiting 144s to avoid session collision with send job...
+2026-06-19 02:30:54,554 - INFO - ==================================================
+2026-06-19 02:30:54,554 - INFO - CRON JOB: Growth Started
+2026-06-19 02:30:54,554 - INFO - ==================================================
+2026-06-19 02:30:54,555 - INFO - Startup stagger: waiting 112s to avoid session collision with send job...
+2026-06-19 06:30:56,681 - INFO - ==================================================
+2026-06-19 06:30:56,682 - INFO - CRON JOB: Growth Started
+2026-06-19 06:30:56,683 - INFO - ==================================================
+2026-06-19 06:30:56,683 - INFO - Startup stagger: waiting 136s to avoid session collision with send job...
+2026-06-19 10:30:55,420 - INFO - ==================================================
+2026-06-19 10:30:55,420 - INFO - CRON JOB: Growth Started
+2026-06-19 10:30:55,421 - INFO - ==================================================
+2026-06-19 10:30:55,421 - INFO - Startup stagger: waiting 105s to avoid session collision with send job...
+2026-06-19 14:30:52,889 - INFO - ==================================================
+2026-06-19 14:30:52,890 - INFO - CRON JOB: Growth Started
+2026-06-19 14:30:52,891 - INFO - ==================================================
+2026-06-19 14:30:52,891 - INFO - Startup stagger: waiting 122s to avoid session collision with send job...
+2026-06-20 01:50:49,963 - INFO - ==================================================
+2026-06-20 01:50:49,964 - INFO - CRON JOB: Growth Started
+2026-06-20 01:50:49,965 - INFO - ==================================================
+2026-06-20 01:50:49,966 - INFO - Startup stagger: waiting 142s to avoid session collision with send job...
+2026-06-21 08:58:59,901 - INFO - ==================================================
+2026-06-21 08:58:59,908 - INFO - CRON JOB: Growth Started
+2026-06-21 08:58:59,908 - INFO - ==================================================
+2026-06-21 08:58:59,908 - INFO - Startup stagger: waiting 124s to avoid session collision with send job...
+2026-06-21 10:30:38,552 - INFO - ==================================================
+2026-06-21 10:30:38,553 - INFO - CRON JOB: Growth Started
+2026-06-21 10:30:38,553 - INFO - ==================================================
+2026-06-21 10:30:38,553 - INFO - Startup stagger: waiting 114s to avoid session collision with send job...
+2026-06-21 14:30:40,438 - INFO - ==================================================
+2026-06-21 14:30:40,439 - INFO - CRON JOB: Growth Started
+2026-06-21 14:30:40,439 - INFO - ==================================================
+2026-06-21 14:30:40,439 - INFO - Startup stagger: waiting 125s to avoid session collision with send job...
+2026-06-21 18:30:41,715 - INFO - ==================================================
+2026-06-21 18:30:41,716 - INFO - CRON JOB: Growth Started
+2026-06-21 18:30:41,717 - INFO - ==================================================
+2026-06-21 18:30:41,717 - INFO - Startup stagger: waiting 118s to avoid session collision with send job...
+2026-06-21 22:30:47,332 - INFO - ==================================================
+2026-06-21 22:30:47,333 - INFO - CRON JOB: Growth Started
+2026-06-21 22:30:47,333 - INFO - ==================================================
+2026-06-21 22:30:47,333 - INFO - Startup stagger: waiting 127s to avoid session collision with send job...
+2026-06-22 02:30:40,363 - INFO - ==================================================
+2026-06-22 02:30:40,364 - INFO - CRON JOB: Growth Started
+2026-06-22 02:30:40,364 - INFO - ==================================================
+2026-06-22 02:30:40,365 - INFO - Startup stagger: waiting 111s to avoid session collision with send job...
+2026-06-22 06:30:40,310 - INFO - ==================================================
+2026-06-22 06:30:40,311 - INFO - CRON JOB: Growth Started
+2026-06-22 06:30:40,311 - INFO - ==================================================
+2026-06-22 06:30:40,311 - INFO - Startup stagger: waiting 102s to avoid session collision with send job...
+2026-06-22 10:30:45,076 - INFO - ==================================================
+2026-06-22 10:30:45,076 - INFO - CRON JOB: Growth Started
+2026-06-22 10:30:45,077 - INFO - ==================================================
+2026-06-22 10:30:45,077 - INFO - Startup stagger: waiting 106s to avoid session collision with send job...
+2026-06-22 14:30:26,170 - INFO - ==================================================
+2026-06-22 14:30:26,170 - INFO - CRON JOB: Growth Started
+2026-06-22 14:30:26,171 - INFO - ==================================================
+2026-06-22 14:30:26,171 - INFO - Startup stagger: waiting 130s to avoid session collision with send job...
+2026-06-22 18:31:00,782 - INFO - ==================================================
+2026-06-22 18:31:00,783 - INFO - CRON JOB: Growth Started
+2026-06-22 18:31:00,783 - INFO - ==================================================
+2026-06-22 18:31:00,783 - INFO - Startup stagger: waiting 106s to avoid session collision with send job...
+2026-06-22 22:30:55,100 - INFO - ==================================================
+2026-06-22 22:30:55,101 - INFO - CRON JOB: Growth Started
+2026-06-22 22:30:55,101 - INFO - ==================================================
+2026-06-22 22:30:55,101 - INFO - Startup stagger: waiting 93s to avoid session collision with send job...
+2026-06-23 02:31:04,173 - INFO - ==================================================
+2026-06-23 02:31:04,174 - INFO - CRON JOB: Growth Started
+2026-06-23 02:31:04,174 - INFO - ==================================================
+2026-06-23 02:31:04,174 - INFO - Startup stagger: waiting 126s to avoid session collision with send job...
+2026-06-23 06:30:56,867 - INFO - ==================================================
+2026-06-23 06:30:56,868 - INFO - CRON JOB: Growth Started
+2026-06-23 06:30:56,868 - INFO - ==================================================
+2026-06-23 06:30:56,868 - INFO - Startup stagger: waiting 93s to avoid session collision with send job...
+2026-06-23 10:30:36,683 - INFO - ==================================================
+2026-06-23 10:30:36,683 - INFO - CRON JOB: Growth Started
+2026-06-23 10:30:36,684 - INFO - ==================================================
+2026-06-23 10:30:36,684 - INFO - Startup stagger: waiting 114s to avoid session collision with send job...
+2026-06-23 18:31:13,215 - INFO - ==================================================
+2026-06-23 18:31:13,216 - INFO - CRON JOB: Growth Started
+2026-06-23 18:31:13,216 - INFO - ==================================================
+2026-06-23 18:31:13,216 - INFO - Startup stagger: waiting 118s to avoid session collision with send job...
+2026-06-23 22:31:16,080 - INFO - ==================================================
+2026-06-23 22:31:16,081 - INFO - CRON JOB: Growth Started
+2026-06-23 22:31:16,081 - INFO - ==================================================
+2026-06-23 22:31:16,081 - INFO - Startup stagger: waiting 101s to avoid session collision with send job...
+2026-06-24 02:31:14,484 - INFO - ==================================================
+2026-06-24 02:31:14,484 - INFO - CRON JOB: Growth Started
+2026-06-24 02:31:14,485 - INFO - ==================================================
+2026-06-24 02:31:14,485 - INFO - Startup stagger: waiting 100s to avoid session collision with send job...
+2026-06-24 06:36:16,535 - INFO - ==================================================
+2026-06-24 06:36:16,536 - INFO - CRON JOB: Growth Started
+2026-06-24 06:36:16,536 - INFO - ==================================================
+2026-06-24 06:36:16,536 - INFO - Startup stagger: waiting 127s to avoid session collision with send job...
+2026-06-24 11:20:53,035 - INFO - ==================================================
+2026-06-24 11:20:53,035 - INFO - CRON JOB: Growth Started
+2026-06-24 11:20:53,035 - INFO - ==================================================
+2026-06-24 11:20:53,036 - INFO - Startup stagger: waiting 127s to avoid session collision with send job...
+2026-06-24 14:41:35,656 - INFO - ==================================================
+2026-06-24 14:41:35,657 - INFO - CRON JOB: Growth Started
+2026-06-24 14:41:35,658 - INFO - ==================================================
+2026-06-24 14:41:35,658 - INFO - Startup stagger: waiting 122s to avoid session collision with send job...
+2026-06-24 18:30:28,651 - INFO - ==================================================
+2026-06-24 18:30:28,652 - INFO - CRON JOB: Growth Started
+2026-06-24 18:30:28,652 - INFO - ==================================================
+2026-06-24 18:30:28,653 - INFO - Startup stagger: waiting 147s to avoid session collision with send job...
+2026-06-24 22:30:21,557 - INFO - ==================================================
+2026-06-24 22:30:21,558 - INFO - CRON JOB: Growth Started
+2026-06-24 22:30:21,558 - INFO - ==================================================
+2026-06-24 22:30:21,559 - INFO - Startup stagger: waiting 128s to avoid session collision with send job...
+2026-06-25 02:30:21,418 - INFO - ==================================================
+2026-06-25 02:30:21,418 - INFO - CRON JOB: Growth Started
+2026-06-25 02:30:21,419 - INFO - ==================================================
+2026-06-25 02:30:21,419 - INFO - Startup stagger: waiting 142s to avoid session collision with send job...
+2026-06-25 06:30:42,258 - INFO - ==================================================
+2026-06-25 06:30:42,258 - INFO - CRON JOB: Growth Started
+2026-06-25 06:30:42,259 - INFO - ==================================================
+2026-06-25 06:30:42,259 - INFO - Startup stagger: waiting 98s to avoid session collision with send job...
+2026-06-25 10:31:05,241 - INFO - ==================================================
+2026-06-25 10:31:05,242 - INFO - CRON JOB: Growth Started
+2026-06-25 10:31:05,242 - INFO - ==================================================
+2026-06-25 10:31:05,243 - INFO - Startup stagger: waiting 100s to avoid session collision with send job...
+2026-06-25 14:32:10,738 - INFO - ==================================================
+2026-06-25 14:32:10,739 - INFO - CRON JOB: Growth Started
+2026-06-25 14:32:10,740 - INFO - ==================================================
+2026-06-25 14:32:10,740 - INFO - Startup stagger: waiting 94s to avoid session collision with send job...
+2026-06-25 18:30:29,949 - INFO - ==================================================
+2026-06-25 18:30:29,950 - INFO - CRON JOB: Growth Started
+2026-06-25 18:30:29,951 - INFO - ==================================================
+2026-06-25 18:30:29,951 - INFO - Startup stagger: waiting 90s to avoid session collision with send job...
+2026-06-25 22:30:29,494 - INFO - ==================================================
+2026-06-25 22:30:29,495 - INFO - CRON JOB: Growth Started
+2026-06-25 22:30:29,495 - INFO - ==================================================
+2026-06-25 22:30:29,496 - INFO - Startup stagger: waiting 147s to avoid session collision with send job...
+2026-06-26 02:30:30,965 - INFO - ==================================================
+2026-06-26 02:30:30,966 - INFO - CRON JOB: Growth Started
+2026-06-26 02:30:30,966 - INFO - ==================================================
+2026-06-26 02:30:30,967 - INFO - Startup stagger: waiting 120s to avoid session collision with send job...
+2026-06-26 06:53:09,979 - INFO - ==================================================
+2026-06-26 06:53:09,980 - INFO - CRON JOB: Growth Started
+2026-06-26 06:53:09,980 - INFO - ==================================================
+2026-06-26 06:53:09,980 - INFO - Startup stagger: waiting 124s to avoid session collision with send job...
+2026-06-26 10:41:46,074 - INFO - ==================================================
+2026-06-26 10:41:46,075 - INFO - CRON JOB: Growth Started
+2026-06-26 10:41:46,075 - INFO - ==================================================
+2026-06-26 10:41:46,075 - INFO - Startup stagger: waiting 120s to avoid session collision with send job...
+2026-06-26 14:30:28,341 - INFO - ==================================================
+2026-06-26 14:30:28,342 - INFO - CRON JOB: Growth Started
+2026-06-26 14:30:28,342 - INFO - ==================================================
+2026-06-26 14:30:28,343 - INFO - Startup stagger: waiting 140s to avoid session collision with send job...
+2026-06-26 18:30:35,377 - INFO - ==================================================
+2026-06-26 18:30:35,378 - INFO - CRON JOB: Growth Started
+2026-06-26 18:30:35,379 - INFO - ==================================================
+2026-06-26 18:30:35,379 - INFO - Startup stagger: waiting 125s to avoid session collision with send job...
+2026-06-26 22:31:43,880 - INFO - ==================================================
+2026-06-26 22:31:43,880 - INFO - CRON JOB: Growth Started
+2026-06-26 22:31:43,881 - INFO - ==================================================
+2026-06-26 22:31:43,881 - INFO - Startup stagger: waiting 129s to avoid session collision with send job...
+2026-06-27 06:39:07,276 - INFO - ==================================================
+2026-06-27 06:39:07,277 - INFO - CRON JOB: Growth Started
+2026-06-27 06:39:07,277 - INFO - ==================================================
+2026-06-27 06:39:07,277 - INFO - Startup stagger: waiting 150s to avoid session collision with send job...
+2026-06-27 09:14:22,743 - INFO - ==================================================
+2026-06-27 09:14:22,743 - INFO - CRON JOB: Growth Started
+2026-06-27 09:14:22,744 - INFO - ==================================================
+2026-06-27 09:14:22,744 - INFO - Startup stagger: waiting 136s to avoid session collision with send job...
+2026-06-29 18:30:26,230 - INFO - ==================================================
+2026-06-29 18:30:26,230 - INFO - CRON JOB: Growth Started
+2026-06-29 18:30:26,231 - INFO - ==================================================
+2026-06-29 18:30:26,231 - INFO - Startup stagger: waiting 111s to avoid session collision with send job...
+env: ‘’: No such file or directory
+2026-06-30 02:35:06,725 - INFO - ==================================================
+2026-06-30 02:35:06,725 - INFO - ==================================================
+2026-06-30 02:35:06,726 - INFO - CRON JOB: Growth Started
+2026-06-30 02:35:06,726 - INFO - CRON JOB: Growth Started
+2026-06-30 02:35:06,726 - INFO - ==================================================
+2026-06-30 02:35:06,726 - INFO - ==================================================
+2026-06-30 02:35:06,726 - INFO - Stagger skipped (--no-stagger flag set)
+2026-06-30 02:35:06,726 - INFO - Stagger skipped (--no-stagger flag set)
+2026-06-30 02:35:06,727 - INFO - Current targets: 28
+2026-06-30 02:35:06,727 - INFO - Current targets: 28
+2026-06-30 02:35:06,734 - INFO - Recovered growth session via /tmp and zeroed journal
+2026-06-30 02:35:06,734 - INFO - Recovered growth session via /tmp and zeroed journal
+2026-06-30 02:35:06,735 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-06-30 02:35:06,735 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-06-30 02:35:06,736 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:06,736 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:07,745 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:07,745 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:08,760 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:08,760 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:09,769 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:09,769 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:10,784 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 02:35:10,784 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-06-30 10:35:27 - WARNING - Scheduled run: sandbox network cannot reach Telegram (OSError 101). Script must run on Mac. Computer-use access request timed out (user not present). Growth cycle skipped.
+2026-06-30 14:35:09 - WARNING - Scheduled run: computer-use access request timed out (user not present); script requires Mac Terminal to connect to Telegram. Growth cycle skipped.
+[run_growth.sh] Using Python: /Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/bin/python3
+[run_growth.sh] Using site-packages: /Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/lib/python3.10/site-packages
+2026-06-30 23:22:39,837 - INFO - ==================================================
+2026-06-30 23:22:39,837 - INFO - ==================================================
+2026-06-30 23:22:39,837 - INFO - CRON JOB: Growth Started
+2026-06-30 23:22:39,837 - INFO - CRON JOB: Growth Started
+2026-06-30 23:22:39,837 - INFO - ==================================================
+2026-06-30 23:22:39,837 - INFO - ==================================================
+2026-06-30 23:22:39,837 - INFO - Stagger skipped (--no-stagger flag set)
+2026-06-30 23:22:39,837 - INFO - Stagger skipped (--no-stagger flag set)
+2026-06-30 23:22:39,837 - INFO - Current targets: 28
+2026-06-30 23:22:39,837 - INFO - Current targets: 28
+2026-06-30 23:22:39,838 - INFO - Cleared stale journal: cron_session.session-journal
+2026-06-30 23:22:39,838 - INFO - Cleared stale journal: cron_session.session-journal
+2026-06-30 23:22:39,840 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-06-30 23:22:39,840 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-06-30 23:22:39,903 - INFO - Connection to 91.108.56.174:443/TcpFull complete!
+2026-06-30 23:22:39,903 - INFO - Connection to 91.108.56.174:443/TcpFull complete!
+2026-06-30 23:22:40,043 - ERROR - Fatal error: The authorization key (session file) was used under two different IP addresses simultaneously, and can no longer be used. Use the same session exclusively, or use different sessions (caused by InvokeWithLayerRequest(InitConnectionRequest(GetConfigRequest)))
+2026-06-30 23:22:40,043 - ERROR - Fatal error: The authorization key (session file) was used under two different IP addresses simultaneously, and can no longer be used. Use the same session exclusively, or use different sessions (caused by InvokeWithLayerRequest(InitConnectionRequest(GetConfigRequest)))
+Traceback (most recent call last):
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_growth.py", line 307, in <module>
+    asyncio.run(run_growth())
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/asyncio/base_events.py", line 646, in run_until_complete
+    return future.result()
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_growth.py", line 215, in run_growth
+    client, working_sess, original_src, tmp_dir = await connect_with_retry(
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/cron_growth.py", line 167, in connect_with_retry
+    await client.start(phone=phone)
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/lib/python3.10/site-packages/telethon/client/auth.py", line 135, in _start
+    await self.connect()
+  File "/Users/mohammadkaishmanihar/Downloads/chatgpt_gui_mac/telegram_marketing/venv/lib/python3.10/site-packages/telethon/client/telegrambaseclient.py", line 603, in connect
+    await self._sender.send(functions.InvokeWithLayerRequest(LAYER, req))
+telethon.errors.rpcerrorlist.AuthKeyDuplicatedError: The authorization key (session file) was used under two different IP addresses simultaneously, and can no longer be used. Use the same session exclusively, or use different sessions (caused by InvokeWithLayerRequest(InitConnectionRequest(GetConfigRequest)))
+2026-06-30 22:34:38 - SCHEDULED_TASK - ⚠️ Run aborted: computer-use approval timed out (no user present) + last run had AuthKeyDuplicatedError. Total targets: 28. Action required: session file may be corrupted from dual-IP use. Run manually to re-authenticate.
+2026-07-01 03:35:19,731 - INFO - ==================================================
+2026-07-01 03:35:19,732 - INFO - CRON JOB: Growth Started
+2026-07-01 03:35:19,732 - INFO - ==================================================
+2026-07-01 03:35:19,732 - INFO - Startup stagger: waiting 109s to avoid session collision with send job...
+2026-07-01 03:36:11,653 - INFO - ==================================================
+2026-07-01 03:36:11,654 - INFO - CRON JOB: Growth Started
+2026-07-01 03:36:11,654 - INFO - ==================================================
+2026-07-01 03:36:11,654 - INFO - Startup stagger: waiting 141s to avoid session collision with send job...
+2026-07-01 06:33:52 [scheduled-task] ⚠️ Automated run skipped — Terminal access approval timed out (no user present)
+2026-07-01 06:34:31 [scheduled-task] ⚠️ Cycle complete — Terminal access requires user presence. Session has AuthKeyDuplicatedError from 2026-06-30. Manual re-auth required before automated runs can succeed. Total targets: 28.
+2026-07-01 10:35:56,601 - INFO - ==================================================
+2026-07-01 10:35:56,601 - INFO - CRON JOB: Growth Started
+2026-07-01 10:35:56,601 - INFO - ==================================================
+2026-07-01 10:35:56,601 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-01 10:35:56,602 - INFO - Current targets: 28
+2026-07-01 10:35:56,604 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-01 10:35:56,605 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-01 10:35:57,609 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-01 10:35:58,619 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-01 10:35:59,630 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-01 10:36:00,634 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-01 10:36:01,646 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-01 10:36:02,660 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-01 10:36:14 [scheduled-task] ❌ Run failed — sandbox network cannot reach Telegram (OSError: Network is unreachable). Script requires Mac Terminal access which timed out (no user present). Total targets unchanged: 28. ACTION NEEDED: Open Terminal on the Mac and run: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1
+2026-07-01 14:57:10 [scheduled-task] ⚠️ Cycle skipped — computer-use request_access to Terminal timed out after 180s (no user present to approve the permission dialog). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either approve Terminal access when present, or manually run: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1
+2026-07-01 18:33:49 [scheduled-task] ⚠️ Cycle skipped — computer-use request_access to Terminal timed out after 180s (no user present to approve the permission dialog). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either approve Terminal access when present, or manually run: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1
+2026-07-01 22:33:39 [scheduled-task] ⚠️ Cycle skipped — computer-use request_access to Terminal timed out after 180s (no user present to approve the permission dialog). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either approve Terminal access when present, or manually run: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1
+2026-07-02 02:33:37 [scheduled-task] ⚠️ Cycle skipped — computer-use request_access to Terminal timed out after 180s (no user present to approve the permission dialog). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either approve Terminal access when present, or manually run: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1
+2026-07-02 18:37:00 [scheduled-task] ⚠️ Cycle skipped — computer-use request_access to Terminal timed out after 180s (no user present to approve the permission dialog). No script was launched this cycle. Total targets unchanged: 28. This is the 6th consecutive skipped cycle since 2026-07-01. ACTION NEEDED: user should either approve Terminal access when present, or manually run: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1
+2026-07-03 04:01:02 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 7+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-03 02:31:05 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-03 12:01:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 8+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-03 16:01:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 9+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-03 20:01:11 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 10+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-04 04:01:07 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 11+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-04 12:01:03 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 12+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings so future runs don't require live approval.
+2026-07-04 16:01:22 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 13+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings, or run it as a non-scheduled task while present so the approval dialog can be answered.
+2026-07-04 20:01:24 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 14+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access in its settings, or run it as a non-scheduled task while present so the approval dialog can be answered.
+2026-07-05 04:01:09 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 15+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access, or run it as a non-scheduled/live task while present so the approval dialog can be answered.
+2026-07-05 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 16+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access, or run it as a non-scheduled/live task while present so the approval dialog can be answered.
+2026-07-05 20:01:20 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 17+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), or reconfigure the scheduled task to pre-grant Terminal access, or run it as a non-scheduled/live task while present so the approval dialog can be answered.
+2026-07-06 00:xx [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). Total targets unchanged. This is now 18+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once, or add Terminal to the scheduled task's pre-granted app settings.
+2026-07-06 08:01:08 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 19+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+20th consecutive skip since 2026-07-01
+2026-07-06 12:30:03 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, and retry in the same turn is hard-blocked, not a timeout). No script was launched this cycle. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-06 20:06:17 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 21+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-07 00:01:18 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 22+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-07 08:01:20 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 23+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-07 12:01:24 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 24+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-07 16:01:21 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present). No script was launched this cycle. Total targets unchanged: 28. This is now 25+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-08 08:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked even on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 26+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-08 09:06:14,946 - INFO - ==================================================
+2026-07-08 09:06:14,946 - INFO - CRON JOB: Growth Started
+2026-07-08 09:06:14,947 - INFO - ==================================================
+2026-07-08 09:06:14,947 - INFO - Startup stagger: waiting 103s to avoid session collision with send job...
+2026-07-08 09:07:09,150 - INFO - ==================================================
+2026-07-08 09:07:09,150 - INFO - CRON JOB: Growth Started
+2026-07-08 09:07:09,151 - INFO - ==================================================
+2026-07-08 09:07:09,151 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-08 09:07:09,152 - INFO - Current targets: 28
+2026-07-08 09:07:09,158 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-08 09:07:09,158 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-08 09:07:10,162 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-08 09:07:11,174 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-08 09:07:12,186 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-08 09:07:13,199 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-08 09:07:14,206 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-08 09:07:15,219 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-08 12:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked even on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 27+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-08 16:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 28+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-08 20:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 29+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-09 00:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 30+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-09 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 31+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-09 09:06:11,154 - INFO - ==================================================
+2026-07-09 09:06:11,154 - INFO - CRON JOB: Growth Started
+2026-07-09 09:06:11,154 - INFO - ==================================================
+2026-07-09 09:06:11,154 - INFO - Startup stagger: waiting 102s to avoid session collision with send job...
+2026-07-09 09:06:59,441 - INFO - ==================================================
+2026-07-09 09:06:59,441 - INFO - CRON JOB: Growth Started
+2026-07-09 09:06:59,441 - INFO - ==================================================
+2026-07-09 09:06:59,442 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-09 09:06:59,442 - INFO - Current targets: 28
+2026-07-09 09:06:59,444 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-09 09:06:59,445 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-09 09:07:00,447 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-09 09:07:01,460 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-09 09:07:02,474 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-09 09:07:03,482 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-09 09:07:04,495 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-09 09:07:05,501 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-09 16:01 [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present, confirmed hard-blocked on retry in same turn). No script was launched this cycle. Total targets unchanged: 28. This is now 32+ consecutive skipped cycles since 2026-07-01. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-09 14:31 UTC [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed hard-blocked on retry in same turn, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-10 08:01 UTC [scheduled-task] ⚠️ Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed hard-blocked on retry in same turn, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-10 10:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-11 19:33 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-12 08:11 IST [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-12 15:57 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-12 18:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-13 04:01 IST [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-13 02:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-13 06:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-13 10:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-14 06:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-14 10:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-15 04:00 IST [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-15 02:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-15 06:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-15 14:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-15 18:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-16 04:00 IST [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-16 02:30 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-16 12:00 IST [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-16 16:00 IST [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: user should either run the script manually once (cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1), add Terminal to the scheduled task's pre-granted app settings, or run this task live (not scheduled) so the approval dialog can be answered.
+2026-07-16 18:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, same as all prior cycles since 2026-07-01, now 17+ consecutive failed cycles / 16 days). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: this scheduled task cannot work as configured — computer-use approval dialogs require a live user and can never be pre-authorized for unattended runs. User should either (a) run the script manually once via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) reconfigure this as a native macOS launchd/cron job instead of a Claude scheduled task (the .plist files already exist in this folder: com.techyera.telegram.growth.plist), or (c) run this task live/on-demand so the approval dialog can be answered in the moment.
+2026-07-17 02:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, now 18+ consecutive failed cycles / 16 days since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: this scheduled task cannot work as configured — computer-use approval dialogs require a live user and can never be pre-authorized for unattended runs. User should either (a) run the script manually once via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) reconfigure this as a native macOS launchd/cron job instead of a Claude scheduled task (the .plist files already exist in this folder: com.techyera.telegram.growth.plist), or (c) run this task live/on-demand so the approval dialog can be answered in the moment.
+2026-07-17 09:06:53,567 - INFO - ==================================================
+2026-07-17 09:06:53,567 - INFO - CRON JOB: Growth Started
+2026-07-17 09:06:53,567 - INFO - ==================================================
+2026-07-17 09:06:53,567 - INFO - Startup stagger: waiting 96s to avoid session collision with send job...
+2026-07-17 06:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via retry per protocol, now 19+ consecutive failed cycles / 16 days since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. NOTE: an earlier manual/live attempt at 2026-07-17 09:06 IST started ("CRON JOB: Growth Started" / "Startup stagger: waiting 96s") but the log shows no further output afterward and cron_growth_session.session was not updated — that run appears to have stalled or died silently and should be checked. ACTION NEEDED: this scheduled task cannot work as configured — computer-use approval dialogs require a live user and can never be pre-authorized for unattended runs. User should either (a) run the script manually once via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) reconfigure this as a native macOS launchd/cron job instead of a Claude scheduled task (the .plist files already exist in this folder: com.techyera.telegram.growth.plist), or (c) run this task live/on-demand so the approval dialog can be answered in the moment.
+2026-07-18 09:06:06,106 - INFO - ==================================================
+2026-07-18 09:06:06,107 - INFO - CRON JOB: Growth Started
+2026-07-18 09:06:06,108 - INFO - ==================================================
+2026-07-18 09:06:06,108 - INFO - Startup stagger: waiting 105s to avoid session collision with send job...
+2026-07-18 09:09:32,866 - INFO - ==================================================
+2026-07-18 09:09:32,866 - INFO - CRON JOB: Growth Started
+2026-07-18 09:09:32,867 - INFO - ==================================================
+2026-07-18 09:09:32,867 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-18 09:09:32,868 - INFO - Current targets: 28
+2026-07-18 09:09:32,871 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-18 09:09:32,871 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-18 09:09:33,874 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-18 09:09:34,886 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-18 09:09:35,898 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-18 09:09:36,906 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-18 09:09:37,916 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-18 09:09:38,919 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-18 14:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, now 20+ consecutive failed cycles / 17 days since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. Earlier same-day run (09:09 UTC, --no-stagger) also failed, but for a different reason: 'Network is unreachable' connecting to Telegram — that attempt ran inside the network-restricted sandbox rather than on the Mac. ACTION NEEDED: this scheduled task cannot work as configured — computer-use approval dialogs require a live user and can never be pre-authorized for unattended runs. User should either (a) run the script manually once via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) reconfigure this as a native macOS launchd/cron job instead of a Claude scheduled task (the .plist files already exist in this folder: com.techyera.telegram.growth.plist), or (c) run this task live/on-demand so the approval dialog can be answered in the moment.
+2026-07-18 22:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry per protocol, now 21+ consecutive failed cycles / 17 days since 2026-07-01). No script was launched this cycle. Total targets unchanged: 28. ACTION NEEDED: this scheduled task cannot work as configured — computer-use approval dialogs require a live user and can never be pre-authorized for unattended runs. User should either (a) run the script manually once via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) reconfigure this as a native macOS launchd/cron job instead of a Claude scheduled task (the .plist files already exist in this folder: com.techyera.telegram.growth.plist), or (c) run this task live/on-demand so the approval dialog can be answered in the moment.
+2026-07-19 02:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via two-attempt retry). No script was launched this cycle. Total targets unchanged: 28. This is now 22+ consecutive failed cycles / 18 days since 2026-07-01. ACTION NEEDED (unchanged): this scheduled task cannot succeed as configured because computer-use approval dialogs require a live user in the moment — they can never be pre-authorized for unattended runs. Recommend disabling/replacing this Claude scheduled task with a native macOS launchd job (com.techyera.telegram.growth.plist already exists in this folder) or running on-demand.
+2026-07-19 09:06:07,968 - INFO - ==================================================
+2026-07-19 09:06:07,969 - INFO - CRON JOB: Growth Started
+2026-07-19 09:06:07,969 - INFO - ==================================================
+2026-07-19 09:06:07,969 - INFO - Startup stagger: waiting 127s to avoid session collision with send job...
+2026-07-19 09:07:13,088 - INFO - ==================================================
+2026-07-19 09:07:13,089 - INFO - CRON JOB: Growth Started
+2026-07-19 09:07:13,089 - INFO - ==================================================
+2026-07-19 09:07:13,090 - INFO - Startup stagger: waiting 115s to avoid session collision with send job...
+2026-07-19 09:08:57,406 - INFO - ==================================================
+2026-07-19 09:08:57,406 - INFO - CRON JOB: Growth Started
+2026-07-19 09:08:57,407 - INFO - ==================================================
+2026-07-19 09:08:57,407 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-19 09:08:57,408 - INFO - Current targets: 28
+2026-07-19 09:08:57,411 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-19 09:08:57,412 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-19 09:08:58,415 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-19 09:08:59,422 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-19 09:09:00,431 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-19 09:09:01,444 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-19 09:09:02,453 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-19 09:09:03,464 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-20 09:05:37,551 - INFO - ==================================================
+2026-07-20 09:05:37,551 - INFO - CRON JOB: Growth Started
+2026-07-20 09:05:37,552 - INFO - ==================================================
+2026-07-20 09:05:37,552 - INFO - Startup stagger: waiting 141s to avoid session collision with send job...
+2026-07-20 09:06:36,074 - INFO - ==================================================
+2026-07-20 09:06:36,075 - INFO - CRON JOB: Growth Started
+2026-07-20 09:06:36,075 - INFO - ==================================================
+2026-07-20 09:06:36,075 - INFO - Startup stagger: waiting 113s to avoid session collision with send job...
+2026-07-21 22:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: 'can't be approved during a scheduled run'). No script was launched this cycle. Total targets unchanged: 28. This confirms the same limitation logged on 2026-07-18/19: computer-use approval dialogs require a live user and cannot be pre-authorized for unattended scheduled runs. ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) switch to native macOS launchd job (com.techyera.telegram.growth.plist exists in this folder), or (c) run this task live/on-demand so the approval dialog can be answered.
+2026-07-22 09:06:04,285 - INFO - ==================================================
+2026-07-22 09:06:04,285 - INFO - CRON JOB: Growth Started
+2026-07-22 09:06:04,286 - INFO - ==================================================
+2026-07-22 09:06:04,286 - INFO - Startup stagger: waiting 111s to avoid session collision with send job...
+2026-07-22 10:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18. ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) switch to native macOS launchd job (com.techyera.telegram.growth.plist exists in this folder), or (c) run this task live/on-demand so the approval dialog can be answered.
+2026-07-22 18:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18 (also seen 07-19, 07-21, 07-22). ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) switch to native macOS launchd job (com.techyera.telegram.growth.plist exists in this folder), or (c) run this task live/on-demand so the approval dialog can be answered.
+2026-07-22 22:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18 (also seen 07-19, 07-21, 07-22 x2). ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) switch to native macOS launchd job (com.techyera.telegram.growth.plist exists in this folder), or (c) run this task live/on-demand so the approval dialog can be answered.
+2026-07-23 02:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18 (also seen 07-19, 07-21, 07-22 x3). ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) switch to native macOS launchd job (com.techyera.telegram.growth.plist exists in this folder), or (c) run this task live/on-demand so the approval dialog can be answered.
+2026-07-23 09:05:41,804 - INFO - ==================================================
+2026-07-23 09:05:41,804 - INFO - CRON JOB: Growth Started
+2026-07-23 09:05:41,804 - INFO - ==================================================
+2026-07-23 09:05:41,805 - INFO - Startup stagger: waiting 119s to avoid session collision with send job...
+2026-07-23 09:06:29,006 - INFO - ==================================================
+2026-07-23 09:06:29,006 - INFO - CRON JOB: Growth Started
+2026-07-23 09:06:29,007 - INFO - ==================================================
+2026-07-23 09:06:29,007 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-23 09:06:29,008 - INFO - Current targets: 28
+2026-07-23 09:06:29,010 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-23 09:06:29,010 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-23 09:06:30,015 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-23 09:06:31,022 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-23 09:06:32,035 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-23 09:06:33,042 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-23 09:06:34,055 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-23 09:06:35,059 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-23 14:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18 (also seen 07-19, 07-21, 07-22 x4, 07-23). Note: an unattended attempt DID fire earlier today at 09:06 UTC (source unclear — not launchd, whose logs are stale since 2025-12-11) but failed with 'Network is unreachable' after 6 connection attempts, i.e. no network path to Telegram's servers from wherever it ran. ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) install/verify the native macOS launchd job (com.techyera.telegram.growth.plist exists but its logs haven't updated since 2025-12-11 — check 'launchctl list | grep techyera' on the Mac), or (c) run this task live/on-demand so the computer-use approval dialog can be answered.
+2026-07-24 [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18. ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) install/verify the native macOS launchd job (com.techyera.telegram.growth.plist — check 'launchctl list | grep techyera' on the Mac), or (c) run this task live/on-demand so the computer-use approval dialog can be answered.
+2026-07-23 22:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18 (also seen 07-19, 07-21, 07-22 x4, 07-23, 07-24). ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) install/verify the native macOS launchd job (com.techyera.telegram.growth.plist — check 'launchctl list | grep techyera' on the Mac), or (c) run this task live/on-demand so the computer-use approval dialog can be answered.
+2026-07-24 02:31 UTC [scheduled-task] Cycle skipped — computer-use access to Terminal cannot be approved during a scheduled run (no user present; confirmed via request_access, error: "can't be approved during a scheduled run"). No script was launched this cycle. Total targets unchanged: 28. Same limitation recurring since 2026-07-18 (also seen 07-19, 07-21, 07-22 x4, 07-23, 07-24 x2). ACTION NEEDED (unchanged): (a) run manually via Terminal: cd ~/Downloads/chatgpt_gui_mac/telegram_marketing && bash run_growth.sh --no-stagger >> cron_growth.log 2>&1, (b) install/verify the native macOS launchd job (com.techyera.telegram.growth.plist — check 'launchctl list | grep techyera' on the Mac), or (c) run this task live/on-demand so the computer-use approval dialog can be answered, or (d) add Terminal to the scheduled task's pre-approved app settings so it doesn't require live approval each cycle.
+2026-07-24 09:05:55,757 - INFO - ==================================================
+2026-07-24 09:05:55,758 - INFO - CRON JOB: Growth Started
+2026-07-24 09:05:55,758 - INFO - ==================================================
+2026-07-24 09:05:55,758 - INFO - Startup stagger: waiting 132s to avoid session collision with send job...
+2026-07-24 09:07:20,166 - INFO - ==================================================
+2026-07-24 09:07:20,166 - INFO - CRON JOB: Growth Started
+2026-07-24 09:07:20,167 - INFO - ==================================================
+2026-07-24 09:07:20,167 - INFO - Startup stagger: waiting 93s to avoid session collision with send job...
+2026-07-24 09:08:16,754 - INFO - ==================================================
+2026-07-24 09:08:16,754 - INFO - CRON JOB: Growth Started
+2026-07-24 09:08:16,754 - INFO - ==================================================
+2026-07-24 09:08:16,755 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-24 09:08:16,755 - INFO - Current targets: 28
+2026-07-24 09:08:16,758 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-24 09:08:16,759 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-24 09:08:17,767 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-24 09:08:18,780 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-24 09:08:19,791 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-24 09:08:20,803 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-24 09:08:21,815 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-24 09:08:22,831 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-25 09:05:50,483 - INFO - ==================================================
+2026-07-25 09:05:50,483 - INFO - CRON JOB: Growth Started
+2026-07-25 09:05:50,483 - INFO - ==================================================
+2026-07-25 09:05:50,484 - INFO - Startup stagger: waiting 121s to avoid session collision with send job...
+2026-07-25 09:06:57,316 - INFO - ==================================================
+2026-07-25 09:06:57,317 - INFO - CRON JOB: Growth Started
+2026-07-25 09:06:57,318 - INFO - ==================================================
+2026-07-25 09:06:57,318 - INFO - Startup stagger: waiting 126s to avoid session collision with send job...
+2026-07-25 09:08:03,928 - INFO - ==================================================
+2026-07-25 09:08:03,929 - INFO - CRON JOB: Growth Started
+2026-07-25 09:08:03,930 - INFO - ==================================================
+2026-07-25 09:08:03,930 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-25 09:08:03,931 - INFO - Current targets: 28
+2026-07-25 09:08:03,936 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-25 09:08:03,937 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-25 09:08:04,948 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-25 09:08:05,970 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-25 09:08:06,982 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-25 09:08:07,990 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-25 09:08:09,004 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-25 09:08:10,020 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-26 10:46:50,965 - INFO - ==================================================
+2026-07-26 10:46:50,966 - INFO - CRON JOB: Growth Started
+2026-07-26 10:46:50,966 - INFO - ==================================================
+2026-07-26 10:46:50,966 - INFO - Startup stagger: waiting 120s to avoid session collision with send job...
+2026-07-27 09:06:13,128 - INFO - ==================================================
+2026-07-27 09:06:13,129 - INFO - CRON JOB: Growth Started
+2026-07-27 09:06:13,129 - INFO - ==================================================
+2026-07-27 09:06:13,129 - INFO - Startup stagger: waiting 145s to avoid session collision with send job...
+2026-07-27 09:08:06,804 - INFO - ==================================================
+2026-07-27 09:08:06,805 - INFO - CRON JOB: Growth Started
+2026-07-27 09:08:06,805 - INFO - ==================================================
+2026-07-27 09:08:06,806 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-27 09:08:06,807 - INFO - Current targets: 28
+2026-07-27 09:08:06,819 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-27 09:08:06,821 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-27 09:08:07,824 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-27 09:08:08,830 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-27 09:08:09,844 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-27 09:08:10,859 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-27 09:08:11,873 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-27 09:08:12,879 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-07-28 09:06:01,907 - INFO - ==================================================
+2026-07-28 09:06:01,908 - INFO - CRON JOB: Growth Started
+2026-07-28 09:06:01,908 - INFO - ==================================================
+2026-07-28 09:06:01,908 - INFO - Startup stagger: waiting 141s to avoid session collision with send job...
+2026-07-29 19:37:35,773 - INFO - ==================================================
+2026-07-29 19:37:35,773 - INFO - CRON JOB: Growth Started
+2026-07-29 19:37:35,774 - INFO - ==================================================
+2026-07-29 19:37:35,774 - INFO - Stagger skipped (--no-stagger flag set)
+2026-07-29 19:37:35,774 - INFO - Current targets: 28
+2026-07-29 19:37:35,777 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-07-29 19:37:35,778 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-29 19:37:36,815 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-29 19:37:37,872 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-29 19:37:38,901 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-29 19:37:39,930 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-29 19:37:40,941 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-07-29 19:37:41,984 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-05 01:54:22,145 - INFO - ==================================================
+2026-08-05 01:54:22,146 - INFO - CRON JOB: Growth Started
+2026-08-05 01:54:22,146 - INFO - ==================================================
+2026-08-05 01:54:22,146 - INFO - Startup stagger: waiting 106s to avoid session collision with send job...
