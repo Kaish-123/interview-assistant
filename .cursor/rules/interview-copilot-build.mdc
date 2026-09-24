@@ -32,7 +32,9 @@ When designing or implementing interview assistant / copilot work, treat these a
 - **macOS is primary.** Ship Mac features fully first. Windows is an enhancement, never a Mac blocker.
 - On OS conflicts: implement Mac path; stub Windows behind `platform/windows/` adapters; track in Windows backlog (build flow §0).
 - OS-specific code only in thin adapters (audio cable, picker, capture-exclude, Dock/taskbar). Core packages stay OS-agnostic.
-- Hotkeys: Cmd on Mac; mirror with Ctrl on Windows when that adapter is built.
+- Apps and packages import `interview_copilot.platform.privacy` (and `platform.hotkeys`). Never import `platform.macos` / `platform.windows` from Studio, Live, or web code.
+- Native Live overlay: macOS **and** Windows. Linux uses browser float / PiP.
+- Hotkeys: Cmd on Mac; mirror with Ctrl on Windows in the same change. Do not ship Mac-only shortcuts without the Ctrl twin.
 
 ## Defaults
 

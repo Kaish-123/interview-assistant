@@ -64,9 +64,9 @@ When implementing any OS-sensitive feature on Mac, also add a checklist item:
 | W1 | Internal/system audio | Detect VB-Audio Virtual Cable / Voicemeeter; README setup |
 | W2 | Native multi file+folder picker | Win32 common dialog or tk + folder walk |
 | W3 | Monitor-under-mouse screenshot | EnumDisplayMonitors / equivalent |
-| W4 | Hotkey modifier map | Ctrl(+Shift) mirrors Cmd(+Shift) |
-| W5 | Exclude overlay from capture | `SetWindowDisplayAffinity` / WDA_EXCLUDEFROMCAPTURE |
-| W6 | Hide from taskbar | Tool window / WS_EX_TOOLWINDOW patterns |
+| W4 | Hotkey modifier map | Ctrl(+Shift) mirrors Cmd(+Shift) — **web overlay done** |
+| W5 | Exclude overlay from capture | `SetWindowDisplayAffinity` / WDA_EXCLUDEFROMCAPTURE — **web overlay done** |
+| W6 | Hide from taskbar | Tool window / WS_EX_TOOLWINDOW — **web overlay done** |
 | W7 | Packaging | PyInstaller / MSIX after Mac package works |
 | W8 | Permission UX | Mic/screen permission guidance for Windows |
 
@@ -199,8 +199,8 @@ Reference detail: `PRODUCT_PRD_chatgpt_toggle_listener.md`
 | PK9 | Language picker | 3 |
 | PK10 | Documents knowledge base (beyond resume) | 2–3 |
 | PK11 | Meeting auto-detect | 5 |
-| PK12 | Browser companion | 5 |
-| PK13 | Mobile web companion | 5 |
+| PK12 | Browser companion | 5 — **web app shipped** (`apps/web`) |
+| PK13 | Mobile web companion | 5 (responsive Live/Studio in `apps/web`; polish later) |
 | PK14 | Accounts / credits / billing | 5 |
 
 ### Privacy Mode — INCLUDE (honest)
@@ -287,25 +287,37 @@ Unified hotkeys, resilience, PyInstaller/brief, README (BlackHole + `.env`), cra
 
 Meeting detect, browser/mobile, multi-LLM, accounts/billing.
 
+**Web companion (brought forward):** `interview_copilot/apps/web` — FastAPI + SPA.
+
+- Studio + Live in browser (Parakeet-style overlay)
+- Same packages: LLM, STT, context, session, prompts
+- Browser mic + `getDisplayMedia` screen analyze (not BlackHole)
+- Persistence: same `data/*.json` + `sessions/`
+
+```bash
+python3 -m interview_copilot.apps.web   # http://127.0.0.1:8787
+```
+
 ---
 
 ## 7. Implementation order (milestones)
 
-| # | Milestone | Exit criteria |
-|---|-----------|---------------|
-| 1 | Config + logging | `.env` loads; settings typed |
-| 2 | Audio package | Record BlackHole/mic → WAV |
-| 3 | STT package | Whisper returns text with retries |
-| 4 | LLM package | Streaming answer + answer modes |
-| 5 | Context package | PDF/DOCX/TXT + image compress |
-| 6 | Session + prompts stores | JSON contracts compatible |
-| 7 | Studio UI shell | Chat + listen wired to packages |
-| 8 | Studio parity | Match prototype P0 features |
-| 9 | Live setup + overlay | Floating session works |
-| 10 | VAD auto-answer | Hands-free Q→A |
-| 11 | Screen + notes | Coding analyze + post-call notes |
-| 12 | Privacy Mode | Capture exclude + Dock hide |
-| 13 | Package + docs | Installable + README |
+| # | Milestone | Exit criteria | Status |
+|---|-----------|---------------|--------|
+| 1 | Config + logging | `.env` loads; settings typed | **Done** (2026-08-07) |
+| 2 | Audio package | Record BlackHole/mic → WAV | **Done** (2026-08-07) |
+| 3 | STT package | Whisper returns text with retries | **Done** (2026-08-07) |
+| 4 | LLM package | Streaming answer + answer modes | **Done** (2026-08-07) |
+| 5 | Context package | PDF/DOCX/TXT + image compress | **Done** (2026-08-07) |
+| 6 | Session + prompts stores | JSON contracts compatible | **Done** (2026-08-07) |
+| 7 | Studio UI shell | Chat + listen wired to packages | **Done** (2026-08-07) |
+| 8 | Studio parity | Match prototype P0 features | **Done** (2026-08-07) |
+| 9 | Live setup + overlay | Floating session works | Pending (desktop); **web Live done** |
+| 10 | VAD auto-answer | Hands-free Q→A | Pending (desktop); **web Auto loop done** |
+| 11 | Screen + notes | Coding analyze + post-call notes | Pending (desktop); **web done** |
+| 12 | Privacy Mode | Capture exclude + Dock hide | Pending (desktop); web dim overlay only |
+| 13 | Package + docs | Installable + README | Pending |
+| 14 | Web companion | Browser Studio + Live on packages | **Done** (2026-08-07) |
 
 Working method with GenAI/agent:
 
@@ -358,14 +370,21 @@ Privacy Mode = capture exclude + Dock hide only — no Task Manager disguise,
 cursor spoofing, or tab-switch deception.
 Preserve flows A–F and Live flows L1–L6. Keep persistence contracts compatible.
 Reference PRODUCT_PRD_chatgpt_toggle_listener.md for feature IDs and acceptance.
-On OS-specific work: Mac path first; stub Windows and list under Windows backlog (§0).
+On OS-specific work: Mac path first; implement the matching Windows adapter in `platform/windows/` and call it only through `platform.privacy` / `platform.hotkeys`.
 ```
 
 ---
 
 ## 11. Change log
 
-| Date | Change |
-|------|--------|
+| 2026-08-26 | Web overlay on Windows: WDA_EXCLUDEFROMCAPTURE, taskbar tool window, Ctrl hotkeys; `platform.privacy` facade |
 | 2026-08-07 | Initial build flow: dual-mode, phases, Parakeet merge, privacy stance |
 | 2026-08-07 | §0 Platform policy: Mac-first priority; Windows adapters + enhancement backlog |
+| 2026-08-07 | Phase 1 Milestone 1 done: `shared/config`, `shared/logging`, `env.example`, tests |
+| 2026-08-07 | Phase 1 Milestone 2 done: `packages/audio` (devices, recorder, wav, level) + Windows backlog stub |
+| 2026-08-07 | Phase 1 Milestone 3 done: `packages/stt` OpenAI Whisper + retries; AssistantEngine delegates |
+| 2026-08-07 | Phase 1 Milestone 4 done: `packages/llm` streaming + answer modes + MessageStore |
+| 2026-08-07 | Phase 1 Milestone 5 done: `packages/context` extract + folder + image compress |
+| 2026-08-07 | Phase 1 Milestone 6 done: `packages/session` + `packages/prompts` JSON contracts |
+| 2026-08-07 | Phase 1 Milestone 7 done: Studio UI shell (`apps/studio`) wired to packages |
+| 2026-08-07 | Phase 1 Milestone 8 done: Studio P0 parity (sidebar, bookmarks, hotkeys, Fast/Full) |

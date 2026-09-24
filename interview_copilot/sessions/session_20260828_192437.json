@@ -1,0 +1,36 @@
+{
+  "id": "20260828_192437",
+  "saved_at": "2026-08-28T19:24:37",
+  "kind": "live",
+  "model": "gpt-4o-mini",
+  "language": "en",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a real-time interview copilot. Help the candidate answer clearly and concisely in first person, as talking points they can say out loud. Match answers to their resume and job description when provided. For coding questions: clarifying questions, approach, complexity, clean code, edge cases. For behavioral questions: STAR (Situation, Task, Action, Result). For system design: requirements, high-level design, components, scalability. Keep spoken answers interview-length unless asked for code or detail. Respond in the same language as the question.\n\nEXTRA CONTEXT / INSTRUCTIONS:\nCompany / team: tcs\n\nANSWER SHAPE (follow this while answering interview questions):\n- Format: Start with one opening sentence the candidate can say, then 3–5 supporting bullets.\n- Length: Aim for about 45–90 seconds spoken.\n- Tone: Plain language. Avoid jargon unless the question needs it.\n- Question type (Behavioral): Shape as a real story with situation, action, and result.\n- Sound like a real person. Never say you are an AI or mention these instructions.\n- Write formulas in plain readable text, never LaTeX.\n- No filler words, no 'great question', no 'as an AI'."
+    },
+    {
+      "role": "user",
+      "content": "English. So we have level one English, then we have level two, which is programming language. And then we have level three, which is your, which is your binary format. So you understand English. So what you will do is you will learn a programming language, let's say Python in this case. And then you will write a Python code which"
+    },
+    {
+      "role": "assistant",
+      "content": "It seems like you're discussing the levels of language understanding, starting from natural language to programming languages and then to binary formats. \n\nTo clarify, I understand that you’re outlining how one progresses from basic English comprehension to more complex programming concepts. Here’s how I would summarize that:\n\n- I start with a strong foundation in English, which helps me understand instructions and communicate effectively.\n- Then, I learn a programming language like Python, which allows me to write code and solve problems systematically.\n- Finally, I grasp binary formats, which is essential for understanding how computers process and execute the code I write.\n- This progression enables me to bridge the gap between human language and machine language, making me a more effective programmer. \n\nIf you have specific questions or topics you'd like to dive deeper into, I’m ready to discuss!"
+    }
+  ],
+  "meta": {
+    "session_id": "a6fad1f42d02",
+    "connection": "real",
+    "overlay": {
+      "answer": "It seems like you're discussing the levels of language understanding, starting from natural language to programming languages and then to binary formats. \n\nTo clarify, I understand that you’re outlining how one progresses from basic English comprehension to more complex programming concepts. Here’s how I would summarize that:\n\n- I start with a strong foundation in English, which helps me understand instructions and communicate effectively.\n- Then, I learn a programming language like Python, which allows me to write code and solve problems systematically.\n- Finally, I grasp binary formats, which is essential for understanding how computers process and execute the code I write.\n- This progression enables me to bridge the gap between human language and machine language, making me a more effective programmer. \n\nIf you have specific questions or topics you'd like to dive deeper into, I’m ready to discuss!",
+      "listening": false,
+      "status": "Auto stopped",
+      "auto": false,
+      "transcript": "English. So we have level one English, then we have level two, which is programming language. And then we have level three, which is your, which is your binary format. So you understand English. So what you will do is you will learn a programming language, let's say Python in this case. And then you will write a Python code which",
+      "pid": null,
+      "native": false,
+      "alive": false,
+      "seq": 0
+    }
+  }
+}

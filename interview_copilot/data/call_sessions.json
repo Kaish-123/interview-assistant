@@ -1,0 +1,769 @@
+[
+  {
+    "id": "7c8390b759e6",
+    "kind": "interview",
+    "title": "Interview",
+    "company": "",
+    "description": "updated resume:\nresume:\n\n\nAREAS OF EXPERTISE\n**AREAS OF EXPERTISE**\n\n• Full Stack Development, Python Development, Healthcare Application Development, Virtual Patient Rooms\n• AI/LLM Application Development, AI Agents, AI-Assisted Development, Generative AI Integration\n• API Development, EHR Integration, HL7/FHIR Interoperability, Real-Time Integrations\n• AI Architecture, LLM Workflows, Prompt Engineering, Retrieval-Based Applications\n• HIPAA Compliance, Secure Authentication, Microservices, Cloud Solutions\n• Dashboard Development, Data Analytics, Reporting, Agile Delivery\n\nTECHNICAL PROFICIENCIES\n**TECHNICAL PROFICIENCIES**\n\n• **Languages & Frameworks:** Python, Django, Flask, FastAPI, Node.js, Express.js, Angular, React.js, TypeScript, JavaScript\n\n• **AI & Generative AI:** LLM Integration, Generative AI, AI Agents, Prompt Engineering, Retrieval-Augmented Generation (RAG) Patterns, LLM Workflows, Azure OpenAI, LangChain, LangGraph, OpenAI APIs, AI-Assisted Development Tools\n\n• **Databases:** SQL Server, PostgreSQL, MySQL, Oracle, DynamoDB, Azure SQL\n\n• **APIs & Integrations:** RESTful APIs, Zoom API, Cerner API, Meditech API, Webhooks, FHIR, HL7, API Orchestration, LLM/AI APIs\n\n• **Cloud Platforms:** AWS (EC2, Lambda, S3, RDS), Azure (App Service, Functions, Data Factory, Logic Apps, Azure OpenAI), GCP (App Engine, Cloud SQL, Dataflow)\n\n• **Containerization & Orchestration:** Docker, Kubernetes (EKS)\n\n• **Authentication & Security:** OAuth2.0, JWT, Azure AD/Entra ID, IAM, HIPAA-Compliant Security Practices\n\n• **Dashboards & Reporting:** Python Dash, Power BI, Tableau, Chart.js\n\n• **Messaging & Streaming:** Kafka, RabbitMQ, Redis, WebSockets\n\n• **Automation & DevOps:** Jenkins, Terraform, Azure DevOps, GitHub Actions, Git, CI/CD Pipelines\n\n• **Testing & API Tools:** PyTest, Selenium, Locust, Swagger, OpenAPI\n\n• **Data & ML:** Pandas, NumPy, Scikit-learn, MLflow, SageMaker, spaCy\n\nEDUCATION\nGandhi Institute of Technology\nand Management\nBachelor of Computer Science Engineering \nPROFILE\n**PROFILE**\n\nResults-driven Senior Python Full Stack Developer with 10+ years of experience designing and building scalable, secure, cloud-native applications across healthcare, financial services, and enterprise environments. Strong expertise in Python, FastAPI, Django, React, REST APIs, microservices, cloud platforms, and enterprise integrations, with extensive experience developing HIPAA-compliant healthcare solutions and real-time Virtual Patient Room platforms. Experienced in integrating modern AI/LLM capabilities into enterprise applications, including LLM-powered workflows, AI agents, prompt-driven services, retrieval-based patterns, and AI-assisted developer productivity tools. Proven ability to translate business requirements into scalable application and AI architectures, integrate third-party and cloud AI services, and rapidly adapt emerging AI technologies to existing enterprise platforms.\n\nPROFESSIONAL EXPERIENCE\nRaining Virtue | Full Stack Developer | 2025 - 2026\n• Designed and developed a Virtual Patient Room platform integrating \nMeditech clinical scheduling with Zoom video visits, enabling providers \nto manage virtual appointments and patients to securely join \nscheduled sessions.\n\n\n• Developed scalable backend APIs and microservices using Python, \nFastAPI, SQL Server, and REST to create and manage Zoom meetings, \nsynchronize appointment data, and power provider and patient \ndashboards.\n• Built React-based provider and patient dashboards with calendar \nviews, resource-group filtering, appointment status tracking, ad-hoc \nmeeting creation, host joining, and patient verification workflows.\n• Implemented automated Node.js scheduling jobs to create and \nsynchronize Zoom meetings while handling cancelled, no-show, \nrescheduled, and non-Zoom appointments between Meditech and the \nVPR Info DB.\n• Developed a FastAPI-based Zoom webhook consumer to process \nmeeting lifecycle events, validate webhook requests, update real-time \nmeeting statuses, and maintain synchronization with the SQL Server \nInfo DB.\n• Implemented secure authentication and authorization using Entra \nSSO, oauth2-proxy, service JWTs, and Meditech SAMB/SBHO facility\u0002based access controls while protecting sensitive patient and meeting \ninformation.\n• Containerized and deployed independently scalable backend, \nfrontend, scheduler, and webhook services using Docker, nginx, \nGunicorn/Uvicorn, and GitHub Actions, with structured logging, health \nchecks, error handling, and performance optimizations for reliable \nproduction operations.\n• Analyzed post-migration service performance and reported a 62.7% \nreduction in dropped-call incidents, decreasing reported incidents \nfrom 450 with Vonage to 168 with Zoom, demonstrating improved \nreliability and stability for patient–provider virtual visits\nPROFESSIONAL EXPERIENCE (CONTINUED)\nAscension Health | Lead Software Developer | 2023 – 2025 \n• Designed and deployed HIPAA-compliant Virtual Patient Rooms by replicating Cerner workflows and extending them with Zoom API \nintegrations, OAuth2.0/JWT authentication, and secure SQL Server storage for provider–patient links.\n• Developed scalable dashboards and microservices (Python, Node.js, React, FastAPI) to support patient intake, scheduling, and \nreal-time appointment link management across multiple hospital units.\n• Integrated Azure OpenAI and LLM-based capabilities into backend workflows to support intelligent information processing, summarization, and developer-facing automation while maintaining secure API boundaries and enterprise application controls.\n\n• Designed AI-assisted service patterns using Python/FastAPI and LangChain/LangGraph concepts to orchestrate LLM interactions, structured prompts, contextual data retrieval, and multi-step processing within existing microservice architectures.\n\n• Leveraged modern AI-assisted developer productivity tools for code generation, debugging, API documentation, test creation, refactoring, and technical analysis, accelerating development while maintaining established engineering, security, and code-review practices.\n• Evaluated and integrated Generative AI and LLM capabilities into healthcare application workflows, designing secure service architectures for contextual data processing while maintaining HIPAA and enterprise security requirements.\n\n• Developed proof-of-concept AI agent and LLM workflows using Python, Azure OpenAI, and LangChain to orchestrate API calls, retrieve application context, and generate structured responses for internal workflow automation.\n\n• Designed scalable AI integration patterns using REST APIs, microservices, event-driven processing, and cloud services, enabling LLM capabilities to be introduced into existing healthcare applications without disrupting core transactional workflows.\n\n• Integrated Zoom API webhooks and automation pipelines (Azure Logic Apps, Kafka, Redis) to manage meeting lifecycles, \nnotifications, and patient redirection into scheduled sessions.\n• Built interoperability with EHR systems by mapping HL7/FHIR data, integrating Cerner and Meditech APIs, and synchronizing \nencounter data to ensure accurate routing of patient–provider video visits.\n• Ensured compliance, reliability, and scalability through containerized deployments (Kubernetes/EKS), IAM/audit reviews, structured \nlogging (Splunk), and automated error-handling for session continuity.\nTexas Capital | Sr. Software Engineer | 2021 – 2023 \n• Developed secure, API-driven dashboards (Python, Node.js, Angular, React) with OAuth2.0, JWT, and IAM policies to support \ncompliance workflows and role-based access.\n• Integrated LLM-powered capabilities into enterprise application workflows using Python and cloud AI services, focusing on structured prompts, API orchestration, contextual data processing, and secure handling of business information.\n\n• Applied AI-assisted development tools throughout the software lifecycle for code analysis, unit-test generation, debugging, documentation, refactoring, and productivity improvements across Python and React-based applications.\n\n• Designed and optimized database schemas (SQL Server, PostgreSQL, GCP Cloud SQL) with tuned queries, caching (Redis), and \nstructured storage for secure link and workflow management.\n• Built scalable, cloud-based solutions by migrating dashboards to GCP App Engine, implementing reusable RESTful services, and \ndelivering automated CI/CD pipelines with Jenkins.\n• Created real-time reporting and monitoring dashboards (Tableau, Power BI) for compliance and audit teams, integrating high\u0002volume transaction data and risk metrics.\n• Ensured reliability and performance with automated pipelines, structured testing (PyTest, Locust), and reverse-engineered legacy \nworkflows into modern, modular services.\nDesIDEA Software Technologies | Python Full Stack Developer | 2018 – 2021 \n• Developed secure, high-volume backend APIs (Python, Flask, REST) with JWT and Azure AD authentication, supporting 10K+ daily \nclient transactions.\n• Engineered scalable ETL and data workflows (Azure Data Factory, Logic Apps, serverless functions) to automate ingestion, \ntransformation, and real-time processing of healthcare and financial datasets, improving latency by 40% and reducing manual work \nby 90%.\n• Designed and optimized relational data models (PostgreSQL, SQLAlchemy, Azure SQL) to ensure data integrity, normalized \nschemas, and accurate reporting for compliance systems.\n• Built interactive reporting dashboards (Power BI) with drill-downs and KPIs, cutting monthly reporting prep time by 50% and enabling \nleaders to analyze billing and transaction trends.\n• Improved system reliability and delivery by refactoring legacy modules, implementing structured logging/monitoring (Azure Monitor, \nApp Insights), and automating CI/CD pipelines in Azure DevOps, doubling release frequency.\nBizionic Technology | Software Developer | 2014 – 2018 \n• Developed and optimized backend services (Python, Django, Oracle SQL, stored procedures) to improve application performance \nand reduce server errors.\n• Built responsive, interactive front-end components (HTML, CSS, JavaScript, jQuery, AJAX) that increased client portal engagement \nby 15%.\n• Integrated third-party systems via SOAP web services and XML data feeds, ensuring interoperability with legacy and modern \nplatforms.\n• Contributed to cross-functional Agile teams, delivering features in sprints, writing unit tests (PyTest), and reducing post-release \ndefects by 20%.\n• Maintained collaborative codebases using Git and contributed to Java-based scheduling modules, gaining experience with multi\u0002threaded service design",
+    "posting_url": "",
+    "connection": "real",
+    "platform": "browser",
+    "language": "en",
+    "model": "gpt-4o-mini",
+    "auto_answer": false,
+    "save_transcript": true,
+    "answer_prefs": {
+      "format": "script_bullets",
+      "length": "balanced",
+      "tone": "simple",
+      "question_type": "behavioral",
+      "star": false,
+      "filler_words": false
+    },
+    "resume": "",
+    "instructions": "",
+    "documents": [],
+    "state": "ended",
+    "engine_id": "8a4712b6f1c5",
+    "created_at": "2026-08-28T20:34:54+00:00",
+    "started_at": "2026-08-28T20:34:56+00:00",
+    "ended_at": "2026-09-01T19:14:48+00:00",
+    "mock_index": 0,
+    "transcript": []
+  },
+  {
+    "id": "9f80f98543d7",
+    "kind": "interview",
+    "title": "Interview",
+    "company": "",
+    "description": "updated resume:\nresume:\n\n\nAREAS OF EXPERTISE\n**AREAS OF EXPERTISE**\n\n• Full Stack Development, Python Development, Healthcare Application Development, Virtual Patient Rooms\n• AI/LLM Application Development, AI Agents, AI-Assisted Development, Generative AI Integration\n• API Development, EHR Integration, HL7/FHIR Interoperability, Real-Time Integrations\n• AI Architecture, LLM Workflows, Prompt Engineering, Retrieval-Based Applications\n• HIPAA Compliance, Secure Authentication, Microservices, Cloud Solutions\n• Dashboard Development, Data Analytics, Reporting, Agile Delivery\n\nTECHNICAL PROFICIENCIES\n**TECHNICAL PROFICIENCIES**\n\n• **Languages & Frameworks:** Python, Django, Flask, FastAPI, Node.js, Express.js, Angular, React.js, TypeScript, JavaScript\n\n• **AI & Generative AI:** LLM Integration, Generative AI, AI Agents, Prompt Engineering, Retrieval-Augmented Generation (RAG) Patterns, LLM Workflows, Azure OpenAI, LangChain, LangGraph, OpenAI APIs, AI-Assisted Development Tools\n\n• **Databases:** SQL Server, PostgreSQL, MySQL, Oracle, DynamoDB, Azure SQL\n\n• **APIs & Integrations:** RESTful APIs, Zoom API, Cerner API, Meditech API, Webhooks, FHIR, HL7, API Orchestration, LLM/AI APIs\n\n• **Cloud Platforms:** AWS (EC2, Lambda, S3, RDS), Azure (App Service, Functions, Data Factory, Logic Apps, Azure OpenAI), GCP (App Engine, Cloud SQL, Dataflow)\n\n• **Containerization & Orchestration:** Docker, Kubernetes (EKS)\n\n• **Authentication & Security:** OAuth2.0, JWT, Azure AD/Entra ID, IAM, HIPAA-Compliant Security Practices\n\n• **Dashboards & Reporting:** Python Dash, Power BI, Tableau, Chart.js\n\n• **Messaging & Streaming:** Kafka, RabbitMQ, Redis, WebSockets\n\n• **Automation & DevOps:** Jenkins, Terraform, Azure DevOps, GitHub Actions, Git, CI/CD Pipelines\n\n• **Testing & API Tools:** PyTest, Selenium, Locust, Swagger, OpenAPI\n\n• **Data & ML:** Pandas, NumPy, Scikit-learn, MLflow, SageMaker, spaCy\n\nEDUCATION\nGandhi Institute of Technology\nand Management\nBachelor of Computer Science Engineering \nPROFILE\n**PROFILE**\n\nResults-driven Senior Python Full Stack Developer with 10+ years of experience designing and building scalable, secure, cloud-native applications across healthcare, financial services, and enterprise environments. Strong expertise in Python, FastAPI, Django, React, REST APIs, microservices, cloud platforms, and enterprise integrations, with extensive experience developing HIPAA-compliant healthcare solutions and real-time Virtual Patient Room platforms. Experienced in integrating modern AI/LLM capabilities into enterprise applications, including LLM-powered workflows, AI agents, prompt-driven services, retrieval-based patterns, and AI-assisted developer productivity tools. Proven ability to translate business requirements into scalable application and AI architectures, integrate third-party and cloud AI services, and rapidly adapt emerging AI technologies to existing enterprise platforms.\n\nPROFESSIONAL EXPERIENCE\nRaining Virtue | Full Stack Developer | 2025 - 2026\n• Designed and developed a Virtual Patient Room platform integrating \nMeditech clinical scheduling with Zoom video visits, enabling providers \nto manage virtual appointments and patients to securely join \nscheduled sessions.\n\n\n• Developed scalable backend APIs and microservices using Python, \nFastAPI, SQL Server, and REST to create and manage Zoom meetings, \nsynchronize appointment data, and power provider and patient \ndashboards.\n• Built React-based provider and patient dashboards with calendar \nviews, resource-group filtering, appointment status tracking, ad-hoc \nmeeting creation, host joining, and patient verification workflows.\n• Implemented automated Node.js scheduling jobs to create and \nsynchronize Zoom meetings while handling cancelled, no-show, \nrescheduled, and non-Zoom appointments between Meditech and the \nVPR Info DB.\n• Developed a FastAPI-based Zoom webhook consumer to process \nmeeting lifecycle events, validate webhook requests, update real-time \nmeeting statuses, and maintain synchronization with the SQL Server \nInfo DB.\n• Implemented secure authentication and authorization using Entra \nSSO, oauth2-proxy, service JWTs, and Meditech SAMB/SBHO facility\u0002based access controls while protecting sensitive patient and meeting \ninformation.\n• Containerized and deployed independently scalable backend, \nfrontend, scheduler, and webhook services using Docker, nginx, \nGunicorn/Uvicorn, and GitHub Actions, with structured logging, health \nchecks, error handling, and performance optimizations for reliable \nproduction operations.\n• Analyzed post-migration service performance and reported a 62.7% \nreduction in dropped-call incidents, decreasing reported incidents \nfrom 450 with Vonage to 168 with Zoom, demonstrating improved \nreliability and stability for patient–provider virtual visits\nPROFESSIONAL EXPERIENCE (CONTINUED)\nAscension Health | Lead Software Developer | 2023 – 2025 \n• Designed and deployed HIPAA-compliant Virtual Patient Rooms by replicating Cerner workflows and extending them with Zoom API \nintegrations, OAuth2.0/JWT authentication, and secure SQL Server storage for provider–patient links.\n• Developed scalable dashboards and microservices (Python, Node.js, React, FastAPI) to support patient intake, scheduling, and \nreal-time appointment link management across multiple hospital units.\n• Integrated Azure OpenAI and LLM-based capabilities into backend workflows to support intelligent information processing, summarization, and developer-facing automation while maintaining secure API boundaries and enterprise application controls.\n\n• Designed AI-assisted service patterns using Python/FastAPI and LangChain/LangGraph concepts to orchestrate LLM interactions, structured prompts, contextual data retrieval, and multi-step processing within existing microservice architectures.\n\n• Leveraged modern AI-assisted developer productivity tools for code generation, debugging, API documentation, test creation, refactoring, and technical analysis, accelerating development while maintaining established engineering, security, and code-review practices.\n• Evaluated and integrated Generative AI and LLM capabilities into healthcare application workflows, designing secure service architectures for contextual data processing while maintaining HIPAA and enterprise security requirements.\n\n• Developed proof-of-concept AI agent and LLM workflows using Python, Azure OpenAI, and LangChain to orchestrate API calls, retrieve application context, and generate structured responses for internal workflow automation.\n\n• Designed scalable AI integration patterns using REST APIs, microservices, event-driven processing, and cloud services, enabling LLM capabilities to be introduced into existing healthcare applications without disrupting core transactional workflows.\n\n• Integrated Zoom API webhooks and automation pipelines (Azure Logic Apps, Kafka, Redis) to manage meeting lifecycles, \nnotifications, and patient redirection into scheduled sessions.\n• Built interoperability with EHR systems by mapping HL7/FHIR data, integrating Cerner and Meditech APIs, and synchronizing \nencounter data to ensure accurate routing of patient–provider video visits.\n• Ensured compliance, reliability, and scalability through containerized deployments (Kubernetes/EKS), IAM/audit reviews, structured \nlogging (Splunk), and automated error-handling for session continuity.\nTexas Capital | Sr. Software Engineer | 2021 – 2023 \n• Developed secure, API-driven dashboards (Python, Node.js, Angular, React) with OAuth2.0, JWT, and IAM policies to support \ncompliance workflows and role-based access.\n• Integrated LLM-powered capabilities into enterprise application workflows using Python and cloud AI services, focusing on structured prompts, API orchestration, contextual data processing, and secure handling of business information.\n\n• Applied AI-assisted development tools throughout the software lifecycle for code analysis, unit-test generation, debugging, documentation, refactoring, and productivity improvements across Python and React-based applications.\n\n• Designed and optimized database schemas (SQL Server, PostgreSQL, GCP Cloud SQL) with tuned queries, caching (Redis), and \nstructured storage for secure link and workflow management.\n• Built scalable, cloud-based solutions by migrating dashboards to GCP App Engine, implementing reusable RESTful services, and \ndelivering automated CI/CD pipelines with Jenkins.\n• Created real-time reporting and monitoring dashboards (Tableau, Power BI) for compliance and audit teams, integrating high\u0002volume transaction data and risk metrics.\n• Ensured reliability and performance with automated pipelines, structured testing (PyTest, Locust), and reverse-engineered legacy \nworkflows into modern, modular services.\nDesIDEA Software Technologies | Python Full Stack Developer | 2018 – 2021 \n• Developed secure, high-volume backend APIs (Python, Flask, REST) with JWT and Azure AD authentication, supporting 10K+ daily \nclient transactions.\n• Engineered scalable ETL and data workflows (Azure Data Factory, Logic Apps, serverless functions) to automate ingestion, \ntransformation, and real-time processing of healthcare and financial datasets, improving latency by 40% and reducing manual work \nby 90%.\n• Designed and optimized relational data models (PostgreSQL, SQLAlchemy, Azure SQL) to ensure data integrity, normalized \nschemas, and accurate reporting for compliance systems.\n• Built interactive reporting dashboards (Power BI) with drill-downs and KPIs, cutting monthly reporting prep time by 50% and enabling \nleaders to analyze billing and transaction trends.\n• Improved system reliability and delivery by refactoring legacy modules, implementing structured logging/monitoring (Azure Monitor, \nApp Insights), and automating CI/CD pipelines in Azure DevOps, doubling release frequency.\nBizionic Technology | Software Developer | 2014 – 2018 \n• Developed and optimized backend services (Python, Django, Oracle SQL, stored procedures) to improve application performance \nand reduce server errors.\n• Built responsive, interactive front-end components (HTML, CSS, JavaScript, jQuery, AJAX) that increased client portal engagement \nby 15%.\n• Integrated third-party systems via SOAP web services and XML data feeds, ensuring interoperability with legacy and modern \nplatforms.\n• Contributed to cross-functional Agile teams, delivering features in sprints, writing unit tests (PyTest), and reducing post-release \ndefects by 20%.\n• Maintained collaborative codebases using Git and contributed to Java-based scheduling modules, gaining experience with multi\u0002threaded service design",
+    "posting_url": "",
+    "connection": "",
+    "platform": "",
+    "language": "en",
+    "model": "gpt-4o-mini",
+    "auto_answer": true,
+    "save_transcript": true,
+    "answer_prefs": {
+      "format": "script_bullets",
+      "length": "balanced",
+      "tone": "simple",
+      "question_type": "behavioral",
+      "star": false,
+      "filler_words": false
+    },
+    "resume": "",
+    "instructions": "",
+    "documents": [],
+    "state": "ready",
+    "engine_id": null,
+    "created_at": "2026-08-28T20:34:50+00:00",
+    "started_at": null,
+    "ended_at": null,
+    "mock_index": 0,
+    "transcript": []
+  },
+  {
+    "id": "c2d42e70f7f6",
+    "kind": "interview",
+    "title": "Interview",
+    "company": "",
+    "description": "updated resume:\nresume:\n\n\nAREAS OF EXPERTISE\n**AREAS OF EXPERTISE**\n\n• Full Stack Development, Python Development, Healthcare Application Development, Virtual Patient Rooms\n• AI/LLM Application Development, AI Agents, AI-Assisted Development, Generative AI Integration\n• API Development, EHR Integration, HL7/FHIR Interoperability, Real-Time Integrations\n• AI Architecture, LLM Workflows, Prompt Engineering, Retrieval-Based Applications\n• HIPAA Compliance, Secure Authentication, Microservices, Cloud Solutions\n• Dashboard Development, Data Analytics, Reporting, Agile Delivery\n\nTECHNICAL PROFICIENCIES\n**TECHNICAL PROFICIENCIES**\n\n• **Languages & Frameworks:** Python, Django, Flask, FastAPI, Node.js, Express.js, Angular, React.js, TypeScript, JavaScript\n\n• **AI & Generative AI:** LLM Integration, Generative AI, AI Agents, Prompt Engineering, Retrieval-Augmented Generation (RAG) Patterns, LLM Workflows, Azure OpenAI, LangChain, LangGraph, OpenAI APIs, AI-Assisted Development Tools\n\n• **Databases:** SQL Server, PostgreSQL, MySQL, Oracle, DynamoDB, Azure SQL\n\n• **APIs & Integrations:** RESTful APIs, Zoom API, Cerner API, Meditech API, Webhooks, FHIR, HL7, API Orchestration, LLM/AI APIs\n\n• **Cloud Platforms:** AWS (EC2, Lambda, S3, RDS), Azure (App Service, Functions, Data Factory, Logic Apps, Azure OpenAI), GCP (App Engine, Cloud SQL, Dataflow)\n\n• **Containerization & Orchestration:** Docker, Kubernetes (EKS)\n\n• **Authentication & Security:** OAuth2.0, JWT, Azure AD/Entra ID, IAM, HIPAA-Compliant Security Practices\n\n• **Dashboards & Reporting:** Python Dash, Power BI, Tableau, Chart.js\n\n• **Messaging & Streaming:** Kafka, RabbitMQ, Redis, WebSockets\n\n• **Automation & DevOps:** Jenkins, Terraform, Azure DevOps, GitHub Actions, Git, CI/CD Pipelines\n\n• **Testing & API Tools:** PyTest, Selenium, Locust, Swagger, OpenAPI\n\n• **Data & ML:** Pandas, NumPy, Scikit-learn, MLflow, SageMaker, spaCy\n\nEDUCATION\nGandhi Institute of Technology\nand Management\nBachelor of Computer Science Engineering \nPROFILE\n**PROFILE**\n\nResults-driven Senior Python Full Stack Developer with 10+ years of experience designing and building scalable, secure, cloud-native applications across healthcare, financial services, and enterprise environments. Strong expertise in Python, FastAPI, Django, React, REST APIs, microservices, cloud platforms, and enterprise integrations, with extensive experience developing HIPAA-compliant healthcare solutions and real-time Virtual Patient Room platforms. Experienced in integrating modern AI/LLM capabilities into enterprise applications, including LLM-powered workflows, AI agents, prompt-driven services, retrieval-based patterns, and AI-assisted developer productivity tools. Proven ability to translate business requirements into scalable application and AI architectures, integrate third-party and cloud AI services, and rapidly adapt emerging AI technologies to existing enterprise platforms.\n\nPROFESSIONAL EXPERIENCE\nRaining Virtue | Full Stack Developer | 2025 - 2026\n• Designed and developed a Virtual Patient Room platform integrating \nMeditech clinical scheduling with Zoom video visits, enabling providers \nto manage virtual appointments and patients to securely join \nscheduled sessions.\n\n\n• Developed scalable backend APIs and microservices using Python, \nFastAPI, SQL Server, and REST to create and manage Zoom meetings, \nsynchronize appointment data, and power provider and patient \ndashboards.\n• Built React-based provider and patient dashboards with calendar \nviews, resource-group filtering, appointment status tracking, ad-hoc \nmeeting creation, host joining, and patient verification workflows.\n• Implemented automated Node.js scheduling jobs to create and \nsynchronize Zoom meetings while handling cancelled, no-show, \nrescheduled, and non-Zoom appointments between Meditech and the \nVPR Info DB.\n• Developed a FastAPI-based Zoom webhook consumer to process \nmeeting lifecycle events, validate webhook requests, update real-time \nmeeting statuses, and maintain synchronization with the SQL Server \nInfo DB.\n• Implemented secure authentication and authorization using Entra \nSSO, oauth2-proxy, service JWTs, and Meditech SAMB/SBHO facility\u0002based access controls while protecting sensitive patient and meeting \ninformation.\n• Containerized and deployed independently scalable backend, \nfrontend, scheduler, and webhook services using Docker, nginx, \nGunicorn/Uvicorn, and GitHub Actions, with structured logging, health \nchecks, error handling, and performance optimizations for reliable \nproduction operations.\n• Analyzed post-migration service performance and reported a 62.7% \nreduction in dropped-call incidents, decreasing reported incidents \nfrom 450 with Vonage to 168 with Zoom, demonstrating improved \nreliability and stability for patient–provider virtual visits\nPROFESSIONAL EXPERIENCE (CONTINUED)\nAscension Health | Lead Software Developer | 2023 – 2025 \n• Designed and deployed HIPAA-compliant Virtual Patient Rooms by replicating Cerner workflows and extending them with Zoom API \nintegrations, OAuth2.0/JWT authentication, and secure SQL Server storage for provider–patient links.\n• Developed scalable dashboards and microservices (Python, Node.js, React, FastAPI) to support patient intake, scheduling, and \nreal-time appointment link management across multiple hospital units.\n• Integrated Azure OpenAI and LLM-based capabilities into backend workflows to support intelligent information processing, summarization, and developer-facing automation while maintaining secure API boundaries and enterprise application controls.\n\n• Designed AI-assisted service patterns using Python/FastAPI and LangChain/LangGraph concepts to orchestrate LLM interactions, structured prompts, contextual data retrieval, and multi-step processing within existing microservice architectures.\n\n• Leveraged modern AI-assisted developer productivity tools for code generation, debugging, API documentation, test creation, refactoring, and technical analysis, accelerating development while maintaining established engineering, security, and code-review practices.\n• Evaluated and integrated Generative AI and LLM capabilities into healthcare application workflows, designing secure service architectures for contextual data processing while maintaining HIPAA and enterprise security requirements.\n\n• Developed proof-of-concept AI agent and LLM workflows using Python, Azure OpenAI, and LangChain to orchestrate API calls, retrieve application context, and generate structured responses for internal workflow automation.\n\n• Designed scalable AI integration patterns using REST APIs, microservices, event-driven processing, and cloud services, enabling LLM capabilities to be introduced into existing healthcare applications without disrupting core transactional workflows.\n\n• Integrated Zoom API webhooks and automation pipelines (Azure Logic Apps, Kafka, Redis) to manage meeting lifecycles, \nnotifications, and patient redirection into scheduled sessions.\n• Built interoperability with EHR systems by mapping HL7/FHIR data, integrating Cerner and Meditech APIs, and synchronizing \nencounter data to ensure accurate routing of patient–provider video visits.\n• Ensured compliance, reliability, and scalability through containerized deployments (Kubernetes/EKS), IAM/audit reviews, structured \nlogging (Splunk), and automated error-handling for session continuity.\nTexas Capital | Sr. Software Engineer | 2021 – 2023 \n• Developed secure, API-driven dashboards (Python, Node.js, Angular, React) with OAuth2.0, JWT, and IAM policies to support \ncompliance workflows and role-based access.\n• Integrated LLM-powered capabilities into enterprise application workflows using Python and cloud AI services, focusing on structured prompts, API orchestration, contextual data processing, and secure handling of business information.\n\n• Applied AI-assisted development tools throughout the software lifecycle for code analysis, unit-test generation, debugging, documentation, refactoring, and productivity improvements across Python and React-based applications.\n\n• Designed and optimized database schemas (SQL Server, PostgreSQL, GCP Cloud SQL) with tuned queries, caching (Redis), and \nstructured storage for secure link and workflow management.\n• Built scalable, cloud-based solutions by migrating dashboards to GCP App Engine, implementing reusable RESTful services, and \ndelivering automated CI/CD pipelines with Jenkins.\n• Created real-time reporting and monitoring dashboards (Tableau, Power BI) for compliance and audit teams, integrating high\u0002volume transaction data and risk metrics.\n• Ensured reliability and performance with automated pipelines, structured testing (PyTest, Locust), and reverse-engineered legacy \nworkflows into modern, modular services.\nDesIDEA Software Technologies | Python Full Stack Developer | 2018 – 2021 \n• Developed secure, high-volume backend APIs (Python, Flask, REST) with JWT and Azure AD authentication, supporting 10K+ daily \nclient transactions.\n• Engineered scalable ETL and data workflows (Azure Data Factory, Logic Apps, serverless functions) to automate ingestion, \ntransformation, and real-time processing of healthcare and financial datasets, improving latency by 40% and reducing manual work \nby 90%.\n• Designed and optimized relational data models (PostgreSQL, SQLAlchemy, Azure SQL) to ensure data integrity, normalized \nschemas, and accurate reporting for compliance systems.\n• Built interactive reporting dashboards (Power BI) with drill-downs and KPIs, cutting monthly reporting prep time by 50% and enabling \nleaders to analyze billing and transaction trends.\n• Improved system reliability and delivery by refactoring legacy modules, implementing structured logging/monitoring (Azure Monitor, \nApp Insights), and automating CI/CD pipelines in Azure DevOps, doubling release frequency.\nBizionic Technology | Software Developer | 2014 – 2018 \n• Developed and optimized backend services (Python, Django, Oracle SQL, stored procedures) to improve application performance \nand reduce server errors.\n• Built responsive, interactive front-end components (HTML, CSS, JavaScript, jQuery, AJAX) that increased client portal engagement \nby 15%.\n• Integrated third-party systems via SOAP web services and XML data feeds, ensuring interoperability with legacy and modern \nplatforms.\n• Contributed to cross-functional Agile teams, delivering features in sprints, writing unit tests (PyTest), and reducing post-release \ndefects by 20%.\n• Maintained collaborative codebases using Git and contributed to Java-based scheduling modules, gaining experience with multi\u0002threaded service design",
+    "posting_url": "",
+    "connection": "real",
+    "platform": "browser",
+    "language": "en",
+    "model": "gpt-4o-mini",
+    "auto_answer": true,
+    "save_transcript": true,
+    "answer_prefs": {
+      "format": "script_bullets",
+      "length": "balanced",
+      "tone": "simple",
+      "question_type": "behavioral",
+      "star": false,
+      "filler_words": false
+    },
+    "resume": "",
+    "instructions": "",
+    "documents": [],
+    "state": "ended",
+    "engine_id": "580762b49253",
+    "created_at": "2026-08-28T20:34:09+00:00",
+    "started_at": "2026-08-28T20:34:12+00:00",
+    "ended_at": "2026-08-28T20:34:42+00:00",
+    "mock_index": 0,
+    "transcript": [
+      {
+        "role": "interviewer",
+        "text": "source of truth. So yeah, like we had built some backend services that would take appointment information and like, you know, create or synchronize the Zoom meeting, like appropriate Zoom meeting for that patient, and then that stored the relationship in our SQL server database, like all of this stuff. And we had FastAPI services, like we had the, we had FastAPI handling the APIs and like a separate web hook.",
+        "t": 27
+      },
+      {
+        "role": "interviewer",
+        "text": "source of truth. So yeah, like we had built some backend services that would take appointment information and like, you know, create or synchronize the Zoom meeting, like appropriate Zoom meeting for that patient, and then that stored the relationship in our SQL server database, like all of this stuff. And we had FastAPI services, like we had the, we had FastAPI handling the APIs and like a separate web hook.",
+        "t": 27
+      }
+    ]
+  },
+  {
+    "id": "e9d97ae2bcf0",
+    "kind": "interview",
+    "title": "a",
+    "company": "a",
+    "description": "",
+    "posting_url": "",
+    "connection": "real",
+    "platform": "browser",
+    "language": "en",
+    "model": "gpt-4o-mini",
+    "auto_answer": false,
+    "save_transcript": true,
+    "answer_prefs": {
+      "format": "script_bullets",
+      "length": "balanced",
+      "tone": "simple",
+      "question_type": "behavioral",
+      "star": false,
+      "filler_words": false
+    },
+    "resume": "",
+    "instructions": "",
+    "documents": [],
+    "state": "ended",
+    "engine_id": "1e77012af2fd",
+    "created_at": "2026-08-28T19:38:24+00:00",
+    "started_at": "2026-08-28T19:38:27+00:00",
+    "ended_at": "2026-08-28T20:10:57+00:00",
+    "mock_index": 0,
+    "transcript": []
+  },
+  {
+    "id": "02ec33f134b0",
+    "kind": "interview",
+    "title": "a",
+    "company": "a",
+    "description": "",
+    "posting_url": "",
+    "connection": "real",
+    "platform": "browser",
+    "language": "en",
+    "model": "gpt-4o-mini",
+    "auto_answer": false,
+    "save_transcript": true,
+    "answer_prefs": {
+      "format": "script_bullets",
+      "length": "balanced",
+      "tone": "professional",
+      "question_type": "behavioral",
+      "star": true,
+      "filler_words": true
+    },
+    "resume": "",
+    "instructions": "",
+    "documents": [],
+    "state": "ended",
+    "engine_id": "bd227fdf8127",
+    "created_at": "2026-08-28T17:04:06+00:00",
+    "started_at": "2026-08-28T17:04:10+00:00",
+    "ended_at": "2026-08-28T20:11:00+00:00",
+    "mock_index": 0,
+    "transcript": [
+      {
+        "role": "interviewer",
+        "text": "hi",
+        "t": 24
+      },
+      {
+        "role": "interviewer",
+        "text": "Cool. When you say multiple AWS accounts, do you do those for like just environments, like dev, staging, prod kind of thing, or do you do those as like each sort of service area gets its own AWS account so there's no resource contention?",
+        "t": 54
+      },
+      {
+        "role": "interviewer",
+        "text": "Cool. When you say multiple AWS accounts, do you do those for like just environments, like dev, staging, prod kind of thing, or do you do those as like each sort of service area gets its own AWS account so there's no resource contention?",
+        "t": 54
+      },
+      {
+        "role": "interviewer",
+        "text": "Let's see. OK, cool. Yeah, that's always, always fun doing org level management of lots of accounts. OK, cool. Well, like I said, I am your first interview. I am going to be sort of diving into the infrastructure aspect of your stuff. I think next up, you have Alex, and he's probably going to dive in.",
+        "t": 89
+      },
+      {
+        "role": "interviewer",
+        "text": "Let's see. OK, cool. Yeah, that's always, always fun doing org level management of lots of accounts. OK, cool. Well, like I said, I am your first interview. I am going to be sort of diving into the infrastructure aspect of your stuff. I think next up, you have Alex, and he's probably going to dive in.",
+        "t": 89
+      },
+      {
+        "role": "interviewer",
+        "text": "Application firewall or shield or anything like that on your public resources.",
+        "t": 392
+      },
+      {
+        "role": "interviewer",
+        "text": "Application firewall or shield or anything like that on your public resources.",
+        "t": 392
+      },
+      {
+        "role": "interviewer",
+        "text": "manages the cloud infrastructure and all of the policies related to it, and some of the, you know, shared services that have to be in place, like the WAF and...",
+        "t": 534
+      },
+      {
+        "role": "interviewer",
+        "text": "First point, well, I guess it's not really on the first point, but the description in your resume says automated infrastructure provisioning with Terraform and GitHub Actions. Did you, when you're talking Terraform, were you deploying, like this was managing like the EKS clusters and AWS resources, IAM roles, etc., or was it actually deploying stuff into Kubernetes?",
+        "t": 595
+      },
+      {
+        "role": "interviewer",
+        "text": "First point, well, I guess it's not really on the first point, but the description in your resume says automated infrastructure provisioning with Terraform and GitHub Actions. Did you, when you're talking Terraform, were you deploying, like this was managing like the EKS clusters and AWS resources, IAM roles, etc., or was it actually deploying stuff into Kubernetes?",
+        "t": 595
+      },
+      {
+        "role": "interviewer",
+        "text": "Yeah, so you mentioned that you, you know, installed Kafka with Helm. Yeah we used eks cluster and IAM roles and policies and networking like VPC and net even I have experience working with AWS cloud formation So Cloud formation was basically native the infrastruct",
+        "t": 627
+      },
+      {
+        "role": "interviewer",
+        "text": "That's pretty much the way we do it as well. We have Terraform that manages most of the infrastructure, and then anything that's deploying into Kubernetes is...",
+        "t": 731
+      },
+      {
+        "role": "interviewer",
+        "text": "All right, I'm gonna jump in here and tell you a little bit about our stack. So our stack is fairly basic. We are still very much a startup. We don't have a ton of resources. We have two AWS.",
+        "t": 784
+      },
+      {
+        "role": "interviewer",
+        "text": "services that are routed from public to internal. So the current infrastructure doesn't have, we don't have a corporatized implementation, there's no VPN to get into the cloud. We don't hardly ever log into any nodes or anything in the cloud other than like kubectl, and that is all maintained through IAM and engineers have access to, you know, do all of that stuff. So our EKS control plane is exposed publicly. We rely on AWS to make sure that stays secure. And then IAM roles sort of delegate everything in there. And if you need to actually get to a node for some reason, SSM is enabled on all the systems, so you can actually get to a command line if you need to on a particular node at any point, but we don't deploy with SSH keys or anything like that. So it's very simplified in terms of routing and what's available and how we do stuff. There are obvious challenges there in terms of like, if they need to get access to the database, like RDS databases, they have to basically proxy through a kubectl implementation at the moment because we don't have any sort of shared VPN. So I see a VPN solution on the horizon. It's just not there at the moment. Go ahead. No, you're good.",
+        "t": 956
+      },
+      {
+        "role": "interviewer",
+        "text": "services that are routed from public to internal. So the current infrastructure doesn't have, we don't have a corporatized implementation, there's no VPN to get into the cloud. We don't hardly ever log into any nodes or anything in the cloud other than like kubectl, and that is all maintained through IAM and engineers have access to, you know, do all of that stuff. So our EKS control plane is exposed publicly. We rely on AWS to make sure that stays secure. And then IAM roles sort of delegate everything in there. And if you need to actually get to a node for some reason, SSM is enabled on all the systems, so you can actually get to a command line if you need to on a particular node at any point, but we don't deploy with SSH keys or anything like that. So it's very simplified in terms of routing and what's available and how we do stuff. There are obvious challenges there in terms of like, if they need to get access to the database, like RDS databases, they have to basically proxy through a kubectl implementation at the moment because we don't have any sort of shared VPN. So I see a VPN solution on the horizon. It's just not there at the moment. Go ahead. No, you're good.",
+        "t": 956
+      },
+      {
+        "role": "interviewer",
+        "text": "Oh, no worries. I wasn't sure if it was you. I reconnected here, so.",
+        "t": 1142
+      },
+      {
+        "role": "interviewer",
+        "text": "Oh, no worries. I wasn't sure if it was you. I reconnected here, so.",
+        "t": 1142
+      },
+      {
+        "role": "interviewer",
+        "text": "Yeah, I think you're the mobile tethering is gonna be a little bit less. If you wanna turn the video off, that's fine by me. We don't have to do video at this point. Might save some bandwidth and make it easier.",
+        "t": 1159
+      },
+      {
+        "role": "interviewer",
+        "text": "Yeah, I think you're the mobile tethering is gonna be a little bit less. If you wanna turn the video off, that's fine by me. We don't have to do video at this point. Might save some bandwidth and make it easier.",
+        "t": 1159
+      },
+      {
+        "role": "interviewer",
+        "text": "to the AWS console. And we do do stuff in the AWS console. So there is absolutely configuration drift with Terraform, 100%. So that is definitely a problem that you're going to have to sort of have a challenge with because all of the other engineers are familiar with navigating around the console interface and making changes and keeping those in sync with Terraform. There's not, we had a Terraform pipeline at one point, and it basically broke and didn't get fixed. So it's basically tech debt that's sitting out there.",
+        "t": 1234
+      },
+      {
+        "role": "interviewer",
+        "text": "to the AWS console. And we do do stuff in the AWS console. So there is absolutely configuration drift with Terraform, 100%. So that is definitely a problem that you're going to have to sort of have a challenge with because all of the other engineers are familiar with navigating around the console interface and making changes and keeping those in sync with Terraform. There's not, we had a Terraform pipeline at one point, and it basically broke and didn't get fixed. So it's basically tech debt that's sitting out there.",
+        "t": 1234
+      },
+      {
+        "role": "interviewer",
+        "text": "Too much infrastructure. So thankfully, that's not like a huge heavy lift. And that's kind of why it's been backburnered for so long, is because there's just not like a huge volume of infrastructure. But that'll lead into the other thing. To do most of our Kubernetes stuff, at least at the infrastructure level, for all of the services like external DNS and cert manager and Argo and, you know, all of the core components that are installed as platform services, we do those all with GitOps. So those are all using a tool called Flux. I don't know if you're, I didn't see it on your resume, so you may not be familiar with it, but we use Flux for that implementation, and that basically manages everything that's installed in the cluster.",
+        "t": 1346
+      },
+      {
+        "role": "interviewer",
+        "text": "Too much infrastructure. So thankfully, that's not like a huge heavy lift. And that's kind of why it's been backburnered for so long, is because there's just not like a huge volume of infrastructure. But that'll lead into the other thing. To do most of our Kubernetes stuff, at least at the infrastructure level, for all of the services like external DNS and cert manager and Argo and, you know, all of the core components that are installed as platform services, we do those all with GitOps. So those are all using a tool called Flux. I don't know if you're, I didn't see it on your resume, so you may not be familiar with it, but we use Flux for that implementation, and that basically manages everything that's installed in the cluster.",
+        "t": 1346
+      },
+      {
+        "role": "interviewer",
+        "text": "Right now is the cybersec stuff. So we're in the process of going through the ISO certification, and that's a much bigger deal than SOC 2. We've been doing SOC 2 for years, but ISO is quite complicated. And again, this touches on the, you know, we're still very much a startup mentality kind of thing. We do probably 10 to 15 deploys to production a day. And we have automation that does all of that stuff, but it does it in a very loose fashion that is highlighted in some of the ISO stuff to be like, okay, this could be better kind of deal. So there's a lot of work to sort of clean up how we do that and the permissions around it and the validation and all of that sort of stuff. So that's kind of like my biggest area of challenge right now.",
+        "t": 1419
+      },
+      {
+        "role": "interviewer",
+        "text": "Right now is the cybersec stuff. So we're in the process of going through the ISO certification, and that's a much bigger deal than SOC 2. We've been doing SOC 2 for years, but ISO is quite complicated. And again, this touches on the, you know, we're still very much a startup mentality kind of thing. We do probably 10 to 15 deploys to production a day. And we have automation that does all of that stuff, but it does it in a very loose fashion that is highlighted in some of the ISO stuff to be like, okay, this could be better kind of deal. So there's a lot of work to sort of clean up how we do that and the permissions around it and the validation and all of that sort of stuff. So that's kind of like my biggest area of challenge right now.",
+        "t": 1419
+      },
+      {
+        "role": "interviewer",
+        "text": "Engineering lead, software lead. So it's usually him, myself, or infrastructure that are dealing with any sort of ISO coming from that team that's doing that certification. So, oh, you don't interview with Alex, you interview with Jesse next. OK, cool.",
+        "t": 1509
+      },
+      {
+        "role": "interviewer",
+        "text": "Engineering lead, software lead. So it's usually him, myself, or infrastructure that are dealing with any sort of ISO coming from that team that's doing that certification. So, oh, you don't interview with Alex, you interview with Jesse next. OK, cool.",
+        "t": 1509
+      },
+      {
+        "role": "interviewer",
+        "text": "To manage this, that has sort of been their mantra, by the way, is that if it's not a core competency, they tend to outsource it, which is why MongoDB is running in a SaaS platform.",
+        "t": 14
+      },
+      {
+        "role": "interviewer",
+        "text": "To manage this, that has sort of been their mantra, by the way, is that if it's not a core competency, they tend to outsource it, which is why MongoDB is running in a SaaS platform.",
+        "t": 14
+      },
+      {
+        "role": "interviewer",
+        "text": "I've tried to get it in the Kubernetes cluster because it's like there's an operator for it and it's super easy to do, but resource constraints.",
+        "t": 27
+      },
+      {
+        "role": "interviewer",
+        "text": "I've tried to get it in the Kubernetes cluster because it's like there's an operator for it and it's super easy to do, but resource constraints.",
+        "t": 27
+      },
+      {
+        "role": "interviewer",
+        "text": "So the engineering team owns everything, soup to nuts. So they're responsible for the code, they're...",
+        "t": 38
+      },
+      {
+        "role": "interviewer",
+        "text": "So the engineering team owns everything, soup to nuts. So they're responsible for the code, they're...",
+        "t": 38
+      },
+      {
+        "role": "interviewer",
+        "text": "Changing, we're hiring a lot more resources, so you might get to my...",
+        "t": 84
+      },
+      {
+        "role": "interviewer",
+        "text": "Changing, we're hiring a lot more resources, so you might get to my...",
+        "t": 84
+      },
+      {
+        "role": "interviewer",
+        "text": "Nice. That is an ongoing challenge with Datadog. Like, we like it, like it's an amazing product, but it can be expensive if you don't pay attention to the data that you put into it because they will...",
+        "t": 26
+      },
+      {
+        "role": "interviewer",
+        "text": "Nice. That is an ongoing challenge with Datadog. Like, we like it, like it's an amazing product, but it can be expensive if you don't pay attention to the data that you put into it because they will...",
+        "t": 26
+      },
+      {
+        "role": "interviewer",
+        "text": "So we have had to migrate off of it. We did use that Ingres, and now we're using direct API.",
+        "t": 186
+      },
+      {
+        "role": "interviewer",
+        "text": "So we have had to migrate off of it. We did use that Ingres, and now we're using direct API.",
+        "t": 186
+      },
+      {
+        "role": "interviewer",
+        "text": "Cartered guarded Carter guarded",
+        "t": 204
+      },
+      {
+        "role": "interviewer",
+        "text": "Cartered guarded Carter guarded",
+        "t": 204
+      },
+      {
+        "role": "interviewer",
+        "text": "Curious, let's just jump into the prompt here and then we can do some, yeah, we'll leave about five minutes at the end for some Q&A. So this is, yeah, so I'm a full stack engineer. Jay that you met with is kind of our infrastructure, or so I guess, like,",
+        "t": 38
+      },
+      {
+        "role": "interviewer",
+        "text": "Curious, let's just jump into the prompt here and then we can do some, yeah, we'll leave about five minutes at the end for some Q&A. So this is, yeah, so I'm a full stack engineer. Jay that you met with is kind of our infrastructure, or so I guess, like,",
+        "t": 38
+      },
+      {
+        "role": "interviewer",
+        "text": "some sort of whiteboarding tool if you like.",
+        "t": 53
+      },
+      {
+        "role": "interviewer",
+        "text": "some sort of whiteboarding tool if you like.",
+        "t": 53
+      },
+      {
+        "role": "interviewer",
+        "text": "And so everyone's kind of been generalists, and now we're kind of trying to kind of hire more specific roles.",
+        "t": 1812
+      },
+      {
+        "role": "interviewer",
+        "text": "And so everyone's kind of been generalists, and now we're kind of trying to kind of hire more specific roles.",
+        "t": 1812
+      },
+      {
+        "role": "interviewer",
+        "text": "Təhsil.",
+        "t": 4
+      },
+      {
+        "role": "interviewer",
+        "text": "Təhsil.",
+        "t": 4
+      },
+      {
+        "role": "interviewer",
+        "text": "a bit of everything, but now we're kind of being more...",
+        "t": 8
+      },
+      {
+        "role": "interviewer",
+        "text": "a bit of everything, but now we're kind of being more...",
+        "t": 8
+      },
+      {
+        "role": "interviewer",
+        "text": "a bit of everything, but now we're kind of being more...",
+        "t": 60
+      },
+      {
+        "role": "interviewer",
+        "text": "a bit of everything, but now we're kind of being more...",
+        "t": 60
+      },
+      {
+        "role": "interviewer",
+        "text": "one's autonomous coding agent that would call the professor.",
+        "t": 68
+      },
+      {
+        "role": "interviewer",
+        "text": "one's autonomous coding agent that would call the professor.",
+        "t": 68
+      },
+      {
+        "role": "interviewer",
+        "text": "And then we have this whole new kind of side of the business for our EDS. It's like...",
+        "t": 85
+      },
+      {
+        "role": "interviewer",
+        "text": "And then we have this whole new kind of side of the business for our EDS. It's like...",
+        "t": 85
+      },
+      {
+        "role": "interviewer",
+        "text": "I had, you know, really hard life science problems and then figuring out how to benchmark it.",
+        "t": 101
+      },
+      {
+        "role": "interviewer",
+        "text": "I had, you know, really hard life science problems and then figuring out how to benchmark it.",
+        "t": 101
+      },
+      {
+        "role": "interviewer",
+        "text": "I've been building dashboards and trying to automate, like, the exports and workflows, so that's been really fun, but...",
+        "t": 117
+      },
+      {
+        "role": "interviewer",
+        "text": "I've been building dashboards and trying to automate, like, the exports and workflows, so that's been really fun, but...",
+        "t": 117
+      },
+      {
+        "role": "interviewer",
+        "text": "I've been building dashboards and trying to automate, like, the exports and workflows, so that's been really fun, but...",
+        "t": 139
+      },
+      {
+        "role": "interviewer",
+        "text": "I've been building dashboards and trying to automate, like, the exports and workflows, so that's been really fun, but...",
+        "t": 139
+      },
+      {
+        "role": "interviewer",
+        "text": "That's, yeah, with a platform and generally.",
+        "t": 153
+      },
+      {
+        "role": "interviewer",
+        "text": "That's, yeah, with a platform and generally.",
+        "t": 153
+      },
+      {
+        "role": "interviewer",
+        "text": "Infrastructure for us to move quickly.",
+        "t": 5
+      },
+      {
+        "role": "interviewer",
+        "text": "Infrastructure for us to move quickly.",
+        "t": 5
+      },
+      {
+        "role": "interviewer",
+        "text": "Yeah, yeah, definitely. I think, I think there'll be some overlap, um, some opportunities for overlap for platform engineering to, yeah, work on development, like product, back-end stuff. Um, yeah, we're still a small team, so I think there may, there probably will be opportunities for that. Um.",
+        "t": 42
+      },
+      {
+        "role": "interviewer",
+        "text": "Yeah, yeah, definitely. I think, I think there'll be some overlap, um, some opportunities for overlap for platform engineering to, yeah, work on development, like product, back-end stuff. Um, yeah, we're still a small team, so I think there may, there probably will be opportunities for that. Um.",
+        "t": 42
+      },
+      {
+        "role": "interviewer",
+        "text": "I'm sorry.",
+        "t": 63
+      },
+      {
+        "role": "interviewer",
+        "text": "I'm sorry.",
+        "t": 63
+      },
+      {
+        "role": "interviewer",
+        "text": "You know, they kind of made it easy to onboard me, so things are going well so far.",
+        "t": 103
+      },
+      {
+        "role": "interviewer",
+        "text": "You know, they kind of made it easy to onboard me, so things are going well so far.",
+        "t": 103
+      },
+      {
+        "role": "interviewer",
+        "text": "And you met Jay, right? Met Jay. So he's been contracting doing this for us for years. And this is where we're getting to this point where we need a full-time person. And so, you know.",
+        "t": 19
+      },
+      {
+        "role": "interviewer",
+        "text": "And you met Jay, right? met Jay. So he's been contracting doing this for us for years. And this is where we're getting to this point where we need a full-time person. And so, you know, we're like, it's even more a jack-of-all-trades situation because, like, you know, we're really looking for somebody who can, you know, roll with the punches and kind of figure out what we need in a lot of ways, right? Because there's just, it's,",
+        "t": 34
+      },
+      {
+        "role": "interviewer",
+        "text": "And you met Jay, right? met Jay. So he's been contracting doing this for us for years. And this is where we're getting to this point where we need a full-time person. And so, you know, we're like, it's even more a jack-of-all-trades situation because, like, you know, we're really looking for somebody who can, you know, roll with the punches and kind of figure out what we need in a lot of ways, right? Because there's just, it's,",
+        "t": 38
+      },
+      {
+        "role": "interviewer",
+        "text": "Okay. Yep. Yeah, tell me about, like, what's, tell me about one piece of software you wrote, one project, and, like, give me an example of, like...",
+        "t": 160
+      },
+      {
+        "role": "interviewer",
+        "text": "Yeah, cool. There's like this, like, modules to kind of improve the workflows and, you know, and connections. It's cool. How has, like, AI coding tools, how?",
+        "t": 232
+      },
+      {
+        "role": "interviewer",
+        "text": "What's your workflow? Walk me through, like, what do you do when, like, what tools do you use and what is your personal workflow look like? Take one of these projects, for example, that you did and tell me like kind of how you...",
+        "t": 255
+      },
+      {
+        "role": "interviewer",
+        "text": "Have you ever made a skill? OK, like, give me an example of a skill you need.",
+        "t": 651
+      },
+      {
+        "role": "interviewer",
+        "text": "Have you ever made a skill? OK, like, give me an example of a skill you need.",
+        "t": 651
+      },
+      {
+        "role": "interviewer",
+        "text": "but also just the engineering team in general. And it's expanding. I mean, we're, there's a lot of growth happening in the company right now, so like, we have a lot of new needs that are evolving, but also just, you know, there's a constantly, like, we need to set up this database, we need to, like, you know, like, here's a new piece of infrastructure we haven't used before. We're bringing Redis in. We need to set this up. Give us a configuration. We need to make sure that the security is all in place. You know what I mean? There's a lot of like, Just day-to-day, like, needs that the team has that we need somebody who's responsible for this part of the, this infrastructure. So that's one piece. Another piece is like just getting ahead of the problem, like setting up best practices, making sure that we've got, like, like, I don't know, like, we're migrating things before they become a problem. And, you know, all the typical type type work that you would need from a full DevOps team, but obviously one person, right, will be doing it. You know, Jay is probably gonna spend a lot of his time on security stuff, but I think there's a big component of this where we're going through an ISO security compliance thing right now. So there's a lot of due diligence that we have to do in the company and change.",
+        "t": 871
+      },
+      {
+        "role": "interviewer",
+        "text": "but also just the engineering team in general. And it's expanding. I mean, we're, there's a lot of growth happening in the company right now, so like, we have a lot of new needs that are evolving, but also just, you know, there's a constantly, like, we need to set up this database, we need to, like, you know, like, here's a new piece of infrastructure we haven't used before. We're bringing Redis in. We need to set this up. Give us a configuration. We need to make sure that the security is all in place. You know what I mean? There's a lot of like, Just day-to-day, like, needs that the team has that we need somebody who's responsible for this part of the, this infrastructure. So that's one piece. Another piece is like just getting ahead of the problem, like setting up best practices, making sure that we've got, like, like, I don't know, like, we're migrating things before they become a problem. And, you know, all the typical type type work that you would need from a full DevOps team, but obviously one person, right, will be doing it. You know, Jay is probably gonna spend a lot of his time on security stuff, but I think there's a big component of this where we're going through an ISO security compliance thing right now. So there's a lot of due diligence that we have to do in the company and change.",
+        "t": 871
+      },
+      {
+        "role": "interviewer",
+        "text": "Here, please. This on, and there we go.",
+        "t": 1152
+      },
+      {
+        "role": "interviewer",
+        "text": "Here, please. This on, and there we go.",
+        "t": 1152
+      },
+      {
+        "role": "interviewer",
+        "text": "The gentleman to the other side is Russ Officer, and he's the director of our department, and he's going to be helping with some of the questions and stuff. This is going to be a, basically, a just get to know each other kind of interview, just to get an idea, give you some information about us, and give us some information about you, just kind of to get a feel for what each other person, you know, is about. If it's okay with you, I'll take a minute and I'll tell you just a little bit about us, if that's okay. We're the county of Lancaster. We're a government office. We have about 42 different departments that we take care of, and because of all the different kind of stuff that we do in the different departments, what we're trying to do is work on AI and working on development towards",
+        "t": 1242
+      },
+      {
+        "role": "interviewer",
+        "text": "The gentleman to the other side is Russ Officer, and he's the director of our department, and he's going to be helping with some of the questions and stuff. This is going to be a, basically, a just get to know each other kind of interview, just to get an idea, give you some information about us, and give us some information about you, just kind of to get a feel for what each other person, you know, is about. If it's okay with you, I'll take a minute and I'll tell you just a little bit about us, if that's okay. We're the county of Lancaster. We're a government office. We have about 42 different departments that we take care of, and because of all the different kind of stuff that we do in the different departments, what we're trying to do is work on AI and working on development towards",
+        "t": 1454
+      },
+      {
+        "role": "interviewer",
+        "text": "In the past two years, moved from an on-prem ERP system to Workday, which is obviously a large SaaS product, as well as a lot of our other on-prem applications have started shifting out to the cloud. So, you know, that's good. But in doing that, from going from being on-prem, you know, now you have a bunch of different services that need to be, you know, if you need to orchestrate business processes or unify data, that's where I think this piece comes in. It's not just the, you know, the AI piece that is like the end result of maybe how you're orchestrating data or a business process, but also the larger orchestration of how that happens because this role would sit in a group focused on AI and automation that would essentially have a like a data architect as well as a like a solutions architect with it. So those three pieces kind of make up, you know, this role included, would make up a basis for where we're going to start looking at, you know, how we can implement solutions for departments because we both review what we're doing currently because we're managing the technology for the whole county, but we also field requests from departments. So to have that knowledge in-house allows us to be proactive and not having to, you know, implement all these different fragmented solutions and be able to look at it from a very high level and holistic perspective. So.",
+        "t": 1593
+      },
+      {
+        "role": "interviewer",
+        "text": "In the past two years, moved from an on-prem ERP system to Workday, which is obviously a large SaaS product, as well as a lot of our other on-prem applications have started shifting out to the cloud. So, you know, that's good. But in doing that, from going from being on-prem, you know, now you have a bunch of different services that need to be, you know, if you need to orchestrate business processes or unify data, that's where I think this piece comes in. It's not just the, you know, the AI piece that is like the end result of maybe how you're orchestrating data or a business process, but also the larger orchestration of how that happens because this role would sit in a group focused on AI and automation that would essentially have a like a data architect as well as a like a solutions architect with it. So those three pieces kind of make up, you know, this role included, would make up a basis for where we're going to start looking at, you know, how we can implement solutions for departments because we both review what we're doing currently because we're managing the technology for the whole county, but we also field requests from departments. So to have that knowledge in-house allows us to be proactive and not having to, you know, implement all these different fragmented solutions and be able to look at it from a very high level and holistic perspective. So.",
+        "t": 1593
+      },
+      {
+        "role": "interviewer",
+        "text": "also makes it interesting and not boring.",
+        "t": 5
+      },
+      {
+        "role": "interviewer",
+        "text": "also makes it interesting and not boring.",
+        "t": 5
+      },
+      {
+        "role": "interviewer",
+        "text": "also makes it interesting and not boring.",
+        "t": 8
+      },
+      {
+        "role": "interviewer",
+        "text": "concepts for me about working here because like I said, after being 16 years here, I'm not bored. There isn't a day where I come to work and I go, oh, I'm gonna make my tea, then at 9:15, I'm gonna have almonds, at 9:17, I'm gonna go say hi. It's not.",
+        "t": 27
+      },
+      {
+        "role": "interviewer",
+        "text": "concepts for me about working here because like I said, after being 16 years here, I'm not bored. There isn't a day where I come to work and I go, oh, I'm gonna make my tea, then at 9:15, I'm gonna have almonds, at 9:17, I'm gonna go say hi. It's not.",
+        "t": 27
+      },
+      {
+        "role": "interviewer",
+        "text": "challenge. And it's rewarding too, because you do get recognized for the differences you make for the challenges that you go through. And I think, to me, a rewarding environment where you're recognized for what you do is also very important.",
+        "t": 48
+      },
+      {
+        "role": "interviewer",
+        "text": "challenge. And it's rewarding too, because you do get recognized for the differences you make for the challenges that you go through. And I think, to me, a rewarding environment where you're recognized for what you do is also very important.",
+        "t": 48
+      },
+      {
+        "role": "interviewer",
+        "text": "Growth is there, and within IT there are divisions, and you can go into a different variety of divisions, so you're not always just stuck in one location. A bunch of my staff alone started with me and on the customer service department.",
+        "t": 75
+      },
+      {
+        "role": "interviewer",
+        "text": "Growth is there, and within IT there are divisions, and you can go into a different variety of divisions, so you're not always just stuck in one location. A bunch of my staff alone started with me and on the customer service department.",
+        "t": 75
+      },
+      {
+        "role": "interviewer",
+        "text": "I mean, we're using a lot of, you know, like I said, we're at a Microsoft shop, so Copilot, under the hood of Copilot, you have, you know, OpenAI, you have Claude models.",
+        "t": 117
+      },
+      {
+        "role": "interviewer",
+        "text": "I mean, we're using a lot of, you know, like I said, we're at a Microsoft shop, so Copilot, under the hood of Copilot, you have, you know, OpenAI, you have Claude models.",
+        "t": 117
+      },
+      {
+        "role": "interviewer",
+        "text": "designsystem for API using keyboard charctyer",
+        "t": 135
+      },
+      {
+        "role": "interviewer",
+        "text": "As well as another automation platform, the Power Platform within Microsoft for doing automation. Those are kind of the basis of what we have. I mean, we have, you know, a whole variety of different technology at our fingertips. We have an Azure presence. We have multiple on-prem data centers.",
+        "t": 142
+      },
+      {
+        "role": "interviewer",
+        "text": "As well as another automation platform, the Power Platform within Microsoft for doing automation. Those are kind of the basis of what we have. I mean, we have, you know, a whole variety of different technology at our fingertips. We have an Azure presence. We have multiple on-prem data centers.",
+        "t": 142
+      },
+      {
+        "role": "interviewer",
+        "text": "development environment. We have a production environment, so we have tools and the place to be able to learn how to use them, I like to say. And we definitely promote, especially with emerging technologies like",
+        "t": 165
+      },
+      {
+        "role": "interviewer",
+        "text": "development environment. We have a production environment, so we have tools and the place to be able to learn how to use them, I like to say. And we definitely promote, especially with emerging technologies like",
+        "t": 165
+      },
+      {
+        "role": "interviewer",
+        "text": "You know, there's, the foot is on the gas, so to speak, right, where what, what it's known as.",
+        "t": 179
+      },
+      {
+        "role": "interviewer",
+        "text": "You know, there's, the foot is on the gas, so to speak, right, where what, what it's known as.",
+        "t": 179
+      },
+      {
+        "role": "interviewer",
+        "text": "So we definitely promote, you know, learning.",
+        "t": 189
+      },
+      {
+        "role": "interviewer",
+        "text": "So we definitely promote, you know, learning.",
+        "t": 189
+      },
+      {
+        "role": "interviewer",
+        "text": "That's not necessarily what we'll have going forward, you know, and I think, you know, that's a big part of this as well, is bringing in someone that, you know, is willing to look at what not only we have...",
+        "t": 207
+      },
+      {
+        "role": "interviewer",
+        "text": "That's not necessarily what we'll have going forward, you know, and I think, you know, that's a big part of this as well, is bringing in someone that, you know, is willing to look at what not only we have...",
+        "t": 207
+      },
+      {
+        "role": "interviewer",
+        "text": "You need to use the right tool to create the right solution, and that's very, very important.",
+        "t": 220
+      },
+      {
+        "role": "interviewer",
+        "text": "You need to use the right tool to create the right solution, and that's very, very important.",
+        "t": 220
+      },
+      {
+        "role": "interviewer",
+        "text": "Like first round of interviews for us, our hiring process, you know, typically takes a couple weeks.",
+        "t": 230
+      },
+      {
+        "role": "interviewer",
+        "text": "Like first round of interviews for us, our hiring process, you know, typically takes a couple weeks.",
+        "t": 230
+      },
+      {
+        "role": "interviewer",
+        "text": "interviews to go more in depth with like technical experience or, you know, more deep into past projects. And then from that, it typically is another like week, week and a half to make a decision as to, you know, who we're hiring or which direction we're going. But all said and done, it's probably a two to three week process from like first interview to hire for us. And then, you know, obviously all the all the stuff that comes with, you know, job offers and whatnot, you know, compensation.",
+        "t": 268
+      },
+      {
+        "role": "interviewer",
+        "text": "interviews to go more in depth with like technical experience or, you know, more deep into past projects. And then from that, it typically is another like week, week and a half to make a decision as to, you know, who we're hiring or which direction we're going. But all said and done, it's probably a two to three week process from like first interview to hire for us. And then, you know, obviously all the all the stuff that comes with, you know, job offers and whatnot, you know, compensation.",
+        "t": 268
+      },
+      {
+        "role": "interviewer",
+        "text": "Shop thank you But yeah they have taken screening Have fun sometime Okay Even sometimes the HR team is not aware about this They don't know whether this is technical also they simply say Lot of time that happens to candidates For sure okay",
+        "t": 1234
+      },
+      {
+        "role": "interviewer",
+        "text": "Shop thank you But yeah they have taken screening Have fun sometime Okay Even sometimes the HR team is not aware about this They don't know whether this is technical also they simply say Lot of time that happens to candidates For sure okay",
+        "t": 1234
+      }
+    ]
+  }
+]

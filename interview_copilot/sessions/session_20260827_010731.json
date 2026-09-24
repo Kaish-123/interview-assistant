@@ -1,0 +1,48 @@
+{
+  "id": "20260827_010731",
+  "saved_at": "2026-08-27T01:07:31",
+  "kind": "live",
+  "model": "gpt-4o-mini",
+  "language": "en",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a real-time interview copilot. Help the candidate answer clearly and concisely in first person, as talking points they can say out loud. Match answers to their resume and job description when provided. For coding questions: clarifying questions, approach, complexity, clean code, edge cases. For behavioral questions: STAR (Situation, Task, Action, Result). For system design: requirements, high-level design, components, scalability. Keep spoken answers interview-length unless asked for code or detail. Respond in the same language as the question."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I assist you today? Are you preparing for an interview?"
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Analyze this coding-interview screenshot (LeetCode / HackerRank / CoderPad style). Provide: 1) Problem restatement 2) Clarifying questions 3) Approach + time/space complexity 4) Clean solution code 5) Edge cases and test ideas. Keep it practical for a live interview."
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,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"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "I can't analyze the screenshot directly, but I can guide you through a typical coding interview structure. Let’s assume a common problem, like \"Two Sum.\" Here’s how you might approach it:\n\n### 1) Problem Restatement\nGiven an array of integers and a target integer, return the indices of the two numbers that add up to the target.\n\n### 2) Clarifying Questions\n- Are there any constraints on the input array (e.g., size, range of numbers)?\n- Can the same element be used twice?\n- Is the output required to be in a specific format (e.g., return indices or values)?\n\n### 3) Approach + Time/Space Complexity\n**Approach:**\n- Use a hash map to store the difference between the target and each element as you iterate through the array.\n- For each element, check if it exists in the hash map. If it does, you’ve found your two indices.\n\n**Time Complexity:** O(n), where n is the number of elements in the array.\n**Space Complexity:** O(n), for storing elements in the hash map.\n\n### 4) Clean Solution Code\n```python\ndef two_sum(nums, target):\n    num_map = {}\n    \n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in num_map:\n            return [num_map[complement], i]\n        num_map[num] = i\n    \n    return None  # Return None if no solution is found\n```\n\n### 5) Edge Cases and Test Ideas\n- **Edge Case 1:** Empty array → should return None.\n- **Edge Case 2:** Array with one element → should return None.\n- **Edge Case 3:** No valid pairs → should return None.\n- **Test Idea 1:** Input: `[2, 7, 11, 15]`, Target: `9` → Expected Output: `[0, 1]`.\n- **Test Idea 2:** Input: `[3, 2, 4]`, Target: `6` → Expected Output: `[1, 2]`.\n- **Test Idea 3:** Input: `[-3, 4, 3, 90]`, Target: `0` → Expected Output: `[0, 2]`.\n\nFeel free to adjust the problem and examples based on the actual coding challenge you are facing!"
+    }
+  ],
+  "meta": {
+    "overlay": {
+      "pid": null,
+      "native": false,
+      "status": "Hidden from share",
+      "seq": 0
+    }
+  }
+}

@@ -18192,3 +18192,1571 @@
 2026-08-06 11:37:16,495 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
 2026-08-06 11:37:16,505 - INFO - Disconnected
 2026-08-06 11:37:16,513 - INFO - Session written back to original location
+2026-08-11 21:08:14,002 - INFO - ==================================================
+2026-08-11 21:08:14,002 - INFO - CRON JOB: Send Messages Started
+2026-08-11 21:08:14,003 - INFO - Run time: 2026-08-11 21:08:14
+2026-08-11 21:08:14,003 - INFO - ==================================================
+2026-08-11 21:08:14,011 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-11 21:08:14,012 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:08:15,032 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:08:16,050 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:08:17,069 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:08:18,113 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:08:19,120 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:08:20,129 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-11 21:08:20,131 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-11 21:08:20,132 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-11 21:08:20,136 - INFO - Disconnected
+2026-08-11 21:08:20,140 - INFO - Session written back to original location
+2026-08-11 21:36:16,331 - INFO - ==================================================
+2026-08-11 21:36:16,332 - INFO - CRON JOB: Send Messages Started
+2026-08-11 21:36:16,332 - INFO - Run time: 2026-08-11 21:36:16
+2026-08-11 21:36:16,332 - INFO - ==================================================
+2026-08-11 21:36:16,338 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-11 21:36:16,339 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:36:17,359 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:36:18,372 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:36:19,383 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:36:20,395 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:36:21,405 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 21:36:22,411 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-11 21:36:22,413 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-11 21:36:22,414 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-11 21:36:22,420 - INFO - Disconnected
+2026-08-11 21:36:22,437 - INFO - Session written back to original location
+2026-08-11 22:06:16,419 - INFO - ==================================================
+2026-08-11 22:06:16,420 - INFO - CRON JOB: Send Messages Started
+2026-08-11 22:06:16,420 - INFO - Run time: 2026-08-11 22:06:16
+2026-08-11 22:06:16,421 - INFO - ==================================================
+2026-08-11 22:06:16,426 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-11 22:06:16,426 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:06:17,435 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:06:18,451 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:06:19,467 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:06:20,481 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:06:21,492 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:06:22,508 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-11 22:06:22,515 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-11 22:06:22,516 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-11 22:06:22,531 - INFO - Disconnected
+2026-08-11 22:06:22,538 - INFO - Session written back to original location
+2026-08-11 22:36:16,187 - INFO - ==================================================
+2026-08-11 22:36:16,188 - INFO - CRON JOB: Send Messages Started
+2026-08-11 22:36:16,188 - INFO - Run time: 2026-08-11 22:36:16
+2026-08-11 22:36:16,188 - INFO - ==================================================
+2026-08-11 22:36:16,194 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-11 22:36:16,194 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:36:17,200 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:36:18,205 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:36:19,221 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:36:20,226 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:36:21,235 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 22:36:22,239 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-11 22:36:22,242 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-11 22:36:22,243 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-11 22:36:22,253 - INFO - Disconnected
+2026-08-11 22:36:22,266 - INFO - Session written back to original location
+2026-08-11 23:06:07,127 - INFO - ==================================================
+2026-08-11 23:06:07,127 - INFO - CRON JOB: Send Messages Started
+2026-08-11 23:06:07,128 - INFO - Run time: 2026-08-11 23:06:07
+2026-08-11 23:06:07,128 - INFO - ==================================================
+2026-08-11 23:06:07,131 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-11 23:06:07,132 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:06:08,139 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:06:09,149 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:06:10,159 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:06:11,163 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:06:12,167 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:06:13,174 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-11 23:06:13,175 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-11 23:06:13,177 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-11 23:06:13,184 - INFO - Disconnected
+2026-08-11 23:06:13,187 - INFO - Session written back to original location
+2026-08-11 23:36:15,475 - INFO - ==================================================
+2026-08-11 23:36:15,476 - INFO - CRON JOB: Send Messages Started
+2026-08-11 23:36:15,476 - INFO - Run time: 2026-08-11 23:36:15
+2026-08-11 23:36:15,477 - INFO - ==================================================
+2026-08-11 23:36:15,483 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-11 23:36:15,483 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:36:16,490 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:36:17,500 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:36:18,511 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:36:19,522 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:36:20,531 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-11 23:36:21,537 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-11 23:36:21,540 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-11 23:36:21,541 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-11 23:36:21,551 - INFO - Disconnected
+2026-08-11 23:36:21,559 - INFO - Session written back to original location
+2026-08-12 00:06:06,684 - INFO - ==================================================
+2026-08-12 00:06:06,685 - INFO - CRON JOB: Send Messages Started
+2026-08-12 00:06:06,686 - INFO - Run time: 2026-08-12 00:06:06
+2026-08-12 00:06:06,686 - INFO - ==================================================
+2026-08-12 00:06:06,693 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-12 00:06:06,693 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:06:07,704 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:06:08,717 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:06:09,726 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:06:10,739 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:06:11,748 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:06:12,755 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-12 00:06:12,758 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-12 00:06:12,759 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-12 00:06:12,768 - INFO - Disconnected
+2026-08-12 00:06:12,773 - INFO - Session written back to original location
+2026-08-12 00:36:18,791 - INFO - ==================================================
+2026-08-12 00:36:18,792 - INFO - CRON JOB: Send Messages Started
+2026-08-12 00:36:18,793 - INFO - Run time: 2026-08-12 00:36:18
+2026-08-12 00:36:18,794 - INFO - ==================================================
+2026-08-12 00:36:18,801 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-12 00:36:18,802 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:36:19,813 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:36:20,828 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:36:21,844 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:36:22,855 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:36:23,877 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 00:36:24,884 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-12 00:36:24,887 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-12 00:36:24,889 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-12 00:36:24,900 - INFO - Disconnected
+2026-08-12 00:36:24,908 - INFO - Session written back to original location
+2026-08-12 01:06:15,055 - INFO - ==================================================
+2026-08-12 01:06:15,056 - INFO - CRON JOB: Send Messages Started
+2026-08-12 01:06:15,057 - INFO - Run time: 2026-08-12 01:06:15
+2026-08-12 01:06:15,058 - INFO - ==================================================
+2026-08-12 01:06:15,061 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-12 01:06:15,062 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:06:16,073 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:06:17,086 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:06:18,106 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:06:19,111 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:06:20,122 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:06:21,132 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-12 01:06:21,135 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-12 01:06:21,136 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-12 01:06:21,148 - INFO - Disconnected
+2026-08-12 01:06:21,158 - INFO - Session written back to original location
+2026-08-12 01:36:09,902 - INFO - ==================================================
+2026-08-12 01:36:09,903 - INFO - CRON JOB: Send Messages Started
+2026-08-12 01:36:09,904 - INFO - Run time: 2026-08-12 01:36:09
+2026-08-12 01:36:09,904 - INFO - ==================================================
+2026-08-12 01:36:09,911 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-12 01:36:09,914 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:36:10,924 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:36:11,929 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:36:12,937 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:36:13,950 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:36:14,956 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 01:36:15,964 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-12 01:36:15,966 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-12 01:36:15,967 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-12 01:36:15,973 - INFO - Disconnected
+2026-08-12 01:36:15,977 - INFO - Session written back to original location
+2026-08-12 02:06:07,184 - INFO - ==================================================
+2026-08-12 02:06:07,185 - INFO - CRON JOB: Send Messages Started
+2026-08-12 02:06:07,185 - INFO - Run time: 2026-08-12 02:06:07
+2026-08-12 02:06:07,186 - INFO - ==================================================
+2026-08-12 02:06:07,196 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-12 02:06:07,199 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:06:08,201 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:06:09,216 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:06:10,223 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:06:11,228 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:06:12,237 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:06:13,243 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-12 02:06:13,246 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-12 02:06:13,247 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-12 02:06:13,253 - INFO - Disconnected
+2026-08-12 02:06:13,259 - INFO - Session written back to original location
+2026-08-12 02:36:17,645 - INFO - ==================================================
+2026-08-12 02:36:17,645 - INFO - CRON JOB: Send Messages Started
+2026-08-12 02:36:17,646 - INFO - Run time: 2026-08-12 02:36:17
+2026-08-12 02:36:17,646 - INFO - ==================================================
+2026-08-12 02:36:17,650 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-12 02:36:17,651 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:36:18,659 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:36:19,676 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:36:20,685 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:36:21,691 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:36:22,697 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-12 02:36:23,703 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-12 02:36:23,705 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-12 02:36:23,706 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-12 02:36:23,715 - INFO - Disconnected
+2026-08-12 02:36:23,722 - INFO - Session written back to original location
+2026-08-26 02:09:11,809 - INFO - ==================================================
+2026-08-26 02:09:11,809 - INFO - CRON JOB: Send Messages Started
+2026-08-26 02:09:11,810 - INFO - Run time: 2026-08-26 02:09:11
+2026-08-26 02:09:11,810 - INFO - ==================================================
+2026-08-26 02:09:11,816 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 02:09:11,816 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 02:09:12,821 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 02:09:13,836 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 02:09:14,845 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 02:09:15,856 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 02:09:16,863 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 02:09:17,875 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 02:09:17,879 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 02:09:17,880 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 02:09:17,886 - INFO - Disconnected
+2026-08-26 02:09:17,893 - INFO - Session written back to original location
+2026-08-26 03:06:16,006 - INFO - ==================================================
+2026-08-26 03:06:16,007 - INFO - CRON JOB: Send Messages Started
+2026-08-26 03:06:16,007 - INFO - Run time: 2026-08-26 03:06:16
+2026-08-26 03:06:16,008 - INFO - ==================================================
+2026-08-26 03:06:16,021 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 03:06:16,023 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:06:17,034 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:06:18,043 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:06:19,053 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:06:20,070 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:06:21,080 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:06:22,089 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 03:06:22,093 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 03:06:22,094 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 03:06:22,104 - INFO - Disconnected
+2026-08-26 03:06:22,111 - INFO - Session written back to original location
+2026-08-26 03:35:51,278 - INFO - ==================================================
+2026-08-26 03:35:51,279 - INFO - CRON JOB: Send Messages Started
+2026-08-26 03:35:51,279 - INFO - Run time: 2026-08-26 03:35:51
+2026-08-26 03:35:51,279 - INFO - ==================================================
+2026-08-26 03:35:51,282 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 03:35:51,283 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:35:52,294 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:35:53,299 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:35:54,303 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:35:55,323 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:35:56,337 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 03:35:57,341 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 03:35:57,343 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 03:35:57,344 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 03:35:57,351 - INFO - Disconnected
+2026-08-26 03:35:57,357 - INFO - Session written back to original location
+2026-08-26 04:05:50,546 - INFO - ==================================================
+2026-08-26 04:05:50,547 - INFO - CRON JOB: Send Messages Started
+2026-08-26 04:05:50,547 - INFO - Run time: 2026-08-26 04:05:50
+2026-08-26 04:05:50,548 - INFO - ==================================================
+2026-08-26 04:05:50,552 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 04:05:50,552 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:05:51,565 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:05:52,574 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:05:53,585 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:05:54,598 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:05:55,611 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:05:56,626 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 04:05:56,628 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 04:05:56,629 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 04:05:56,637 - INFO - Disconnected
+2026-08-26 04:05:56,644 - INFO - Session written back to original location
+2026-08-26 04:35:51,057 - INFO - ==================================================
+2026-08-26 04:35:51,057 - INFO - CRON JOB: Send Messages Started
+2026-08-26 04:35:51,058 - INFO - Run time: 2026-08-26 04:35:51
+2026-08-26 04:35:51,058 - INFO - ==================================================
+2026-08-26 04:35:51,062 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 04:35:51,063 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:35:52,072 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:35:53,083 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:35:54,099 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:35:55,111 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:35:56,122 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 04:35:57,133 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 04:35:57,137 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 04:35:57,139 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 04:35:57,143 - INFO - Disconnected
+2026-08-26 04:35:57,146 - INFO - Session written back to original location
+2026-08-26 05:05:50,225 - INFO - ==================================================
+2026-08-26 05:05:50,226 - INFO - CRON JOB: Send Messages Started
+2026-08-26 05:05:50,226 - INFO - Run time: 2026-08-26 05:05:50
+2026-08-26 05:05:50,226 - INFO - ==================================================
+2026-08-26 05:05:50,229 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 05:05:50,230 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:05:51,237 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:05:52,248 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:05:53,260 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:05:54,265 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:05:55,269 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:05:56,284 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 05:05:56,286 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 05:05:56,287 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 05:05:56,295 - INFO - Disconnected
+2026-08-26 05:05:56,303 - INFO - Session written back to original location
+2026-08-26 05:35:53,012 - INFO - ==================================================
+2026-08-26 05:35:53,012 - INFO - CRON JOB: Send Messages Started
+2026-08-26 05:35:53,013 - INFO - Run time: 2026-08-26 05:35:53
+2026-08-26 05:35:53,013 - INFO - ==================================================
+2026-08-26 05:35:53,018 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 05:35:53,018 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:35:54,028 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:35:55,042 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:35:56,052 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:35:57,064 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:35:58,080 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 05:35:59,090 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 05:35:59,093 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 05:35:59,095 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 05:35:59,106 - INFO - Disconnected
+2026-08-26 05:35:59,112 - INFO - Session written back to original location
+2026-08-26 06:05:50,286 - INFO - ==================================================
+2026-08-26 06:05:50,286 - INFO - CRON JOB: Send Messages Started
+2026-08-26 06:05:50,287 - INFO - Run time: 2026-08-26 06:05:50
+2026-08-26 06:05:50,287 - INFO - ==================================================
+2026-08-26 06:05:50,290 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 06:05:50,290 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:05:51,297 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:05:52,310 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:05:53,320 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:05:54,331 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:05:55,344 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:05:56,353 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 06:05:56,355 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 06:05:56,357 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 06:05:56,366 - INFO - Disconnected
+2026-08-26 06:05:56,372 - INFO - Session written back to original location
+2026-08-26 06:35:51,738 - INFO - ==================================================
+2026-08-26 06:35:51,739 - INFO - CRON JOB: Send Messages Started
+2026-08-26 06:35:51,739 - INFO - Run time: 2026-08-26 06:35:51
+2026-08-26 06:35:51,740 - INFO - ==================================================
+2026-08-26 06:35:51,743 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 06:35:51,744 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:35:52,751 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:35:53,759 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:35:54,770 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:35:55,776 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:35:56,784 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 06:35:57,796 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 06:35:57,799 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 06:35:57,800 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 06:35:57,811 - INFO - Disconnected
+2026-08-26 06:35:57,818 - INFO - Session written back to original location
+2026-08-26 07:05:51,451 - INFO - ==================================================
+2026-08-26 07:05:51,451 - INFO - CRON JOB: Send Messages Started
+2026-08-26 07:05:51,452 - INFO - Run time: 2026-08-26 07:05:51
+2026-08-26 07:05:51,452 - INFO - ==================================================
+2026-08-26 07:05:51,457 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 07:05:51,457 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:05:52,467 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:05:53,482 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:05:54,489 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:05:55,495 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:05:56,509 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:05:57,522 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 07:05:57,525 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 07:05:57,526 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 07:05:57,533 - INFO - Disconnected
+2026-08-26 07:05:57,540 - INFO - Session written back to original location
+2026-08-26 07:35:51,394 - INFO - ==================================================
+2026-08-26 07:35:51,395 - INFO - CRON JOB: Send Messages Started
+2026-08-26 07:35:51,395 - INFO - Run time: 2026-08-26 07:35:51
+2026-08-26 07:35:51,395 - INFO - ==================================================
+2026-08-26 07:35:51,398 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 07:35:51,398 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:35:52,410 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:35:53,419 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:35:54,426 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:35:55,440 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:35:56,447 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 07:35:57,457 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 07:35:57,458 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 07:35:57,459 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 07:35:57,470 - INFO - Disconnected
+2026-08-26 07:35:57,477 - INFO - Session written back to original location
+2026-08-26 08:05:56,054 - INFO - ==================================================
+2026-08-26 08:05:56,055 - INFO - CRON JOB: Send Messages Started
+2026-08-26 08:05:56,055 - INFO - Run time: 2026-08-26 08:05:56
+2026-08-26 08:05:56,056 - INFO - ==================================================
+2026-08-26 08:05:56,059 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 08:05:56,059 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:05:57,069 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:05:58,085 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:05:59,093 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:06:00,104 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:06:01,111 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:06:02,125 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 08:06:02,127 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 08:06:02,128 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 08:06:02,137 - INFO - Disconnected
+2026-08-26 08:06:02,144 - INFO - Session written back to original location
+2026-08-26 08:35:53,357 - INFO - ==================================================
+2026-08-26 08:35:53,358 - INFO - CRON JOB: Send Messages Started
+2026-08-26 08:35:53,358 - INFO - Run time: 2026-08-26 08:35:53
+2026-08-26 08:35:53,359 - INFO - ==================================================
+2026-08-26 08:35:53,363 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 08:35:53,363 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:35:54,376 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:35:55,385 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:35:56,399 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:35:57,411 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:35:58,419 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 08:35:59,434 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 08:35:59,437 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 08:35:59,439 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 08:35:59,449 - INFO - Disconnected
+2026-08-26 08:35:59,457 - INFO - Session written back to original location
+2026-08-26 09:05:39,217 - INFO - ==================================================
+2026-08-26 09:05:39,218 - INFO - CRON JOB: Send Messages Started
+2026-08-26 09:05:39,218 - INFO - Run time: 2026-08-26 09:05:39
+2026-08-26 09:05:39,219 - INFO - ==================================================
+2026-08-26 09:05:39,224 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 09:05:39,224 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:05:40,236 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:05:41,250 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:05:42,263 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:05:43,276 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:05:44,288 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:05:45,295 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 09:05:45,297 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 09:05:45,298 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 09:05:45,305 - INFO - Disconnected
+2026-08-26 09:05:45,312 - INFO - Session written back to original location
+2026-08-26 09:35:35,484 - INFO - ==================================================
+2026-08-26 09:35:35,485 - INFO - CRON JOB: Send Messages Started
+2026-08-26 09:35:35,485 - INFO - Run time: 2026-08-26 09:35:35
+2026-08-26 09:35:35,486 - INFO - ==================================================
+2026-08-26 09:35:35,488 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 09:35:35,489 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:35:36,497 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:35:37,502 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:35:38,517 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:35:39,524 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:35:40,532 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:35:41,544 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 09:35:41,545 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 09:35:41,546 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 09:35:41,552 - INFO - Disconnected
+2026-08-26 09:35:41,559 - INFO - Session written back to original location
+2026-08-26 10:05:34,676 - INFO - ==================================================
+2026-08-26 10:05:34,677 - INFO - CRON JOB: Send Messages Started
+2026-08-26 10:05:34,677 - INFO - Run time: 2026-08-26 10:05:34
+2026-08-26 10:05:34,677 - INFO - ==================================================
+2026-08-26 10:05:34,680 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 10:05:34,681 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:05:35,686 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:05:36,699 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:05:37,710 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:05:38,718 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:05:39,724 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:05:40,733 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 10:05:40,735 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 10:05:40,736 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 10:05:40,746 - INFO - Disconnected
+2026-08-26 10:05:40,753 - INFO - Session written back to original location
+2026-08-26 10:35:35,921 - INFO - ==================================================
+2026-08-26 10:35:35,921 - INFO - CRON JOB: Send Messages Started
+2026-08-26 10:35:35,922 - INFO - Run time: 2026-08-26 10:35:35
+2026-08-26 10:35:35,922 - INFO - ==================================================
+2026-08-26 10:35:35,925 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 10:35:35,926 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:35:36,936 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:35:37,946 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:35:38,959 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:35:39,973 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:35:40,984 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 10:35:41,992 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 10:35:41,993 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 10:35:41,994 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 10:35:42,002 - INFO - Disconnected
+2026-08-26 10:35:42,008 - INFO - Session written back to original location
+2026-08-26 11:05:36,620 - INFO - ==================================================
+2026-08-26 11:05:36,621 - INFO - CRON JOB: Send Messages Started
+2026-08-26 11:05:36,621 - INFO - Run time: 2026-08-26 11:05:36
+2026-08-26 11:05:36,622 - INFO - ==================================================
+2026-08-26 11:05:36,624 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 11:05:36,625 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:05:37,637 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:05:38,642 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:05:39,652 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:05:40,665 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:05:41,669 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:05:42,678 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 11:05:42,680 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 11:05:42,682 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 11:05:42,690 - INFO - Disconnected
+2026-08-26 11:05:42,697 - INFO - Session written back to original location
+2026-08-26 11:35:35,303 - INFO - ==================================================
+2026-08-26 11:35:35,304 - INFO - CRON JOB: Send Messages Started
+2026-08-26 11:35:35,304 - INFO - Run time: 2026-08-26 11:35:35
+2026-08-26 11:35:35,304 - INFO - ==================================================
+2026-08-26 11:35:35,309 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 11:35:35,309 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:35:36,321 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:35:37,334 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:35:38,347 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:35:39,357 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:35:40,362 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 11:35:41,366 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 11:35:41,367 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 11:35:41,368 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 11:35:41,376 - INFO - Disconnected
+2026-08-26 11:35:41,383 - INFO - Session written back to original location
+2026-08-26 12:05:35,020 - INFO - ==================================================
+2026-08-26 12:05:35,021 - INFO - CRON JOB: Send Messages Started
+2026-08-26 12:05:35,021 - INFO - Run time: 2026-08-26 12:05:35
+2026-08-26 12:05:35,022 - INFO - ==================================================
+2026-08-26 12:05:35,025 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 12:05:35,025 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:05:36,034 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:05:37,042 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:05:38,046 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:05:39,053 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:05:40,069 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:05:41,079 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 12:05:41,081 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 12:05:41,083 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 12:05:41,091 - INFO - Disconnected
+2026-08-26 12:05:41,098 - INFO - Session written back to original location
+2026-08-26 12:35:35,013 - INFO - ==================================================
+2026-08-26 12:35:35,013 - INFO - CRON JOB: Send Messages Started
+2026-08-26 12:35:35,014 - INFO - Run time: 2026-08-26 12:35:35
+2026-08-26 12:35:35,014 - INFO - ==================================================
+2026-08-26 12:35:35,017 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 12:35:35,017 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:35:36,020 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:35:37,034 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:35:38,038 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:35:39,082 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:35:40,092 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 12:35:41,106 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 12:35:41,108 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 12:35:41,110 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 12:35:41,121 - INFO - Disconnected
+2026-08-26 12:35:41,128 - INFO - Session written back to original location
+2026-08-26 13:05:37,641 - INFO - ==================================================
+2026-08-26 13:05:37,641 - INFO - CRON JOB: Send Messages Started
+2026-08-26 13:05:37,642 - INFO - Run time: 2026-08-26 13:05:37
+2026-08-26 13:05:37,642 - INFO - ==================================================
+2026-08-26 13:05:37,645 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 13:05:37,645 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:05:38,651 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:05:39,661 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:05:40,671 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:05:41,685 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:05:42,697 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:05:43,712 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 13:05:43,718 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 13:05:43,720 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 13:05:43,732 - INFO - Disconnected
+2026-08-26 13:05:43,739 - INFO - Session written back to original location
+2026-08-26 13:35:35,312 - INFO - ==================================================
+2026-08-26 13:35:35,313 - INFO - CRON JOB: Send Messages Started
+2026-08-26 13:35:35,313 - INFO - Run time: 2026-08-26 13:35:35
+2026-08-26 13:35:35,313 - INFO - ==================================================
+2026-08-26 13:35:35,318 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 13:35:35,318 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:35:36,326 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:35:37,350 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:35:38,359 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:35:39,364 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:35:40,372 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 13:35:41,381 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 13:35:41,386 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 13:35:41,388 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 13:35:41,398 - INFO - Disconnected
+2026-08-26 13:35:41,404 - INFO - Session written back to original location
+2026-08-26 14:05:41,891 - INFO - ==================================================
+2026-08-26 14:05:41,892 - INFO - CRON JOB: Send Messages Started
+2026-08-26 14:05:41,893 - INFO - Run time: 2026-08-26 14:05:41
+2026-08-26 14:05:41,893 - INFO - ==================================================
+2026-08-26 14:05:41,899 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 14:05:41,900 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:05:42,907 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:05:43,920 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:05:44,927 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:05:45,933 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:05:46,940 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:05:47,948 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 14:05:47,952 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 14:05:47,953 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 14:05:47,961 - INFO - Disconnected
+2026-08-26 14:05:47,965 - INFO - Session written back to original location
+2026-08-26 14:35:39,969 - INFO - ==================================================
+2026-08-26 14:35:39,969 - INFO - CRON JOB: Send Messages Started
+2026-08-26 14:35:39,970 - INFO - Run time: 2026-08-26 14:35:39
+2026-08-26 14:35:39,970 - INFO - ==================================================
+2026-08-26 14:35:39,974 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 14:35:39,975 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:35:40,986 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:35:41,998 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:35:43,012 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:35:44,019 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:35:45,026 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 14:35:46,038 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 14:35:46,042 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 14:35:46,043 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 14:35:46,053 - INFO - Disconnected
+2026-08-26 14:35:46,061 - INFO - Session written back to original location
+2026-08-26 15:05:35,550 - INFO - ==================================================
+2026-08-26 15:05:35,551 - INFO - CRON JOB: Send Messages Started
+2026-08-26 15:05:35,552 - INFO - Run time: 2026-08-26 15:05:35
+2026-08-26 15:05:35,552 - INFO - ==================================================
+2026-08-26 15:05:35,565 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 15:05:35,569 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:05:36,577 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:05:37,589 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:05:38,602 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:05:39,616 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:05:40,627 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:05:41,636 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 15:05:41,638 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 15:05:41,639 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 15:05:41,648 - INFO - Disconnected
+2026-08-26 15:05:41,654 - INFO - Session written back to original location
+2026-08-26 15:35:34,350 - INFO - ==================================================
+2026-08-26 15:35:34,351 - INFO - CRON JOB: Send Messages Started
+2026-08-26 15:35:34,351 - INFO - Run time: 2026-08-26 15:35:34
+2026-08-26 15:35:34,351 - INFO - ==================================================
+2026-08-26 15:35:34,354 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 15:35:34,355 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:35:35,361 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:35:36,371 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:35:37,383 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:35:38,393 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:35:39,400 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 15:35:40,421 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 15:35:40,426 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 15:35:40,429 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 15:35:40,440 - INFO - Disconnected
+2026-08-26 15:35:40,446 - INFO - Session written back to original location
+2026-08-26 16:05:43,587 - INFO - ==================================================
+2026-08-26 16:05:43,588 - INFO - CRON JOB: Send Messages Started
+2026-08-26 16:05:43,588 - INFO - Run time: 2026-08-26 16:05:43
+2026-08-26 16:05:43,588 - INFO - ==================================================
+2026-08-26 16:05:43,592 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 16:05:43,593 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:05:44,604 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:05:45,611 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:05:46,623 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:05:47,638 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:05:48,646 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:05:49,654 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 16:05:49,656 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 16:05:49,657 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 16:05:49,663 - INFO - Disconnected
+2026-08-26 16:05:49,669 - INFO - Session written back to original location
+2026-08-26 16:35:39,398 - INFO - ==================================================
+2026-08-26 16:35:39,398 - INFO - CRON JOB: Send Messages Started
+2026-08-26 16:35:39,399 - INFO - Run time: 2026-08-26 16:35:39
+2026-08-26 16:35:39,399 - INFO - ==================================================
+2026-08-26 16:35:39,402 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 16:35:39,402 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:35:40,412 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:35:41,426 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:35:42,437 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:35:43,443 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:35:44,458 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 16:35:45,466 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 16:35:45,469 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 16:35:45,470 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 16:35:45,478 - INFO - Disconnected
+2026-08-26 16:35:45,485 - INFO - Session written back to original location
+2026-08-26 17:05:43,366 - INFO - ==================================================
+2026-08-26 17:05:43,366 - INFO - CRON JOB: Send Messages Started
+2026-08-26 17:05:43,367 - INFO - Run time: 2026-08-26 17:05:43
+2026-08-26 17:05:43,367 - INFO - ==================================================
+2026-08-26 17:05:43,372 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 17:05:43,372 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:05:44,385 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:05:45,396 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:05:46,409 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:05:47,418 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:05:48,430 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:05:49,436 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 17:05:49,438 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 17:05:49,440 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 17:05:49,446 - INFO - Disconnected
+2026-08-26 17:05:49,452 - INFO - Session written back to original location
+2026-08-26 17:35:38,632 - INFO - ==================================================
+2026-08-26 17:35:38,633 - INFO - CRON JOB: Send Messages Started
+2026-08-26 17:35:38,633 - INFO - Run time: 2026-08-26 17:35:38
+2026-08-26 17:35:38,634 - INFO - ==================================================
+2026-08-26 17:35:38,637 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 17:35:38,637 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:35:39,644 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:35:40,659 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:35:41,670 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:35:42,681 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:35:43,687 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 17:35:44,695 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 17:35:44,697 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 17:35:44,698 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 17:35:44,705 - INFO - Disconnected
+2026-08-26 17:35:44,711 - INFO - Session written back to original location
+2026-08-26 18:05:34,332 - INFO - ==================================================
+2026-08-26 18:05:34,333 - INFO - CRON JOB: Send Messages Started
+2026-08-26 18:05:34,333 - INFO - Run time: 2026-08-26 18:05:34
+2026-08-26 18:05:34,334 - INFO - ==================================================
+2026-08-26 18:05:34,337 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 18:05:34,337 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:05:35,350 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:05:36,364 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:05:37,376 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:05:38,387 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:05:39,391 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:05:40,402 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 18:05:40,403 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 18:05:40,404 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 18:05:40,411 - INFO - Disconnected
+2026-08-26 18:05:40,418 - INFO - Session written back to original location
+2026-08-26 18:35:36,291 - INFO - ==================================================
+2026-08-26 18:35:36,291 - INFO - CRON JOB: Send Messages Started
+2026-08-26 18:35:36,292 - INFO - Run time: 2026-08-26 18:35:36
+2026-08-26 18:35:36,292 - INFO - ==================================================
+2026-08-26 18:35:36,295 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 18:35:36,295 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:35:37,306 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:35:38,319 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:35:39,331 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:35:40,344 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:35:41,351 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 18:35:42,363 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 18:35:42,365 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 18:35:42,366 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 18:35:42,373 - INFO - Disconnected
+2026-08-26 18:35:42,381 - INFO - Session written back to original location
+2026-08-26 19:05:37,906 - INFO - ==================================================
+2026-08-26 19:05:37,907 - INFO - CRON JOB: Send Messages Started
+2026-08-26 19:05:37,907 - INFO - Run time: 2026-08-26 19:05:37
+2026-08-26 19:05:37,907 - INFO - ==================================================
+2026-08-26 19:05:37,912 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 19:05:37,912 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:05:38,915 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:05:39,923 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:05:40,934 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:05:41,944 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:05:42,950 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:05:43,958 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 19:05:43,961 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 19:05:43,962 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 19:05:43,973 - INFO - Disconnected
+2026-08-26 19:05:43,981 - INFO - Session written back to original location
+2026-08-26 19:35:40,957 - INFO - ==================================================
+2026-08-26 19:35:40,957 - INFO - CRON JOB: Send Messages Started
+2026-08-26 19:35:40,958 - INFO - Run time: 2026-08-26 19:35:40
+2026-08-26 19:35:40,958 - INFO - ==================================================
+2026-08-26 19:35:40,971 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 19:35:40,973 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:35:41,992 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:35:43,022 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:35:44,033 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:35:45,043 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:35:46,062 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 19:35:47,072 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 19:35:47,077 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 19:35:47,078 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 19:35:47,101 - INFO - Disconnected
+2026-08-26 19:35:47,107 - INFO - Session written back to original location
+2026-08-26 20:05:41,684 - INFO - ==================================================
+2026-08-26 20:05:41,685 - INFO - CRON JOB: Send Messages Started
+2026-08-26 20:05:41,686 - INFO - Run time: 2026-08-26 20:05:41
+2026-08-26 20:05:41,686 - INFO - ==================================================
+2026-08-26 20:05:41,709 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 20:05:41,712 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:05:42,734 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:05:43,772 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:05:44,777 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:05:45,785 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:05:46,792 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:05:47,820 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 20:05:47,845 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 20:05:47,848 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 20:05:47,877 - INFO - Disconnected
+2026-08-26 20:05:47,882 - INFO - Session written back to original location
+2026-08-26 20:35:35,775 - INFO - ==================================================
+2026-08-26 20:35:35,776 - INFO - CRON JOB: Send Messages Started
+2026-08-26 20:35:35,776 - INFO - Run time: 2026-08-26 20:35:35
+2026-08-26 20:35:35,777 - INFO - ==================================================
+2026-08-26 20:35:35,782 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 20:35:35,782 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:35:36,794 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:35:37,807 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:35:38,819 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:35:39,827 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:35:40,845 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 20:35:41,856 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-26 20:35:41,858 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-26 20:35:41,859 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-26 20:35:41,867 - INFO - Disconnected
+2026-08-26 20:35:41,878 - INFO - Session written back to original location
+2026-08-27 00:33:25,964 - INFO - ==================================================
+2026-08-27 00:33:25,970 - INFO - CRON JOB: Send Messages Started
+2026-08-27 00:33:25,973 - INFO - Run time: 2026-08-27 00:33:25
+2026-08-27 00:33:25,979 - INFO - ==================================================
+2026-08-27 00:33:25,990 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 00:33:25,992 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 00:33:27,007 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 00:33:28,031 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 00:33:29,041 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 00:33:30,051 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 00:33:31,060 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 00:33:32,073 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 00:33:32,082 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 00:33:32,083 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 00:33:32,100 - INFO - Disconnected
+2026-08-27 00:33:32,122 - INFO - Session written back to original location
+2026-08-27 01:05:34,334 - INFO - ==================================================
+2026-08-27 01:05:34,335 - INFO - CRON JOB: Send Messages Started
+2026-08-27 01:05:34,335 - INFO - Run time: 2026-08-27 01:05:34
+2026-08-27 01:05:34,335 - INFO - ==================================================
+2026-08-27 01:05:34,339 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 01:05:34,339 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:05:35,346 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:05:36,369 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:05:37,390 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:05:38,404 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:05:39,408 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:05:40,415 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 01:05:40,419 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 01:05:40,426 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 01:05:40,435 - INFO - Disconnected
+2026-08-27 01:05:40,441 - INFO - Session written back to original location
+2026-08-27 01:35:33,033 - INFO - ==================================================
+2026-08-27 01:35:33,033 - INFO - CRON JOB: Send Messages Started
+2026-08-27 01:35:33,034 - INFO - Run time: 2026-08-27 01:35:33
+2026-08-27 01:35:33,034 - INFO - ==================================================
+2026-08-27 01:35:33,037 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 01:35:33,038 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:35:34,046 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:35:35,069 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:35:36,075 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:35:37,083 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:35:38,089 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 01:35:39,096 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 01:35:39,099 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 01:35:39,100 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 01:35:39,105 - INFO - Disconnected
+2026-08-27 01:35:39,109 - INFO - Session written back to original location
+2026-08-27 02:35:34,790 - INFO - ==================================================
+2026-08-27 02:35:34,791 - INFO - CRON JOB: Send Messages Started
+2026-08-27 02:35:34,792 - INFO - Run time: 2026-08-27 02:35:34
+2026-08-27 02:35:34,792 - INFO - ==================================================
+2026-08-27 02:35:34,795 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 02:35:34,795 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 02:35:35,808 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 02:35:36,817 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 02:35:37,839 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 02:35:38,860 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 02:35:39,875 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 02:35:40,888 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 02:35:40,891 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 02:35:40,892 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 02:35:40,934 - INFO - Disconnected
+2026-08-27 02:35:40,950 - INFO - Session written back to original location
+2026-08-27 03:05:36,990 - INFO - ==================================================
+2026-08-27 03:05:36,991 - INFO - CRON JOB: Send Messages Started
+2026-08-27 03:05:36,991 - INFO - Run time: 2026-08-27 03:05:36
+2026-08-27 03:05:36,991 - INFO - ==================================================
+2026-08-27 03:05:36,995 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 03:05:36,995 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:05:38,008 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:05:39,022 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:05:40,027 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:05:41,038 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:05:42,053 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:05:43,061 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 03:05:43,064 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 03:05:43,065 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 03:05:43,073 - INFO - Disconnected
+2026-08-27 03:05:43,079 - INFO - Session written back to original location
+2026-08-27 03:35:41,741 - INFO - ==================================================
+2026-08-27 03:35:41,741 - INFO - CRON JOB: Send Messages Started
+2026-08-27 03:35:41,741 - INFO - Run time: 2026-08-27 03:35:41
+2026-08-27 03:35:41,742 - INFO - ==================================================
+2026-08-27 03:35:41,745 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 03:35:41,745 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:35:42,754 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:35:43,766 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:35:44,780 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:35:45,786 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:35:46,794 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 03:35:47,801 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 03:35:47,803 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 03:35:47,804 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 03:35:47,816 - INFO - Disconnected
+2026-08-27 03:35:47,822 - INFO - Session written back to original location
+2026-08-27 04:05:51,285 - INFO - ==================================================
+2026-08-27 04:05:51,286 - INFO - CRON JOB: Send Messages Started
+2026-08-27 04:05:51,286 - INFO - Run time: 2026-08-27 04:05:51
+2026-08-27 04:05:51,286 - INFO - ==================================================
+2026-08-27 04:05:51,290 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 04:05:51,291 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:05:52,295 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:05:53,304 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:05:54,310 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:05:55,320 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:05:56,333 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:05:57,338 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 04:05:57,341 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 04:05:57,343 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 04:05:57,354 - INFO - Disconnected
+2026-08-27 04:05:57,361 - INFO - Session written back to original location
+2026-08-27 04:35:31,989 - INFO - ==================================================
+2026-08-27 04:35:31,992 - INFO - CRON JOB: Send Messages Started
+2026-08-27 04:35:31,992 - INFO - Run time: 2026-08-27 04:35:31
+2026-08-27 04:35:31,992 - INFO - ==================================================
+2026-08-27 04:35:31,997 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 04:35:31,998 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:35:33,013 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:35:34,026 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:35:35,036 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:35:36,047 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:35:37,062 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 04:35:38,076 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 04:35:38,079 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 04:35:38,080 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 04:35:38,085 - INFO - Disconnected
+2026-08-27 04:35:38,088 - INFO - Session written back to original location
+2026-08-27 05:05:42,234 - INFO - ==================================================
+2026-08-27 05:05:42,234 - INFO - CRON JOB: Send Messages Started
+2026-08-27 05:05:42,234 - INFO - Run time: 2026-08-27 05:05:42
+2026-08-27 05:05:42,235 - INFO - ==================================================
+2026-08-27 05:05:42,238 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 05:05:42,239 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:05:43,242 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:05:44,249 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:05:45,264 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:05:46,275 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:05:47,285 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:05:48,297 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 05:05:48,301 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 05:05:48,302 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 05:05:48,312 - INFO - Disconnected
+2026-08-27 05:05:48,320 - INFO - Session written back to original location
+2026-08-27 05:35:45,530 - INFO - ==================================================
+2026-08-27 05:35:45,531 - INFO - CRON JOB: Send Messages Started
+2026-08-27 05:35:45,531 - INFO - Run time: 2026-08-27 05:35:45
+2026-08-27 05:35:45,532 - INFO - ==================================================
+2026-08-27 05:35:45,535 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 05:35:45,535 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:35:46,548 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:35:47,552 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:35:48,564 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:35:49,576 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:35:50,587 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 05:35:51,593 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 05:35:51,595 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 05:35:51,597 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 05:35:51,606 - INFO - Disconnected
+2026-08-27 05:35:51,614 - INFO - Session written back to original location
+2026-08-27 06:05:40,849 - INFO - ==================================================
+2026-08-27 06:05:40,849 - INFO - CRON JOB: Send Messages Started
+2026-08-27 06:05:40,850 - INFO - Run time: 2026-08-27 06:05:40
+2026-08-27 06:05:40,850 - INFO - ==================================================
+2026-08-27 06:05:40,853 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 06:05:40,853 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 06:05:41,862 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 06:05:42,868 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 06:05:43,882 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 06:05:44,891 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 06:05:45,897 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 06:05:46,902 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 06:05:46,905 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 06:05:46,906 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 06:05:46,913 - INFO - Disconnected
+2026-08-27 06:05:46,919 - INFO - Session written back to original location
+2026-08-27 07:05:39,633 - INFO - ==================================================
+2026-08-27 07:05:39,633 - INFO - CRON JOB: Send Messages Started
+2026-08-27 07:05:39,634 - INFO - Run time: 2026-08-27 07:05:39
+2026-08-27 07:05:39,634 - INFO - ==================================================
+2026-08-27 07:05:39,638 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 07:05:39,638 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:05:40,651 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:05:41,664 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:05:42,678 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:05:43,688 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:05:44,694 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:05:45,704 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 07:05:45,706 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 07:05:45,707 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 07:05:45,715 - INFO - Disconnected
+2026-08-27 07:05:45,722 - INFO - Session written back to original location
+2026-08-27 07:35:34,128 - INFO - ==================================================
+2026-08-27 07:35:34,128 - INFO - CRON JOB: Send Messages Started
+2026-08-27 07:35:34,129 - INFO - Run time: 2026-08-27 07:35:34
+2026-08-27 07:35:34,129 - INFO - ==================================================
+2026-08-27 07:35:34,133 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 07:35:34,133 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:35:35,140 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:35:36,147 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:35:37,155 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:35:38,166 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:35:39,178 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 07:35:40,188 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 07:35:40,190 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 07:35:40,191 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 07:35:40,198 - INFO - Disconnected
+2026-08-27 07:35:40,203 - INFO - Session written back to original location
+2026-08-27 08:05:20,749 - INFO - ==================================================
+2026-08-27 08:05:20,750 - INFO - CRON JOB: Send Messages Started
+2026-08-27 08:05:20,750 - INFO - Run time: 2026-08-27 08:05:20
+2026-08-27 08:05:20,750 - INFO - ==================================================
+2026-08-27 08:05:20,753 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 08:05:20,753 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:05:21,766 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:05:22,780 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:05:23,797 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:05:24,808 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:05:25,813 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:05:26,824 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 08:05:26,829 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 08:05:26,830 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 08:05:26,839 - INFO - Disconnected
+2026-08-27 08:05:26,846 - INFO - Session written back to original location
+2026-08-27 08:35:24,091 - INFO - ==================================================
+2026-08-27 08:35:24,091 - INFO - CRON JOB: Send Messages Started
+2026-08-27 08:35:24,092 - INFO - Run time: 2026-08-27 08:35:24
+2026-08-27 08:35:24,092 - INFO - ==================================================
+2026-08-27 08:35:24,096 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 08:35:24,096 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:35:25,108 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:35:26,121 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:35:27,130 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:35:28,147 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:35:29,160 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 08:35:30,175 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 08:35:30,178 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 08:35:30,180 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 08:35:30,189 - INFO - Disconnected
+2026-08-27 08:35:30,201 - INFO - Session written back to original location
+2026-08-27 09:05:23,033 - INFO - ==================================================
+2026-08-27 09:05:23,034 - INFO - CRON JOB: Send Messages Started
+2026-08-27 09:05:23,034 - INFO - Run time: 2026-08-27 09:05:23
+2026-08-27 09:05:23,034 - INFO - ==================================================
+2026-08-27 09:05:23,037 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 09:05:23,037 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:24,039 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:24,144 - INFO - ==================================================
+2026-08-27 09:05:24,145 - INFO - CRON JOB: Send Messages Started
+2026-08-27 09:05:24,145 - INFO - Run time: 2026-08-27 09:05:24
+2026-08-27 09:05:24,145 - INFO - ==================================================
+2026-08-27 09:05:24,148 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 09:05:24,148 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:25,047 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:25,161 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:26,057 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:26,176 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:27,068 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:27,188 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:28,075 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:28,199 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:29,089 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 09:05:29,091 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 09:05:29,092 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 09:05:29,102 - INFO - Disconnected
+2026-08-27 09:05:29,109 - INFO - Session written back to original location
+2026-08-27 09:05:29,202 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:05:30,210 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 09:05:30,217 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 09:05:30,218 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 09:05:30,226 - INFO - Disconnected
+2026-08-27 09:05:30,247 - INFO - Session written back to original location
+2026-08-27 09:35:28,867 - INFO - ==================================================
+2026-08-27 09:35:28,868 - INFO - CRON JOB: Send Messages Started
+2026-08-27 09:35:28,869 - INFO - Run time: 2026-08-27 09:35:28
+2026-08-27 09:35:28,869 - INFO - ==================================================
+2026-08-27 09:35:28,874 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 09:35:28,874 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:35:29,882 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:35:30,897 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:35:31,907 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:35:32,916 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:35:33,929 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 09:35:34,942 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 09:35:34,945 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 09:35:34,946 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 09:35:34,956 - INFO - Disconnected
+2026-08-27 09:35:34,964 - INFO - Session written back to original location
+2026-08-27 10:05:23,776 - INFO - ==================================================
+2026-08-27 10:05:23,777 - INFO - CRON JOB: Send Messages Started
+2026-08-27 10:05:23,778 - INFO - Run time: 2026-08-27 10:05:23
+2026-08-27 10:05:23,778 - INFO - ==================================================
+2026-08-27 10:05:23,783 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 10:05:23,784 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:05:24,815 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:05:25,851 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:05:26,869 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:05:27,889 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:05:28,902 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:05:29,912 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 10:05:29,923 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 10:05:29,924 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 10:05:29,940 - INFO - Disconnected
+2026-08-27 10:05:29,947 - INFO - Session written back to original location
+2026-08-27 10:35:22,265 - INFO - ==================================================
+2026-08-27 10:35:22,266 - INFO - CRON JOB: Send Messages Started
+2026-08-27 10:35:22,267 - INFO - Run time: 2026-08-27 10:35:22
+2026-08-27 10:35:22,267 - INFO - ==================================================
+2026-08-27 10:35:22,274 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 10:35:22,276 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:35:23,284 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:35:24,294 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:35:25,321 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:35:26,332 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:35:27,341 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 10:35:28,346 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 10:35:28,351 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 10:35:28,353 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 10:35:28,360 - INFO - Disconnected
+2026-08-27 10:35:28,366 - INFO - Session written back to original location
+2026-08-27 11:05:30,878 - INFO - ==================================================
+2026-08-27 11:05:30,878 - INFO - CRON JOB: Send Messages Started
+2026-08-27 11:05:30,879 - INFO - Run time: 2026-08-27 11:05:30
+2026-08-27 11:05:30,879 - INFO - ==================================================
+2026-08-27 11:05:30,884 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 11:05:30,884 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:05:31,910 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:05:32,929 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:05:33,939 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:05:34,951 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:05:35,962 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:05:36,970 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 11:05:36,973 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 11:05:36,974 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 11:05:36,985 - INFO - Disconnected
+2026-08-27 11:05:36,992 - INFO - Session written back to original location
+2026-08-27 11:35:40,266 - INFO - ==================================================
+2026-08-27 11:35:40,267 - INFO - CRON JOB: Send Messages Started
+2026-08-27 11:35:40,267 - INFO - Run time: 2026-08-27 11:35:40
+2026-08-27 11:35:40,267 - INFO - ==================================================
+2026-08-27 11:35:40,271 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 11:35:40,271 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:35:41,282 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:35:42,289 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:35:43,304 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:35:44,321 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:35:45,325 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 11:35:46,334 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 11:35:46,338 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 11:35:46,342 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 11:35:46,357 - INFO - Disconnected
+2026-08-27 11:35:46,364 - INFO - Session written back to original location
+2026-08-27 12:05:24,222 - INFO - ==================================================
+2026-08-27 12:05:24,222 - INFO - CRON JOB: Send Messages Started
+2026-08-27 12:05:24,223 - INFO - Run time: 2026-08-27 12:05:24
+2026-08-27 12:05:24,223 - INFO - ==================================================
+2026-08-27 12:05:24,226 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 12:05:24,227 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:05:25,238 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:05:26,255 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:05:27,263 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:05:28,278 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:05:29,291 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:05:30,303 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 12:05:30,307 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 12:05:30,307 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 12:05:30,313 - INFO - Disconnected
+2026-08-27 12:05:30,316 - INFO - Session written back to original location
+2026-08-27 12:35:32,918 - INFO - ==================================================
+2026-08-27 12:35:32,918 - INFO - CRON JOB: Send Messages Started
+2026-08-27 12:35:32,919 - INFO - Run time: 2026-08-27 12:35:32
+2026-08-27 12:35:32,919 - INFO - ==================================================
+2026-08-27 12:35:32,923 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 12:35:32,924 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:35:33,928 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:35:34,937 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:35:35,946 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:35:36,951 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:35:37,964 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 12:35:38,977 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 12:35:38,979 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 12:35:38,981 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 12:35:38,989 - INFO - Disconnected
+2026-08-27 12:35:38,993 - INFO - Session written back to original location
+2026-08-27 13:05:18,809 - INFO - ==================================================
+2026-08-27 13:05:18,810 - INFO - CRON JOB: Send Messages Started
+2026-08-27 13:05:18,810 - INFO - Run time: 2026-08-27 13:05:18
+2026-08-27 13:05:18,810 - INFO - ==================================================
+2026-08-27 13:05:18,814 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 13:05:18,815 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:05:19,820 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:05:20,837 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:05:21,846 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:05:22,860 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:05:23,872 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:05:24,888 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 13:05:24,891 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 13:05:24,892 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 13:05:24,906 - INFO - Disconnected
+2026-08-27 13:05:24,914 - INFO - Session written back to original location
+2026-08-27 13:35:22,607 - INFO - ==================================================
+2026-08-27 13:35:22,608 - INFO - CRON JOB: Send Messages Started
+2026-08-27 13:35:22,608 - INFO - Run time: 2026-08-27 13:35:22
+2026-08-27 13:35:22,609 - INFO - ==================================================
+2026-08-27 13:35:22,613 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 13:35:22,614 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:35:23,624 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:35:24,643 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:35:25,656 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:35:26,674 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:35:27,683 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 13:35:28,701 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 13:35:28,702 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 13:35:28,703 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 13:35:28,710 - INFO - Disconnected
+2026-08-27 13:35:28,716 - INFO - Session written back to original location
+2026-08-27 14:05:21,070 - INFO - ==================================================
+2026-08-27 14:05:21,070 - INFO - CRON JOB: Send Messages Started
+2026-08-27 14:05:21,071 - INFO - Run time: 2026-08-27 14:05:21
+2026-08-27 14:05:21,071 - INFO - ==================================================
+2026-08-27 14:05:21,076 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 14:05:21,076 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:05:22,082 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:05:23,107 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:05:24,122 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:05:25,132 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:05:26,145 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:05:27,153 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 14:05:27,155 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 14:05:27,156 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 14:05:27,166 - INFO - Disconnected
+2026-08-27 14:05:27,173 - INFO - Session written back to original location
+2026-08-27 14:35:32,034 - INFO - ==================================================
+2026-08-27 14:35:32,034 - INFO - CRON JOB: Send Messages Started
+2026-08-27 14:35:32,035 - INFO - Run time: 2026-08-27 14:35:32
+2026-08-27 14:35:32,035 - INFO - ==================================================
+2026-08-27 14:35:32,040 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 14:35:32,041 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:35:33,051 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:35:34,064 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:35:35,077 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:35:36,089 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:35:37,094 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 14:35:38,103 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 14:35:38,106 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 14:35:38,106 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 14:35:38,110 - INFO - Disconnected
+2026-08-27 14:35:38,114 - INFO - Session written back to original location
+2026-08-27 15:05:24,921 - INFO - ==================================================
+2026-08-27 15:05:24,922 - INFO - CRON JOB: Send Messages Started
+2026-08-27 15:05:24,923 - INFO - Run time: 2026-08-27 15:05:24
+2026-08-27 15:05:24,923 - INFO - ==================================================
+2026-08-27 15:05:24,937 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 15:05:24,938 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:05:25,951 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:05:26,962 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:05:27,971 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:05:28,982 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:05:29,990 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:05:31,005 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 15:05:31,016 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 15:05:31,020 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 15:05:31,030 - INFO - Disconnected
+2026-08-27 15:05:31,037 - INFO - Session written back to original location
+2026-08-27 15:35:18,846 - INFO - ==================================================
+2026-08-27 15:35:18,847 - INFO - CRON JOB: Send Messages Started
+2026-08-27 15:35:18,847 - INFO - Run time: 2026-08-27 15:35:18
+2026-08-27 15:35:18,848 - INFO - ==================================================
+2026-08-27 15:35:18,852 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 15:35:18,853 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:35:19,865 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:35:20,880 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:35:21,892 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:35:22,906 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:35:23,919 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 15:35:24,927 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 15:35:24,932 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 15:35:24,934 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 15:35:24,944 - INFO - Disconnected
+2026-08-27 15:35:24,951 - INFO - Session written back to original location
+2026-08-27 16:05:24,067 - INFO - ==================================================
+2026-08-27 16:05:24,068 - INFO - CRON JOB: Send Messages Started
+2026-08-27 16:05:24,068 - INFO - Run time: 2026-08-27 16:05:24
+2026-08-27 16:05:24,069 - INFO - ==================================================
+2026-08-27 16:05:24,073 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 16:05:24,074 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:05:25,080 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:05:26,088 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:05:27,093 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:05:28,104 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:05:29,115 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:05:30,128 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 16:05:30,131 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 16:05:30,132 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 16:05:30,139 - INFO - Disconnected
+2026-08-27 16:05:30,144 - INFO - Session written back to original location
+2026-08-27 16:35:27,557 - INFO - ==================================================
+2026-08-27 16:35:27,558 - INFO - CRON JOB: Send Messages Started
+2026-08-27 16:35:27,558 - INFO - Run time: 2026-08-27 16:35:27
+2026-08-27 16:35:27,558 - INFO - ==================================================
+2026-08-27 16:35:27,563 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 16:35:27,564 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:35:28,571 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:35:29,583 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:35:30,611 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:35:31,629 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:35:32,639 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 16:35:33,655 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 16:35:33,658 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 16:35:33,659 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 16:35:33,668 - INFO - Disconnected
+2026-08-27 16:35:33,674 - INFO - Session written back to original location
+2026-08-27 17:05:25,340 - INFO - ==================================================
+2026-08-27 17:05:25,341 - INFO - CRON JOB: Send Messages Started
+2026-08-27 17:05:25,341 - INFO - Run time: 2026-08-27 17:05:25
+2026-08-27 17:05:25,342 - INFO - ==================================================
+2026-08-27 17:05:25,346 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 17:05:25,347 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:05:26,354 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:05:27,363 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:05:28,375 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:05:29,387 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:05:30,402 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:05:31,414 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 17:05:31,419 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 17:05:31,422 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 17:05:31,434 - INFO - Disconnected
+2026-08-27 17:05:31,441 - INFO - Session written back to original location
+2026-08-27 17:35:22,839 - INFO - ==================================================
+2026-08-27 17:35:22,840 - INFO - CRON JOB: Send Messages Started
+2026-08-27 17:35:22,841 - INFO - Run time: 2026-08-27 17:35:22
+2026-08-27 17:35:22,841 - INFO - ==================================================
+2026-08-27 17:35:22,847 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 17:35:22,847 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:35:23,858 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:35:24,870 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:35:25,877 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:35:26,889 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:35:27,901 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 17:35:28,905 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 17:35:28,907 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 17:35:28,908 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 17:35:28,917 - INFO - Disconnected
+2026-08-27 17:35:28,924 - INFO - Session written back to original location
+2026-08-27 18:05:23,881 - INFO - ==================================================
+2026-08-27 18:05:23,882 - INFO - CRON JOB: Send Messages Started
+2026-08-27 18:05:23,882 - INFO - Run time: 2026-08-27 18:05:23
+2026-08-27 18:05:23,883 - INFO - ==================================================
+2026-08-27 18:05:23,887 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 18:05:23,888 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:05:24,902 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:05:25,916 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:05:26,927 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:05:27,942 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:05:28,949 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:05:29,953 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 18:05:29,956 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 18:05:29,957 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 18:05:29,965 - INFO - Disconnected
+2026-08-27 18:05:29,972 - INFO - Session written back to original location
+2026-08-27 18:35:23,456 - INFO - ==================================================
+2026-08-27 18:35:23,457 - INFO - CRON JOB: Send Messages Started
+2026-08-27 18:35:23,458 - INFO - Run time: 2026-08-27 18:35:23
+2026-08-27 18:35:23,458 - INFO - ==================================================
+2026-08-27 18:35:23,463 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 18:35:23,464 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:35:24,470 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:35:25,485 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:35:26,502 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:35:27,515 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:35:28,527 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 18:35:29,542 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 18:35:29,546 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 18:35:29,548 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 18:35:29,560 - INFO - Disconnected
+2026-08-27 18:35:29,567 - INFO - Session written back to original location
+2026-08-27 19:05:24,592 - INFO - ==================================================
+2026-08-27 19:05:24,593 - INFO - CRON JOB: Send Messages Started
+2026-08-27 19:05:24,593 - INFO - Run time: 2026-08-27 19:05:24
+2026-08-27 19:05:24,593 - INFO - ==================================================
+2026-08-27 19:05:24,597 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 19:05:24,598 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:05:25,603 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:05:26,620 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:05:27,632 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:05:28,638 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:05:29,653 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:05:30,667 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 19:05:30,671 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 19:05:30,674 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 19:05:30,690 - INFO - Disconnected
+2026-08-27 19:05:30,697 - INFO - Session written back to original location
+2026-08-27 19:36:01,039 - INFO - ==================================================
+2026-08-27 19:36:01,039 - INFO - CRON JOB: Send Messages Started
+2026-08-27 19:36:01,040 - INFO - Run time: 2026-08-27 19:36:01
+2026-08-27 19:36:01,040 - INFO - ==================================================
+2026-08-27 19:36:01,045 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 19:36:01,045 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:36:02,062 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:36:03,070 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:36:04,078 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:36:05,086 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:36:06,099 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 19:36:07,111 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 19:36:07,113 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 19:36:07,114 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 19:36:07,122 - INFO - Disconnected
+2026-08-27 19:36:07,126 - INFO - Session written back to original location
+2026-08-27 20:06:00,751 - INFO - ==================================================
+2026-08-27 20:06:00,751 - INFO - CRON JOB: Send Messages Started
+2026-08-27 20:06:00,751 - INFO - Run time: 2026-08-27 20:06:00
+2026-08-27 20:06:00,752 - INFO - ==================================================
+2026-08-27 20:06:00,755 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 20:06:00,755 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:06:01,761 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:06:02,767 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:06:03,774 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:06:04,783 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:06:05,791 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:06:06,794 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 20:06:06,796 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 20:06:06,797 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 20:06:06,805 - INFO - Disconnected
+2026-08-27 20:06:06,810 - INFO - Session written back to original location
+2026-08-27 20:36:10,000 - INFO - ==================================================
+2026-08-27 20:36:10,001 - INFO - CRON JOB: Send Messages Started
+2026-08-27 20:36:10,001 - INFO - Run time: 2026-08-27 20:36:10
+2026-08-27 20:36:10,001 - INFO - ==================================================
+2026-08-27 20:36:10,004 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 20:36:10,005 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:36:11,011 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:36:12,019 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:36:13,026 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:36:14,048 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:36:15,062 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 20:36:16,072 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 20:36:16,077 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 20:36:16,078 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 20:36:16,086 - INFO - Disconnected
+2026-08-27 20:36:16,090 - INFO - Session written back to original location
+2026-08-27 21:05:59,383 - INFO - ==================================================
+2026-08-27 21:05:59,383 - INFO - CRON JOB: Send Messages Started
+2026-08-27 21:05:59,384 - INFO - Run time: 2026-08-27 21:05:59
+2026-08-27 21:05:59,384 - INFO - ==================================================
+2026-08-27 21:05:59,387 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 21:05:59,388 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:06:00,393 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:06:01,401 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:06:02,415 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:06:03,425 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:06:04,438 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:06:05,460 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 21:06:05,463 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 21:06:05,465 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 21:06:05,470 - INFO - Disconnected
+2026-08-27 21:06:05,473 - INFO - Session written back to original location
+2026-08-27 21:35:56,385 - INFO - ==================================================
+2026-08-27 21:35:56,388 - INFO - CRON JOB: Send Messages Started
+2026-08-27 21:35:56,389 - INFO - Run time: 2026-08-27 21:35:56
+2026-08-27 21:35:56,389 - INFO - ==================================================
+2026-08-27 21:35:56,396 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 21:35:56,398 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:35:57,404 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:35:58,412 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:35:59,420 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:36:00,426 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:36:01,433 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 21:36:02,443 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 21:36:02,448 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 21:36:02,449 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 21:36:02,456 - INFO - Disconnected
+2026-08-27 21:36:02,460 - INFO - Session written back to original location
+2026-08-27 22:06:00,259 - INFO - ==================================================
+2026-08-27 22:06:00,259 - INFO - CRON JOB: Send Messages Started
+2026-08-27 22:06:00,260 - INFO - Run time: 2026-08-27 22:06:00
+2026-08-27 22:06:00,261 - INFO - ==================================================
+2026-08-27 22:06:00,264 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 22:06:00,265 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:06:01,269 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:06:02,287 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:06:03,294 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:06:04,305 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:06:05,316 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:06:06,322 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 22:06:06,324 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 22:06:06,325 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 22:06:06,336 - INFO - Disconnected
+2026-08-27 22:06:06,344 - INFO - Session written back to original location
+2026-08-27 22:35:57,251 - INFO - ==================================================
+2026-08-27 22:35:57,252 - INFO - CRON JOB: Send Messages Started
+2026-08-27 22:35:57,252 - INFO - Run time: 2026-08-27 22:35:57
+2026-08-27 22:35:57,252 - INFO - ==================================================
+2026-08-27 22:35:57,255 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 22:35:57,256 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:35:58,266 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:35:59,282 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:36:00,295 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:36:01,310 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:36:02,319 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 22:36:03,333 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 22:36:03,335 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 22:36:03,336 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 22:36:03,343 - INFO - Disconnected
+2026-08-27 22:36:03,351 - INFO - Session written back to original location
+2026-08-27 23:06:02,817 - INFO - ==================================================
+2026-08-27 23:06:02,818 - INFO - CRON JOB: Send Messages Started
+2026-08-27 23:06:02,818 - INFO - Run time: 2026-08-27 23:06:02
+2026-08-27 23:06:02,819 - INFO - ==================================================
+2026-08-27 23:06:02,821 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-27 23:06:02,822 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 23:06:03,833 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 23:06:04,840 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 23:06:05,850 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 23:06:06,873 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 23:06:07,885 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-27 23:06:08,912 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 23:06:08,915 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-08-27 23:06:08,918 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-08-27 23:06:08,928 - INFO - Disconnected
+2026-08-27 23:06:08,935 - INFO - Session written back to original location
+2026-09-12 00:51:50,103 - INFO - ==================================================
+2026-09-12 00:51:50,103 - INFO - CRON JOB: Send Messages Started
+2026-09-12 00:51:50,104 - INFO - Run time: 2026-09-12 00:51:50
+2026-09-12 00:51:50,104 - INFO - ==================================================
+2026-09-12 00:51:50,108 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-09-12 00:51:50,108 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 00:51:51,115 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 00:51:52,125 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 00:51:53,128 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 00:51:54,132 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 00:51:55,141 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 00:51:56,150 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-09-12 00:51:56,152 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-09-12 00:51:56,153 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-09-12 00:51:56,162 - INFO - Disconnected
+2026-09-12 00:51:56,170 - INFO - Session written back to original location
+2026-09-12 01:05:47,054 - INFO - ==================================================
+2026-09-12 01:05:47,054 - INFO - CRON JOB: Send Messages Started
+2026-09-12 01:05:47,055 - INFO - Run time: 2026-09-12 01:05:47
+2026-09-12 01:05:47,055 - INFO - ==================================================
+2026-09-12 01:05:47,057 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-09-12 01:05:47,058 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 01:05:48,064 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 01:05:49,093 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 01:05:50,111 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 01:05:51,118 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 01:05:52,128 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 01:05:53,136 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-09-12 01:05:53,141 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-09-12 01:05:53,143 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-09-12 01:05:53,156 - INFO - Disconnected
+2026-09-12 01:05:53,164 - INFO - Session written back to original location
+2026-09-12 02:06:36,946 - INFO - ==================================================
+2026-09-12 02:06:36,947 - INFO - CRON JOB: Send Messages Started
+2026-09-12 02:06:36,947 - INFO - Run time: 2026-09-12 02:06:36
+2026-09-12 02:06:36,947 - INFO - ==================================================
+2026-09-12 02:06:36,950 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-09-12 02:06:36,951 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:06:37,957 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:06:38,968 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:06:39,975 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:06:40,984 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:06:41,992 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:06:43,001 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-09-12 02:06:43,004 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-09-12 02:06:43,005 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-09-12 02:06:43,011 - INFO - Disconnected
+2026-09-12 02:06:43,017 - INFO - Session written back to original location
+2026-09-12 02:36:04,178 - INFO - ==================================================
+2026-09-12 02:36:04,178 - INFO - CRON JOB: Send Messages Started
+2026-09-12 02:36:04,178 - INFO - Run time: 2026-09-12 02:36:04
+2026-09-12 02:36:04,179 - INFO - ==================================================
+2026-09-12 02:36:04,182 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-09-12 02:36:04,182 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:36:05,185 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:36:06,190 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:36:07,200 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:36:08,211 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:36:09,221 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-09-12 02:36:10,232 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-09-12 02:36:10,238 - INFO - Disconnecting from 91.108.56.174:443/TcpFull...
+2026-09-12 02:36:10,239 - INFO - Disconnection from 91.108.56.174:443/TcpFull complete!
+2026-09-12 02:36:10,245 - INFO - Disconnected
+2026-09-12 02:36:10,249 - INFO - Session written back to original location

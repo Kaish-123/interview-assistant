@@ -25,6 +25,12 @@ import os
 import Quartz
 from dotenv import load_dotenv
 
+from ascii_diagram import (
+    DiagramBuffer,
+    diagram_block_line_ranges,
+    estimate_char_columns,
+)
+
 
 # ============================================================================
 # HELPER FUNCTIONS
@@ -96,6 +102,153 @@ def compress_image_png(image: Image.Image, max_size: int = 1024) -> str:
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 
+DIAGRAM_LAYOUT_INSTRUCTION = (
+    "When drawing a system design, architecture, or flowchart, put it in a "
+    "fenced code block using ASCII or box-drawing characters. Prefer a TOP-DOWN "
+    "layout (boxes stacked, vertical arrows) over a wide left-to-right layout. "
+    "Keep each diagram line under 56 characters. Never put ASCII diagrams in "
+    "wrapping paragraph text."
+)
+
+MATH_NOTATION_INSTRUCTION = (
+    "Write formulas and equations in plain, human-readable text — never LaTeX or "
+    "MathJax. Do NOT use \\text{}, \\frac{}, \\[, \\], $, or similar markup. "
+    "Use normal words and simple notation, e.g. "
+    "'Accuracy = (Correct Predictions) / (Total Predictions)' or "
+    "'Accuracy = (TP + TN) / (TP + TN + FP + FN)'. "
+    "Spell out terms (True Positives, False Negatives) instead of only TP/FN "
+    "unless you define them first."
+)
+
+
+def _read_braced_content(s: str, open_brace_idx: int) -> tuple[str, int] | None:
+    """Return (inner text, index after '}') when s[open_brace_idx] is '{'."""
+    if open_brace_idx >= len(s) or s[open_brace_idx] != "{":
+        return None
+    depth = 0
+    start = open_brace_idx + 1
+    for i in range(open_brace_idx, len(s)):
+        if s[i] == "{":
+            depth += 1
+        elif s[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return s[start:i], i + 1
+    return None
+
+
+def _humanize_math_plain(text: str) -> str:
+    """Convert common LaTeX math in prose to readable plain text."""
+    if not text or ("\\" not in text and "$" not in text):
+        return text
+
+    s = text
+    for pat in (r"\\\]", r"\\\[", r"\\\)", r"\\\(", r"\$\$"):
+        s = re.sub(pat, "", s)
+    s = re.sub(r"(?<!\$)\$(?!\$)", "", s)
+
+    while True:
+        m = re.search(r"\\frac", s)
+        if not m:
+            break
+        i = m.start()
+        j = m.end()
+        while j < len(s) and s[j].isspace():
+            j += 1
+        num_result = _read_braced_content(s, j) if j < len(s) and s[j] == "{" else None
+        if not num_result:
+            s = s[:i] + "frac " + s[i + 5 :]
+            continue
+        num, j = num_result
+        while j < len(s) and s[j].isspace():
+            j += 1
+        den_result = _read_braced_content(s, j) if j < len(s) and s[j] == "{" else None
+        if not den_result:
+            s = s[:i] + f"({_humanize_math_plain(num)}) / " + s[j:]
+            continue
+        den, j = den_result
+        repl = f"({_humanize_math_plain(num)}) / ({_humanize_math_plain(den)})"
+        s = s[:i] + repl + s[j:]
+
+    for cmd in ("text", "mathrm", "mathbf", "operatorname", "textbf", "textit"):
+        while True:
+            m = re.search(rf"\\{cmd}\b", s)
+            if not m:
+                break
+            i = m.start()
+            j = m.end()
+            while j < len(s) and s[j].isspace():
+                j += 1
+            if j < len(s) and s[j] == "{":
+                content, end = _read_braced_content(s, j)
+                s = s[:i] + content + s[end:]
+            else:
+                s = s[:i] + s[j:]
+
+    while True:
+        m = re.search(r"\\sqrt\b", s)
+        if not m:
+            break
+        i = m.start()
+        j = m.end()
+        while j < len(s) and s[j].isspace():
+            j += 1
+        if j < len(s) and s[j] == "{":
+            content, end = _read_braced_content(s, j)
+            s = s[:i] + f"sqrt({content})" + s[end:]
+        else:
+            s = s[:i] + "sqrt" + s[j:]
+
+    s = re.sub(r"_\{([^{}]+)\}", r"_\1", s)
+    s = re.sub(r"\^\{([^{}]+)\}", r"^\1", s)
+
+    for pat, repl in (
+        (r"\\times\b", " × "),
+        (r"\\cdot\b", " · "),
+        (r"\\div\b", " ÷ "),
+        (r"\\pm\b", " ± "),
+        (r"\\leq\b", " ≤ "),
+        (r"\\geq\b", " ≥ "),
+        (r"\\neq\b", " ≠ "),
+        (r"\\approx\b", " ≈ "),
+        (r"\\infty\b", " ∞ "),
+        (r"\\sum\b", " sum "),
+        (r"\\left\b", ""),
+        (r"\\right\b", ""),
+    ):
+        s = re.sub(pat, repl, s)
+
+    s = re.sub(r"\\([a-zA-Z]+)", r"\1", s)
+    s = re.sub(r"[ \t]+", " ", s)
+    s = re.sub(r" *\n *", "\n", s)
+    return s
+
+
+def humanize_math_notation(text: str) -> str:
+    """Humanize math in prose but leave fenced code blocks unchanged."""
+    if not text:
+        return text
+    parts = text.split("```")
+    for i in range(0, len(parts), 2):
+        parts[i] = _humanize_math_plain(parts[i])
+    return "```".join(parts)
+
+
+def _with_formatting_instructions(messages: list) -> list:
+    out = list(messages)
+    existing = {
+        m.get("content")
+        for m in out
+        if isinstance(m, dict) and isinstance(m.get("content"), str)
+    }
+    for instr in (DIAGRAM_LAYOUT_INSTRUCTION, MATH_NOTATION_INSTRUCTION):
+        if instr not in existing:
+            out.append({"role": "system", "content": instr})
+    return out
+
+
+def _with_diagram_instruction(messages: list) -> list:
+    return _with_formatting_instructions(messages)
 
 
 # ============================================================================
@@ -650,7 +803,7 @@ class ChatGPTAssistant:
         self.recorder = AudioRecorder()
         self.streaming = False
         self.current_response = ""
-        self.messages = [{"role": "system", "content": "You are a helpful interview assistant. Provide detailed technical answers and ask follow-up questions when appropriate."}]
+        self.messages = [{"role": "system", "content": "You are a helpful interview assistant. Provide detailed technical answers and ask follow-up questions when appropriate. Write all formulas in plain readable text, never LaTeX."}]
         self.lock = threading.Lock()
         self.last_scroll_position = 0
         self.font_size = 12
@@ -838,7 +991,7 @@ class ChatGPTAssistant:
                 mode_instruction = self.app.get_answer_mode_instruction()
                 if mode_instruction:
                     all_msgs.append({"role": "system", "content": mode_instruction})
-            return all_msgs
+            return _with_diagram_instruction(all_msgs)
         
         print(f"🔧 Optimization: {optimization_level} ({total_msgs} msgs → keeping {len(recent)})")
         
@@ -883,7 +1036,7 @@ class ChatGPTAssistant:
             if mode_instruction:
                 final_messages.append({"role": "system", "content": mode_instruction})
         
-        return final_messages
+        return _with_diagram_instruction(final_messages)
     
     def _truncate_long_message(self, msg: dict, max_chars: int = 2000) -> dict:
         """Truncate very long messages while preserving structure."""
@@ -1237,13 +1390,22 @@ class ChatGPTAssistant:
                     buffer = ""
                     last_update = time.time()
 
-                    # Insert the ANSWER header on the main thread — never scroll.
+                    # Insert the ANSWER header on the main thread — never move the viewport.
                     def _insert_answer_header():
-                        first_visible = text_widget.index("@0,0")
+                        if self.app and hasattr(self.app, "_capture_response_scroll"):
+                            anchor, _top = self.app._capture_response_scroll()
+                        else:
+                            try:
+                                anchor = text_widget.index("@0,0")
+                            except Exception:
+                                anchor = "1.0"
                         text_widget.config(state=tk.NORMAL)
                         text_widget.insert(tk.END, "------------------\nANSWER: ")
                         text_widget.config(state=tk.DISABLED)
-                        text_widget.see(first_visible)
+                        try:
+                            text_widget.see(anchor)
+                        except Exception:
+                            pass
                     text_widget.after(0, _insert_answer_header)
 
                     output_chars = 0
@@ -1288,10 +1450,16 @@ class ChatGPTAssistant:
 
                 finally:
                     self.streaming = False
+                    raw_answer = self.current_response
+                    humanized = humanize_math_notation(raw_answer)
+                    placeholder["content"] = humanized
                     button.config(state=tk.NORMAL)
                     status_label.config(text="✅ Ready")
                     if self.app:
+                        if humanized != raw_answer:
+                            self.app.after(0, lambda h=humanized: self.app._refresh_last_answer_math(h))
                         self.app.chat_manager.save_current_session(self.messages)
+                        # Diagram reflow on window resize only — not after each answer (avoids scroll jump).
                         if on_complete is not None:
                             # Delay so full answer is shown before next prompt (main thread can process UI)
                             self.app.after(600, on_complete)
@@ -1307,23 +1475,25 @@ class ChatGPTAssistant:
 
     def update_text_widget(self, text_widget, new_text_part: str):
         # Called from background streaming thread — schedule on main thread via after().
-        #
-        # Key insight: yview_moveto(fraction) uses a PROPORTIONAL position.
-        # As text is appended and the document grows longer, the same fraction points
-        # to a lower and lower line — so every insert silently scrolls the viewport down.
-        #
-        # Correct fix: save "@0,0" — the absolute text index (e.g. "42.0") of the
-        # character visible at the top-left pixel. Line numbers are absolute; line 42
-        # stays line 42 no matter how many lines are appended after it.
-        # After the insert, see(saved_index) brings that exact line back into view.
+        # Never auto-scroll: keep whatever the user is reading pinned in place.
+        app = self.app
+
         def _do_insert():
-            # Absolute index of the top-left visible character
-            first_visible = text_widget.index("@0,0")
+            if app and hasattr(app, "_capture_response_scroll"):
+                anchor, _top = app._capture_response_scroll()
+            else:
+                try:
+                    anchor = text_widget.index("@0,0")
+                except Exception:
+                    anchor = "1.0"
+            chunk = humanize_math_notation(new_text_part)
             text_widget.config(state=tk.NORMAL)
-            text_widget.insert(tk.END, new_text_part)
+            text_widget.insert(tk.END, chunk)
             text_widget.config(state=tk.DISABLED)
-            # Restore that exact line to the top of the viewport
-            text_widget.see(first_visible)
+            try:
+                text_widget.see(anchor)
+            except Exception:
+                pass
 
         text_widget.after(0, _do_insert)
 
@@ -1379,6 +1549,9 @@ class Application(tk.Tk):
         # UI Mode: "modern" or "classic"
         self.ui_mode = self.ui_prefs.get("ui_mode", "modern")
 
+        self._diagram_buffer = DiagramBuffer()
+        self._diagram_layout_job = None
+
         self.assistant = ChatGPTAssistant(app=self)
         self.prompt_manager = PromptManager()
         self.chat_manager = ChatHistoryManager()
@@ -1402,7 +1575,7 @@ class Application(tk.Tk):
             msgs = auto_session.get("messages", [])
             if isinstance(msgs, list):
                 self.assistant.messages = msgs
-                self.display_chat_history()
+                self.display_chat_history(scroll_to_end=True)
             self.status.config(text="🕑 Resumed from last auto-save session")
 
         # Bind paste to input_entry directly (not bind_all) to prevent double-paste
@@ -1457,6 +1630,7 @@ class Application(tk.Tk):
             return
 
         try:
+            anchor, _top = self._capture_response_scroll()
             self.response_box.config(state=tk.NORMAL)
             
             # Find "Live Question:" and replace everything after it on that line
@@ -1469,9 +1643,7 @@ class Application(tk.Tk):
                 self.response_box.insert(pos, f"Live Question: {text}")
             
             self.response_box.config(state=tk.DISABLED)
-            # Only follow live transcription updates if already at the bottom
-            if self.response_box.yview()[1] >= 0.99:
-                self.response_box.see(tk.END)
+            self._restore_response_scroll(anchor)
         except Exception as e:
             print(f"Live UI update error: {e}")
 
@@ -1744,6 +1916,8 @@ class Application(tk.Tk):
             try:
                 self.assistant.font_size = int(prefs["response_font_size"])
                 self.response_box.config(font=('Consolas', self.assistant.font_size))
+                self.response_box.tag_configure('diagram', font=('Consolas', self.assistant.font_size))
+                self.after(50, self.apply_response_diagrams)
             except Exception as e:
                 print("Font apply error:", e)
 
@@ -1941,9 +2115,11 @@ class Application(tk.Tk):
         }
         return instructions.get(self.answer_mode, "")
 
-    def display_chat_history(self, max_rounds=20):
+    def display_chat_history(self, max_rounds=20, *, scroll_to_end: bool = False):
         self.response_box.config(state=tk.NORMAL)
         self.response_box.delete(1.0, tk.END)
+        if scroll_to_end:
+            self._scroll_to_end_on_load = True
 
         # Normalize / skip malformed messages
         ua = []
@@ -1979,17 +2155,159 @@ class Application(tk.Tk):
                     f"\n\n---------------------------------------------------------------------\nQUESTION: {text.strip()}\n"
                 )
             elif role == "assistant":
+                text = humanize_math_notation(text)
                 self.response_box.insert(
                     tk.END,
                     f"------------------\nANSWER: {text.strip()}\n"
                 )
 
         self.response_box.config(state=tk.DISABLED)
-        self.response_box.see(tk.END)
+        self._diagram_buffer.set_unfitted_source(self.response_box.get("1.0", "end-1c"))
+        self.apply_response_diagrams(from_unfitted=True)
 
         # Re-apply any saved bookmarks for this session
         self._restore_bookmarks()
 
+        if scroll_to_end:
+            self._scroll_response_to_end()
+            # Window sizing / diagram reflow can run after first paint — scroll once more.
+            self.after(300, self._finish_startup_scroll)
+
+    def _scroll_response_to_end(self):
+        """Show the latest answer at the bottom of the chat pane."""
+        try:
+            self.response_box.see(tk.END)
+            self.response_box.update_idletasks()
+        except Exception:
+            pass
+
+    def _finish_startup_scroll(self):
+        """Final scroll after startup layout and diagram reflow settle."""
+        self._scroll_response_to_end()
+        self._scroll_to_end_on_load = False
+
+    def _response_char_columns(self) -> int:
+        """How many monospace columns currently fit in the answer pane."""
+        try:
+            self.response_box.update_idletasks()
+            width_px = int(self.response_box.winfo_width())
+        except Exception:
+            width_px = 0
+        if width_px <= 1:
+            return 64
+        try:
+            text_font = font.Font(font=self.response_box.cget("font"))
+            char_w = max(1, int(text_font.measure("0")))
+            return max(16, (width_px - 10) // char_w)
+        except Exception:
+            return estimate_char_columns(width_px, self.assistant.font_size)
+
+    def _on_response_configure(self, _event=None):
+        if self._diagram_layout_job is not None:
+            try:
+                self.after_cancel(self._diagram_layout_job)
+            except Exception:
+                pass
+        self._diagram_layout_job = self.after(160, self._debounced_diagram_layout)
+
+    def _debounced_diagram_layout(self):
+        self._diagram_layout_job = None
+        self.apply_response_diagrams()
+
+    def _capture_response_scroll(self) -> tuple[str, float]:
+        """Save the line at the top of the chat pane and its scroll fraction."""
+        try:
+            return self.response_box.index("@0,0"), float(self.response_box.yview()[0])
+        except Exception:
+            return "1.0", 0.0
+
+    def _restore_response_scroll(self, anchor: str, top_frac: float | None = None, *, full_replace: bool = False):
+        """Put the chat pane back where the user was reading."""
+        try:
+            if full_replace and top_frac is not None:
+                self.response_box.yview_moveto(top_frac)
+            else:
+                self.response_box.see(anchor)
+        except Exception:
+            pass
+
+    def _insert_response_end(self, text: str):
+        """Append to the chat log without moving the user's scroll position."""
+        anchor, _top = self._capture_response_scroll()
+        self.response_box.config(state=tk.NORMAL)
+        self.response_box.insert(tk.END, text)
+        self.response_box.config(state=tk.DISABLED)
+        self._restore_response_scroll(anchor)
+
+    def _refresh_last_answer_math(self, humanized: str):
+        """Replace the most recent ANSWER block with a fully humanized formula."""
+        marker = "------------------\nANSWER: "
+        try:
+            anchor, _top = self._capture_response_scroll()
+            body = self.response_box.get("1.0", "end-1c")
+            idx = body.rfind(marker)
+            if idx < 0:
+                return
+            start = f"1.0+{idx}c"
+            self.response_box.config(state=tk.NORMAL)
+            self.response_box.delete(start, tk.END)
+            self.response_box.insert(start, f"{marker}{humanized.strip()}\n")
+            self.response_box.config(state=tk.DISABLED)
+            self._restore_response_scroll(anchor)
+            try:
+                self.assistant.highlight_code(self.response_box)
+            except Exception:
+                pass
+        except Exception as exc:
+            print(f"Math refresh error: {exc}")
+
+    def apply_response_diagrams(self, from_unfitted: bool = False):
+        """Reflow ASCII / box-drawing flowcharts to the current window width."""
+        if not hasattr(self, "response_box"):
+            return
+        if getattr(self.assistant, "streaming", False):
+            return
+        try:
+            anchor, top_frac = self._capture_response_scroll()
+            cols = self._response_char_columns()
+            current = self.response_box.get("1.0", "end-1c")
+            if from_unfitted:
+                self._diagram_buffer.set_unfitted_source(current)
+            laid = self._diagram_buffer.apply(current, cols)
+            was_disabled = str(self.response_box.cget("state")) == "disabled"
+            self.response_box.config(state=tk.NORMAL)
+            if laid != current:
+                self.response_box.delete("1.0", tk.END)
+                self.response_box.insert("1.0", laid)
+                if getattr(self, "_scroll_to_end_on_load", False):
+                    self._scroll_response_to_end()
+                else:
+                    self._restore_response_scroll(anchor, top_frac, full_replace=True)
+            elif getattr(self, "_scroll_to_end_on_load", False):
+                self._scroll_response_to_end()
+            self._tag_diagram_blocks()
+            try:
+                self.assistant.highlight_code(self.response_box)
+            except Exception:
+                pass
+            if was_disabled:
+                self.response_box.config(state=tk.DISABLED)
+        except Exception as exc:
+            print(f"Diagram layout error: {exc}")
+
+    def _tag_diagram_blocks(self):
+        try:
+            was_disabled = str(self.response_box.cget("state")) == "disabled"
+            if was_disabled:
+                self.response_box.config(state=tk.NORMAL)
+            self.response_box.tag_remove("diagram", "1.0", tk.END)
+            text = self.response_box.get("1.0", "end-1c")
+            for start, end in diagram_block_line_ranges(text):
+                self.response_box.tag_add("diagram", f"{start + 1}.0", f"{end + 1}.end")
+            if was_disabled:
+                self.response_box.config(state=tk.DISABLED)
+        except Exception:
+            pass
 
     def setup_ui(self):
         # Create paned window for sidebar and main content
@@ -2134,7 +2452,7 @@ class Application(tk.Tk):
 
         # ====== BOOKMARK/POINTER PANEL (like debug breakpoints) ======
         # Pack FIRST (side=right) so it reserves space before response_box expands
-        self.bookmark_frame = ttk.Frame(text_frame, width=28)
+        self.bookmark_frame = ttk.Frame(text_frame, width=32)
         self.bookmark_frame.pack(side="right", fill="y", padx=(2, 0))
         self.bookmark_frame.pack_propagate(False)
         
@@ -2157,6 +2475,16 @@ class Application(tk.Tk):
         self.bookmark_listbox.pack(fill="both", expand=True)
         self.bookmark_listbox.bind("<<ListboxSelect>>", self._on_bookmark_click)
         self.bookmark_listbox.bind("<Double-Button-1>", self._on_bookmark_delete)
+        self.bookmark_listbox.bind("<Button-2>", self._show_bookmark_list_menu)
+        self.bookmark_listbox.bind("<Button-3>", self._show_bookmark_list_menu)
+        self.bookmark_listbox.bind("<Control-Button-1>", self._show_bookmark_list_menu)
+
+        ttk.Button(
+            self.bookmark_frame,
+            text="🗑",
+            width=3,
+            command=self.clear_all_bookmarks,
+        ).pack(side="bottom", pady=(2, 2))
         
         # Store bookmarks: [(line_index, question_preview), ...]
         self.bookmarks = []
@@ -2178,6 +2506,13 @@ class Application(tk.Tk):
         
         self.response_box.tag_configure('code', foreground='#4EC9B0')
         self.response_box.tag_configure('bookmark_highlight', background='#4a4a00', foreground='#ffff00')
+        self.response_box.tag_configure(
+            'diagram',
+            foreground='#E8E8E8',
+            background='#2a2a32',
+            font=('Consolas', self.assistant.font_size),
+        )
+        self.response_box.bind("<Configure>", self._on_response_configure)
         
         # Right-click context menu for bookmarking
         self.response_box.bind("<Button-2>", self._show_bookmark_menu)  # Middle click on Mac
@@ -2248,7 +2583,7 @@ class Application(tk.Tk):
         self.bookmark_btn = ttk.Button(row2, text="🔖", command=self.add_bookmark_at_cursor, width=3)
         self.bookmark_btn.pack(side="left", padx=2)
         
-        self.clear_bookmarks_btn = ttk.Button(row2, text="🗑", command=self.clear_all_bookmarks, width=3)
+        self.clear_bookmarks_btn = ttk.Button(row2, text="🗑 All", command=self.clear_all_bookmarks, width=6)
         self.clear_bookmarks_btn.pack(side="left", padx=2)
         
         # Report button
@@ -2835,15 +3170,10 @@ class Application(tk.Tk):
         self._profile_queue = list(valid_ids)
         self._profile_name = profile_name or "Profile"
         self._profile_first = True
-        self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(
-            tk.END,
+        self._insert_response_end(
             f"\n\n---------------------------------------------------------------------\n"
             f"🚀 {self._profile_name}: {len(valid_ids)} prompts (one-by-one)\n"
         )
-        self.response_box.config(state=tk.DISABLED)
-        if self.response_box.yview()[1] >= 0.99:
-            self.response_box.see(tk.END)
         self._send_next_profile_prompt()
 
     def _send_next_profile_prompt(self):
@@ -2874,11 +3204,7 @@ class Application(tk.Tk):
         else:
             self.assistant.messages.append({"role": "user", "content": combined_prompt})
         name = selected_names[0] if selected_names else sid
-        self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(tk.END, f"\n\n---- QUESTION ({name}) ----\n")
-        self.response_box.config(state=tk.DISABLED)
-        if self.response_box.yview()[1] >= 0.99:
-            self.response_box.see(tk.END)
+        self._insert_response_end(f"\n\n---- QUESTION ({name}) ----\n")
         self.chat_manager.save_current_session(self.assistant.messages)
         self.assistant.cancel_streaming()
         remaining = len(self._profile_queue)
@@ -3163,13 +3489,9 @@ class Application(tk.Tk):
         ]
 
         # UI preview
-        self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(
-            tk.END,
+        self._insert_response_end(
             "\n\n---------------------------------------------------------------------\nQUESTION: [Screenshot attached]\n"
         )
-        self.response_box.config(state=tk.DISABLED)
-        self.response_box.see(tk.END)
 
         # Add to chat history & stream
         self.assistant.messages.append({"role": "user", "content": content})
@@ -3225,13 +3547,9 @@ class Application(tk.Tk):
             c["text"] if c["type"] == "text" else "[Image]" for c in content
         )
 
-        self.response_box.config(state=tk.NORMAL)
-        self.response_box.insert(
-            tk.END,
+        self._insert_response_end(
             f"\n\n---------------------------------------------------------------------\nQUESTION: {flat_text.strip()}\n"
         )
-        self.response_box.config(state=tk.DISABLED)
-        self.response_box.see(tk.END)
 
         # Send to GPT
         if any(c["type"] == "image_url" for c in content):
@@ -3416,14 +3734,15 @@ class Application(tk.Tk):
             if not self.assistant.recorder.is_recording:
                 self.assistant.streaming = False
 
-                # Show listening + create a Live Question line
+                # Show listening + create a Live Question line (keep scroll position)
+                anchor, _top = self._capture_response_scroll()
                 self.response_box.config(state=tk.NORMAL)
                 self.response_box.insert(tk.END, "\n\n🎙 Listening to your question...\n")
                 # Remember where the live question line starts
                 self.live_question_index = self.response_box.index(tk.END)
                 self.response_box.insert(tk.END, "Live Question: ")
                 self.response_box.config(state=tk.DISABLED)
-                self.response_box.see(tk.END)
+                self._restore_response_scroll(anchor)
 
                 self.assistant.recorder.start_recording()
                 self.status.config(text="🎙 Listening to interviewer...")
@@ -3467,18 +3786,18 @@ class Application(tk.Tk):
             question = question.strip()
 
             # Clean up the "Listening..." block from UI before showing final question
+            anchor, _top = self._capture_response_scroll()
             self.response_box.config(state=tk.NORMAL)
             content = self.response_box.get("1.0", tk.END)
             listening_idx = content.rfind("🎙 Listening to your question...")
             if listening_idx != -1:
                 self.response_box.delete(f"1.0+{listening_idx}c", tk.END)
+            self.response_box.insert(
+                tk.END,
+                f"\n\n---------------------------------------------------------------------\nQUESTION: {question}\n",
+            )
             self.response_box.config(state=tk.DISABLED)
-
-            # Show the final question in UI (only once)
-            self.response_box.config(state=tk.NORMAL)
-            self.response_box.insert(tk.END, f"\n\n---------------------------------------------------------------------\nQUESTION: {question}\n")
-            self.response_box.config(state=tk.DISABLED)
-            self.response_box.see(tk.END)
+            self._restore_response_scroll(anchor)
 
             # Send to GPT (only once)
             self.assistant.messages.append({"role": "user", "content": question})
@@ -3520,6 +3839,7 @@ class Application(tk.Tk):
         self.response_box.delete(1.0, tk.END)
         self.response_box.insert(tk.END, "🤖 New conversation started...")
         self.response_box.config(state=tk.DISABLED)
+        self._diagram_buffer.reset()
         self.status.config(text="🆕 New chat started")
 
 
@@ -3533,10 +3853,14 @@ class Application(tk.Tk):
     def increase_font(self):
         self.assistant.font_size = min(24, self.assistant.font_size + 1)
         self.response_box.config(font=('Consolas', self.assistant.font_size))
+        self.response_box.tag_configure('diagram', font=('Consolas', self.assistant.font_size))
+        self.after(30, self.apply_response_diagrams)
 
     def decrease_font(self):
         self.assistant.font_size = max(8, self.assistant.font_size - 1)
         self.response_box.config(font=('Consolas', self.assistant.font_size))
+        self.response_box.tag_configure('diagram', font=('Consolas', self.assistant.font_size))
+        self.after(30, self.apply_response_diagrams)
 
     def toggle_always_on_top(self):
         self.always_on_top = not self.always_on_top
@@ -3798,9 +4122,15 @@ class Application(tk.Tk):
             if len(entry) < 2:
                 continue
             line_index, preview = str(entry[0]), str(entry[1])
-            self.bookmarks.append((line_index, preview))
+            pos = None
+            needle = preview.replace("...", "").strip()
+            if needle and not needle.startswith("📍"):
+                pos = self.response_box.search(needle[:40], "1.0", tk.END)
+            if not pos:
+                pos = line_index
+            self.bookmarks.append((pos, preview))
             self.bookmark_listbox.insert(tk.END, f"Q{len(self.bookmarks)}")
-            self._highlight_bookmark(line_index)
+            self._highlight_bookmark(pos)
 
     # ─────────────────────────────────────────────────────────────────── #
 
@@ -3946,10 +4276,30 @@ class Application(tk.Tk):
         for i, (_, _) in enumerate(self.bookmarks):
             self.bookmark_listbox.insert(tk.END, f"Q{i+1}")
     
+    def _show_bookmark_list_menu(self, event):
+        """Right-click the bookmark rail to remove one or all."""
+        menu = tk.Menu(self, tearoff=0)
+        if self.bookmarks:
+            menu.add_command(label="🗑 Remove All Bookmarks", command=self.clear_all_bookmarks)
+        else:
+            menu.add_command(label="ℹ️ No bookmarks", state="disabled")
+        try:
+            menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            menu.grab_release()
+
     def clear_all_bookmarks(self):
-        """Clear all bookmarks."""
+        """Clear all bookmarks in one go."""
         if not self.bookmarks:
             self.status.config(text="ℹ️ No bookmarks to clear")
+            return
+
+        n = len(self.bookmarks)
+        if not messagebox.askyesno(
+            "Remove all bookmarks",
+            f"Remove all {n} bookmark{'s' if n != 1 else ''} from this chat?",
+            parent=self,
+        ):
             return
         
         # Remove all highlights
@@ -3966,7 +4316,7 @@ class Application(tk.Tk):
         self._current_bookmark_index = -1
         self._save_current_bookmarks()   # persist the empty list
 
-        self.status.config(text="🗑 All bookmarks cleared")
+        self.status.config(text=f"🗑 All {n} bookmarks cleared")
     
     def auto_bookmark_question(self, question_text: str):
         """
@@ -4032,6 +4382,8 @@ class Application(tk.Tk):
         
         menu.add_separator()
         menu.add_command(label="📋 Show All Questions", command=self._show_all_questions_dialog)
+        if self.bookmarks:
+            menu.add_command(label="🗑 Remove All Bookmarks", command=self.clear_all_bookmarks)
 
         # ── Copy question + images for use in other AI tools ─────────────
         if nearest_q:

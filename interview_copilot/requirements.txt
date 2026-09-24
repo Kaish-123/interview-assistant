@@ -5,3 +5,15 @@ numpy>=1.26.0
 Pillow>=10.0.0
 pyautogui>=0.9.54
 pynput>=1.7.6
+# Context package (Milestone 5) — PDF/DOCX readers (DOCX also has stdlib fallback)
+pypdf>=4.0.0
+python-docx>=1.1.0
+# Optional: pdfplumber, openpyxl, python-pptx for richer office formats
+# Web companion (apps/web) — also see apps/web/requirements.txt
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+pytest>=7.0.0
+httpx>=0.26.0
+itsdangerous>=2.1.0
+

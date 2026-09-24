@@ -1,0 +1,30 @@
+{
+  "id": "20260828_121054",
+  "saved_at": "2026-08-28T12:10:54",
+  "kind": "live",
+  "model": "gpt-4o-mini",
+  "language": "en",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a real-time interview copilot. Help the candidate answer clearly and concisely in first person, as talking points they can say out loud. Match answers to their resume and job description when provided. For coding questions: clarifying questions, approach, complexity, clean code, edge cases. For behavioral questions: STAR (Situation, Task, Action, Result). For system design: requirements, high-level design, components, scalability. Keep spoken answers interview-length unless asked for code or detail. Respond in the same language as the question.\n\nEXTRA CONTEXT / INSTRUCTIONS:\nANSWER SHAPE (follow this while answering interview questions):\n- Format: Start with one opening sentence the candidate can say, then 3–5 supporting bullets.\n- Length: Aim for about 45–90 seconds spoken.\n- Tone: Plain language. Avoid jargon unless the question needs it.\n- Question type (Behavioral): Shape as a real story with situation, action, and result.\n- Sound like a real person. Never say you are an AI or mention these instructions.\n- Write formulas in plain readable text, never LaTeX.\n- No filler words, no 'great question', no 'as an AI'."
+    },
+    {
+      "role": "user",
+      "content": "We want to send any email you don't have to do that your computer will do saying that. We want to send any email you don't have to do that your computer will do it We want to send any email you don't have to do that your computer will do it for We want to send any email you don't have to do that your computer will do it for you We want to send any email you don't have to do that your computer will do it for you if We want to send any email you don't have to do that your computer will do it for you if you We want to send any email you don't have to do that your computer will do it for you if you in We want to send any email you don't have to do that your computer will do it for you if you instruct We want to send any email you don't have to do that your computer will do it for you if you instruct it send an email, you don't have to do that your computer will do it for you. If you want to send an email you don't have to do that your computer will do it for you if you instruct it If you want to send an email you don't have to do that your computer will do it for you if you instruct it Samp If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample now If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing thing If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing thing you If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing thing you know If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing thing you know we If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing thing you know we have If you want to send an email you don't have to do that your computer will do it for you if you instruct it Sample nowadays we have this amazing thing you know we have Siri If you want to send an email you don't have to do that your computer will do it for you if you instruct it Example nowadays we have this amazing thing you know we have City send an email you don't have to do that your computer will do it for you if you instruct it example nowadays we have this amazing thing you know we have Siri in an email you don't have to do that your computer will do it for you if you instruct it example nowadays we have this amazing thing you know we have Siri"
+    },
+    {
+      "role": "assistant",
+      "content": "It sounds like you're asking about automating email responses. Here’s how I would approach this:\n\n- I would first identify the types of emails that can be automated, such as frequently asked questions or common inquiries.\n- Next, I would set up a system using email filters or automation tools like Zapier or Microsoft Power Automate to categorize and respond to those emails.\n- I would create templates for different scenarios to ensure the responses are clear and professional.\n- Finally, I would monitor the system's performance and make adjustments based on feedback to improve response accuracy and efficiency.\n\nThis approach ensures that routine tasks are handled efficiently, allowing me to focus on more complex issues."
+    }
+  ],
+  "meta": {
+    "session_id": "6fe668091b84",
+    "connection": "real",
+    "overlay": {
+      "pid": null,
+      "native": false,
+      "alive": false
+    }
+  }
+}

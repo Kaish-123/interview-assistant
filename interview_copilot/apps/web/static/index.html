@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interview Copilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <aside class="dash-nav" id="dash-nav">
+      <div class="dash-brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Interview Copilot</span>
+        <button type="button" class="icon-btn" id="btn-nav-collapse" title="Collapse sidebar">☰</button>
+      </div>
+      <p class="nav-label">Workspace</p>
+      <button type="button" class="nav-item active" data-mode="sessions" id="nav-sessions">
+        <span>Call Sessions</span>
+        <span class="nav-live hidden" id="nav-live-pill"><span class="live-dot"></span> Call Live</span>
+      </button>
+      <button type="button" class="nav-item" data-mode="resumes" id="nav-resumes">CVs &amp; Resumes</button>
+      <button type="button" class="nav-item" data-mode="documents" id="nav-documents">Documents</button>
+      <button type="button" class="nav-item" data-mode="studio" id="nav-studio">Studio</button>
+      <p class="nav-label">Support</p>
+      <a class="nav-item" href="/" target="_blank" rel="noreferrer">Getting started</a>
+      <div class="plan-card">
+        <p class="plan-title">Local workspace</p>
+        <p class="plan-copy">Sessions, resumes, and transcripts stay on this computer. No credits.</p>
+      </div>
+      <div class="dash-nav-foot">
+        <button type="button" class="nav-item" id="btn-open-desktop" title="Open the floating overlay after a session starts">Open floating overlay</button>
+        <button type="button" class="nav-item" id="btn-logout-nav">Log out</button>
+        <div class="user-chip" id="user-chip">
+          <span class="user-avatar" id="user-avatar">IC</span>
+          <span>
+            <span class="user-name" id="user-name">Guest</span>
+            <span class="user-email" id="user-email"></span>
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="topbar">
+        <nav class="mode-tabs" role="tablist">
+          <button type="button" class="mode-tab active" data-mode="sessions" id="tab-sessions">Sessions</button>
+          <button type="button" class="mode-tab" data-mode="studio" id="tab-studio">Studio</button>
+          <button type="button" class="mode-tab" data-mode="live" id="tab-live">Live</button>
+        </nav>
+        <div class="topbar-status">
+          <button type="button" class="btn ghost" id="btn-privacy-global" title="Hide overlay from screen share">Hide from share</button>
+          <span id="conn-status" class="pill pill-warn">Checking…</span>
+          <span id="model-pill" class="pill">—</span>
+          <span class="account-chip hidden" id="account-chip">
+            <span id="account-email"></span>
+            <button type="button" class="btn ghost" id="btn-logout">Sign out</button>
+          </span>
+        </div>
+      </header>
+
+      <!-- SESSIONS DASHBOARD -->
+      <main id="view-sessions" class="view sessions-view">
+        <div class="sessions-head">
+          <div>
+            <h1>Call Sessions</h1>
+            <p class="lede">Prepare for calls and review past sessions.</p>
+          </div>
+          <button type="button" class="btn primary" id="btn-create-session">+ Create Session</button>
+        </div>
+        <div class="sessions-toolbar">
+          <div class="filter-tabs" role="tablist">
+            <button type="button" class="filter-tab active" data-filter="all">All</button>
+            <button type="button" class="filter-tab" data-filter="live">Active</button>
+            <button type="button" class="filter-tab" data-filter="ended">Ended</button>
+          </div>
+          <span class="session-count" id="session-count">0 Sessions</span>
+        </div>
+        <div class="sessions-search-row">
+          <input type="search" id="session-search" placeholder="Search by title or description" />
+          <div class="view-toggle">
+            <button type="button" class="icon-btn active" id="btn-view-grid" title="Grid">▦</button>
+            <button type="button" class="icon-btn" id="btn-view-list" title="List">☰</button>
+          </div>
+        </div>
+        <div id="session-grid" class="session-grid"></div>
+        <div id="session-empty" class="empty-state">
+          <p>No sessions yet. Create one to hear the interviewer from a call tab or your mic, then generate answers.</p>
+        </div>
+      </main>
+
+      <!-- LIBRARY -->
+      <main id="view-library" class="view library-view hidden">
+        <div class="sessions-head">
+          <div>
+            <h1 id="library-title">CVs &amp; Resumes</h1>
+            <p class="lede">Files you attach here can be added when you create a session.</p>
+          </div>
+          <label class="btn primary">
+            + Upload
+            <input type="file" id="library-file" hidden accept=".pdf,.txt,.md,.docx,.doc" />
+          </label>
+        </div>
+        <div id="library-list" class="library-list"></div>
+      </main>
+
+      <!-- STUDIO -->
+      <main id="view-studio" class="view studio-view hidden">
+        <aside class="sidebar" id="studio-sidebar">
+          <section class="side-block">
+            <div class="side-head">
+              <h2>Prompts</h2>
+              <button type="button" class="icon-btn" id="btn-add-tab" title="Add tab">+</button>
+            </div>
+            <div id="prompt-tree" class="prompt-tree"></div>
+          </section>
+          <section class="side-block">
+            <div class="side-head">
+              <h2>Profiles</h2>
+            </div>
+            <div id="profile-list" class="list"></div>
+            <button type="button" class="btn ghost full" id="btn-default-interview">Default interview</button>
+          </section>
+          <section class="side-block grow">
+            <div class="side-head">
+              <h2>Chats</h2>
+              <button type="button" class="icon-btn" id="btn-new-chat" title="New chat">↻</button>
+            </div>
+            <div id="chat-list" class="list"></div>
+          </section>
+        </aside>
+
+        <section class="chat-panel">
+          <div class="toolbar">
+            <button type="button" class="btn" id="btn-listen" title="` start listening · ` again stop and answer">Listen</button>
+            <button type="button" class="btn ghost" id="btn-stop" title="Cancel stream">Stop</button>
+            <button type="button" class="btn ghost" id="btn-screen" title="Capture screen">Screen</button>
+            <button type="button" class="btn ghost" id="btn-attach" title="Attach document">Attach</button>
+            <input type="file" id="file-attach" hidden multiple accept=".pdf,.txt,.md,.docx,.doc,.py,.js,.ts,.java,.cpp,.c,.h,.json,.csv" />
+            <div class="toolbar-sep"></div>
+            <button type="button" class="btn ghost" id="btn-cycle-mode" title="Answer mode">Mode</button>
+            <button type="button" class="btn ghost" id="btn-fast" title="Fast / Full context">Full</button>
+            <select id="select-model" class="select" title="Model"></select>
+            <button type="button" class="btn ghost" id="btn-bookmark" title="Bookmark last Q">★</button>
+            <button type="button" class="btn ghost" id="btn-font-down" title="Smaller">A−</button>
+            <button type="button" class="btn ghost" id="btn-font-up" title="Larger">A+</button>
+            <button type="button" class="btn ghost" id="btn-save-chat" title="Save named chat">Save</button>
+          </div>
+          <div id="messages" class="messages" aria-live="polite"></div>
+          <div id="status-line" class="status-line">Ready</div>
+          <div class="composer">
+            <textarea id="input" rows="2" placeholder="Ask or paste a question… Enter to send · Shift+Enter newline · paste images"></textarea>
+            <button type="button" class="btn primary" id="btn-send">Send</button>
+          </div>
+          <div id="pending-images" class="pending-images"></div>
+        </section>
+
+        <aside class="bookmarks-panel" id="bookmarks-panel">
+          <h2>Bookmarks</h2>
+          <div id="bookmark-list" class="list"></div>
+        </aside>
+      </main>
+
+      <!-- LIVE -->
+      <main id="view-live" class="view live-view hidden">
+        <div class="live-setup" id="live-setup">
+          <div class="setup-card">
+            <h1>Start Live session</h1>
+            <p class="lede">Hears the interviewer from Zoom, Meet, Teams, Webex, YouTube, or a browser tab — then auto-answers so you can just follow along.</p>
+            <div class="audio-grant" id="audio-grant">
+              <p class="audio-grant-title">Hear the interviewer (required)</p>
+              <p class="muted" id="audio-setup-hint">Allow the microphone — the same permission Mock uses. It hears YouTube or a call playing on this computer. Pick BlackHole in the browser prompt if you have it.</p>
+              <label>Audio source
+                <select id="audio-source">
+                <option value="mic" selected>Microphone (hears YouTube / call like Mock)</option>
+                <option value="call">Meeting / tab share (optional)</option>
+                </select>
+              </label>
+              <button type="button" class="btn primary" id="btn-grant-audio">Allow microphone</button>
+              <p class="audio-grant-status" id="audio-grant-status">Not connected</p>
+            </div>
+            <label>Resume / background
+              <textarea id="live-resume" rows="4" placeholder="Paste resume text…"></textarea>
+            </label>
+            <label>Job description
+              <textarea id="live-jd" rows="3" placeholder="Paste JD…"></textarea>
+            </label>
+            <label>Extra instructions
+              <textarea id="live-extra" rows="2" placeholder="Tone, role focus…"></textarea>
+            </label>
+            <div class="setup-row">
+              <label>Language
+                <select id="live-lang">
+                  <option value="en">English</option>
+                  <option value="hi">Hindi</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="zh">Chinese</option>
+                  <option value="ja">Japanese</option>
+                  <option value="auto">Auto</option>
+                </select>
+              </label>
+              <label>Model
+                <select id="live-model"></select>
+              </label>
+            </div>
+            <div class="setup-actions">
+              <button type="button" class="btn primary" id="btn-start-live">Open Live overlay</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-stage hidden has-room" id="live-stage">
+          <div class="live-room live-room-single" id="live-room">
+            <div id="overlay-dock" class="live-right-dock">
+              <div class="overlay-window" id="overlay-window">
+                <div class="overlay-chrome">
+                  <span class="overlay-title">Live Assist</span>
+                  <div class="wave-wrap compact">
+                    <canvas id="live-wave" width="640" height="56"></canvas>
+                    <p class="wave-label" id="live-wave-label">Waiting for audio…</p>
+                  </div>
+                  <div class="overlay-chrome-actions">
+                    <span class="pill" id="live-timer">0m</span>
+                    <button type="button" class="btn ghost" id="btn-live-fullscreen">Fullscreen</button>
+                    <button type="button" class="btn ghost" id="btn-live-disconnect">Disconnect</button>
+                    <button type="button" class="icon-btn" id="btn-overlay-opacity" title="Dim overlay">◐</button>
+                    <button type="button" class="icon-btn" id="btn-end-live" title="End session">×</button>
+                  </div>
+                </div>
+                <div class="overlay-controls">
+                  <button type="button" class="btn primary" id="btn-live-listen" title="Listen, then press ` or this button again to stop and answer">Listen</button>
+                  <button type="button" class="btn" id="btn-live-auto" data-on="0">Auto off</button>
+                  <button type="button" class="btn ghost" id="btn-overlay-float" title="Pop out and hide from screen share">Float</button>
+                  <button type="button" class="btn ghost" id="btn-overlay-privacy" title="Hide overlay from screen share">Hide from share</button>
+                  <button type="button" class="btn ghost" id="btn-live-screen">Screen</button>
+                  <button type="button" class="btn ghost" id="btn-live-notes">Notes</button>
+                  <button type="button" class="btn ghost" id="btn-live-prefs">Prefs</button>
+                  <button type="button" class="btn ghost" id="btn-live-mode">Mode</button>
+                  <button type="button" class="btn ghost" id="btn-live-fast">Full</button>
+                  <button type="button" class="btn ghost" id="btn-overlay-clickthrough" title="Clicks pass through the overlay. Hover the top bar or press Esc to turn off.">Click-through off</button>
+                  <button type="button" class="btn ghost hidden" id="btn-mock-next">Next mock question</button>
+                  <select id="live-room-lang" class="select" title="Language">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="zh">Chinese</option>
+                    <option value="ja">Japanese</option>
+                    <option value="auto">Auto</option>
+                  </select>
+                  <label class="opacity-ctl" title="Overlay opacity">
+                    <span>Opacity</span>
+                    <input type="range" id="overlay-opacity" min="20" max="100" value="85" />
+                  </label>
+                </div>
+                <div class="live-hearing" id="live-question-caption">
+                  <span class="caption-kicker">Hearing</span>
+                  <p id="live-caption-text">Waiting for the interviewer…</p>
+                </div>
+                <div id="live-answer" class="live-log live-answer" role="log" aria-live="polite">
+                  <article class="qa-block q">
+                    <div class="qa-kicker">Question</div>
+                    <p id="live-transcript-body" class="qa-body">Captions appear as the interviewer speaks.</p>
+                  </article>
+                  <div class="qa-idle">Questions and answers stay in this pane. Press Listen, then ` again to stop and answer.</div>
+                </div>
+                <div class="live-qna-foot">
+                  <div class="live-composer">
+                    <input type="text" id="live-input" placeholder="Type a manual message…" />
+                    <button type="button" class="btn" id="btn-live-send">Send</button>
+                    <button type="button" class="btn ghost" id="btn-live-answer" title="Answer the current question again">Answer again</button>
+                  </div>
+                  <div id="live-status" class="status-line">Ready — allow mic, then Listen. Press ` to stop and answer.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside class="notes-drawer hidden" id="notes-drawer">
+            <h2>Post-call notes</h2>
+            <pre id="notes-body"></pre>
+            <button type="button" class="btn" id="btn-close-notes">Close</button>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="share-safe-cover" class="share-safe-cover hidden" aria-hidden="true">
+    <div class="share-safe-card">
+      <p class="share-safe-kicker">Interview Copilot</p>
+      <h2>Overlay hidden from screen share</h2>
+      <p>Keep this tab open. The floating overlay listens to meeting audio and stays hidden from screen share.</p>
+      <p id="share-safe-hint" class="hint">Share the meeting window/tab (with audio) if you want the browser path too. The overlay also captures system audio on Mac/Windows.</p>
+      <button type="button" class="btn primary" id="btn-privacy-show">Show overlay in this tab</button>
+    </div>
+  </div>
+
+  <!-- Create Session -->
+  <div class="modal-root hidden" id="modal-create" role="dialog" aria-labelledby="create-title">
+    <div class="modal-card modal-wide">
+      <header class="modal-head">
+        <h2 id="create-title">Create Session</h2>
+        <button type="button" class="icon-btn modal-close" data-close="modal-create">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="field-row">
+          <label>Session Type</label>
+          <div class="seg" id="create-kind">
+            <button type="button" class="seg-btn active" data-kind="interview">Interview</button>
+            <button type="button" class="seg-btn" data-kind="regular">Regular Call</button>
+          </div>
+        </div>
+        <div id="create-interview-fields">
+          <label>Company
+            <input type="text" id="create-company" placeholder="Acme…" />
+          </label>
+          <label>Interview post URL (optional — paste, we do not scrape)
+            <input type="url" id="create-url" placeholder="https://…" />
+          </label>
+          <label>Interview Description
+            <textarea id="create-desc" rows="3" placeholder="Software Engineer versed in Python, SQL, and AWS…"></textarea>
+          </label>
+        </div>
+        <div id="create-regular-fields" class="hidden">
+          <label>Call Title (optional)
+            <input type="text" id="create-title-input" placeholder="Feature request discussion…" />
+          </label>
+          <label>Description (optional)
+            <textarea id="create-regular-desc" rows="3" placeholder="Discussing Q4 targets…"></textarea>
+          </label>
+        </div>
+        <p class="section-label">Context</p>
+        <div class="dash-add-row">
+          <button type="button" class="dash-add" id="btn-add-resume">+ Resume</button>
+          <button type="button" class="dash-add" id="btn-add-docs">+ Documents</button>
+          <button type="button" class="dash-add" id="btn-add-instructions">+ Instructions</button>
+        </div>
+        <input type="file" id="create-resume-file" hidden accept=".pdf,.txt,.md,.docx,.doc" />
+        <input type="file" id="create-docs-file" hidden multiple accept=".pdf,.txt,.md,.docx,.doc" />
+        <textarea id="create-instructions" class="hidden" rows="3" placeholder="How the assistant should behave…"></textarea>
+        <p class="muted" id="create-context-status"></p>
+        <p class="section-label">Output Settings</p>
+        <div class="output-row">
+          <button type="button" class="pill-select" id="btn-open-prefs">Answer Preferences</button>
+          <select id="create-model" class="select"></select>
+          <select id="create-lang" class="select">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
+        </div>
+        <p class="section-label">Behavior</p>
+        <label class="check"><input type="checkbox" id="create-auto" /> Auto Answer</label>
+        <label class="check"><input type="checkbox" id="create-save" checked /> Save Transcript</label>
+      </div>
+      <footer class="modal-foot">
+        <button type="button" class="btn ghost" data-close="modal-create">Close</button>
+        <button type="button" class="btn primary" id="btn-submit-create">Create Session</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Choose session type: real vs mock -->
+  <div class="modal-root hidden" id="modal-kind" role="dialog">
+    <div class="modal-card">
+      <header class="modal-head center">
+        <h2>Choose a Session Type</h2>
+        <button type="button" class="icon-btn modal-close" data-close="modal-kind">×</button>
+      </header>
+      <p class="modal-sub">Connect to a real interview, or practice with your microphone.</p>
+      <div class="choice-grid">
+        <div class="choice-card">
+          <h3>Real Session</h3>
+          <p>Connect to your actual interview by sharing the call tab and enabling Share audio.</p>
+          <button type="button" class="btn primary full" id="btn-select-real">Select Real</button>
+        </div>
+        <div class="choice-card">
+          <h3>Mock Session <span class="badge">Practice</span></h3>
+          <p>Practice with your mic. We ask sample questions — no credits, no time limit.</p>
+          <button type="button" class="btn full" id="btn-select-mock">Select Mock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Choose platform -->
+  <div class="modal-root hidden" id="modal-platform" role="dialog">
+    <div class="modal-card modal-narrow">
+      <header class="modal-head center">
+        <h2>Choose Platform</h2>
+        <button type="button" class="icon-btn modal-close" data-close="modal-platform">×</button>
+      </header>
+      <p class="modal-sub">How would you like to connect to your call session?</p>
+      <button type="button" class="btn primary full stacked" id="btn-platform-desktop">Floating overlay (desktop)</button>
+      <button type="button" class="btn full stacked" id="btn-platform-browser">Open in Browser</button>
+      <button type="button" class="linkish" id="btn-platform-diff">What’s the difference?</button>
+    </div>
+  </div>
+
+  <div class="modal-root hidden" id="modal-diff" role="dialog">
+    <div class="modal-card modal-narrow">
+      <header class="modal-head">
+        <h2>What’s the difference?</h2>
+        <button type="button" class="icon-btn modal-close" data-close="modal-diff">×</button>
+      </header>
+      <p>Browser stays on this page. After you allow the mic — or share a call tab with audio — the live room hears the interviewer.</p>
+      <p>Floating overlay opens a separate Live Assist window you can hide from screen share. On Mac, other-app audio still needs BlackHole; Chrome tab share with Share audio works without it.</p>
+      <button type="button" class="btn primary" data-close="modal-diff">Got it</button>
+    </div>
+  </div>
+
+  <!-- Answer preferences -->
+  <div class="modal-root hidden" id="modal-prefs" role="dialog">
+    <div class="modal-card modal-split">
+      <header class="modal-head">
+        <h2>Answer Preferences</h2>
+        <button type="button" class="icon-btn modal-close" data-close="modal-prefs">×</button>
+      </header>
+      <div class="prefs-grid">
+        <div class="prefs-left">
+          <p class="muted">Pick a preference to change how answers are shaped. You can change these anytime, including mid-call.</p>
+          <p class="section-label">How should answers be presented?</p>
+          <label class="pref-card"><input type="radio" name="pref-format" value="full_script" /> <span><strong>Full script</strong><br />An answer you can read word for word.</span></label>
+          <label class="pref-card"><input type="radio" name="pref-format" value="script_bullets" checked /> <span><strong>Script + bullets</strong><br />Opening line, then supporting bullets.</span></label>
+          <label class="pref-card"><input type="radio" name="pref-format" value="bullets" /> <span><strong>Bullet points</strong><br />Short bullets you can say in your own words.</span></label>
+          <label class="check"><input type="checkbox" id="pref-star" /> Enable STAR Method</label>
+          <label class="check"><input type="checkbox" id="pref-filler" /> Use filler words</label>
+          <div class="setup-row">
+            <label>Length
+              <select id="pref-length">
+                <option value="concise">Concise</option>
+                <option value="balanced" selected>Balanced</option>
+                <option value="detailed">Detailed</option>
+              </select>
+            </label>
+            <label>Tone
+              <select id="pref-tone">
+                <option value="simple" selected>Simple</option>
+                <option value="professional">Professional</option>
+                <option value="conversational">Conversational</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="prefs-right">
+          <label>Question Type
+            <select id="pref-qtype">
+              <option value="behavioral">Behavioral</option>
+              <option value="coding">Coding (LeetCode-style)</option>
+              <option value="experience">Experience check</option>
+              <option value="how_do_you">How-do-you</option>
+              <option value="situational">Situational</option>
+              <option value="system_design">System design</option>
+              <option value="technical">Technical knowledge</option>
+              <option value="tell_me">Tell me about yourself</option>
+            </select>
+          </label>
+          <p class="section-label">Answer Preview</p>
+          <div class="preview-box" id="pref-preview"></div>
+        </div>
+      </div>
+      <footer class="modal-foot">
+        <button type="button" class="btn ghost" data-close="modal-prefs">Back</button>
+        <button type="button" class="btn primary" id="btn-save-prefs">Save</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/audio.js"></script>
+  <script src="/static/js/question.js"></script>
+  <script src="/static/js/privacy.js"></script>
+  <script src="/static/js/sessions.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

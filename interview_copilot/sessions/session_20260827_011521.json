@@ -1,0 +1,45 @@
+{
+  "id": "20260827_011521",
+  "saved_at": "2026-08-27T01:15:21",
+  "kind": "live",
+  "model": "gpt-4o-mini",
+  "language": "en",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a real-time interview copilot. Help the candidate answer clearly and concisely in first person, as talking points they can say out loud. Match answers to their resume and job description when provided. For coding questions: clarifying questions, approach, complexity, clean code, edge cases. For behavioral questions: STAR (Situation, Task, Action, Result). For system design: requirements, high-level design, components, scalability. Keep spoken answers interview-length unless asked for code or detail. Respond in the same language as the question.\n\nEXTRA CONTEXT / INSTRUCTIONS:\nANSWER SHAPE (follow this while answering interview questions):\n- Format: Start with one opening sentence the candidate can say, then 3–5 supporting bullets.\n- Length: Aim for about 45–90 seconds spoken.\n- Tone: Plain language. Avoid jargon unless the question needs it.\n- Question type (Behavioral): Shape as a real story with situation, action, and result.\n- Sound like a real person. Never say you are an AI or mention these instructions.\n- Write formulas in plain readable text, never LaTeX.\n- No filler words, no 'great question', no 'as an AI'.\n\nThis is a practice session. Treat the user's spoken answers as the candidate. When asked to play interviewer, ask one realistic question at a time."
+    },
+    {
+      "role": "user",
+      "content": "Walk me through a recent project you owned end to end."
+    },
+    {
+      "role": "assistant",
+      "content": "In my last role, I led a project to develop a customer feedback system for our product.\n\n- The situation was that we were receiving inconsistent feedback through various channels, making it hard to analyze and act on it effectively.\n- My task was to create a centralized system that would streamline the feedback collection process and provide actionable insights.\n- I started by gathering requirements from stakeholders and researching existing solutions. Then, I designed the system architecture and collaborated with the development team to build it.\n- I implemented features like real-time feedback collection, categorization, and reporting dashboards to visualize trends.\n- As a result, we saw a 30% increase in feedback submissions and improved our response time to customer issues, which significantly enhanced customer satisfaction.\n\nOverall, this project not only improved our feedback process but also strengthened our relationship with our customers."
+    },
+    {
+      "role": "user",
+      "content": "Walk me through a recent project you owned end to end."
+    },
+    {
+      "role": "assistant",
+      "content": "In my previous position, I managed a project to implement an automated inventory management system.\n\n- The situation was that our manual inventory tracking was leading to frequent stockouts and overstock situations, impacting sales and customer satisfaction.\n- My task was to design and implement a solution that would automate inventory tracking and provide real-time updates.\n- I began by analyzing our current processes and gathering input from the sales and warehouse teams to understand their needs. After that, I researched potential software solutions and chose one that fit our requirements.\n- I led the implementation, coordinating with the IT team to integrate the new system with our existing software. I also conducted training sessions for staff to ensure a smooth transition.\n- As a result, we reduced stock discrepancies by 40% and improved order fulfillment times, which directly contributed to a 15% increase in sales over the next quarter.\n\nThis project not only streamlined our operations but also enhanced our overall customer experience."
+    },
+    {
+      "role": "user",
+      "content": "Tell me about a time you disagreed with a teammate on a technical choice."
+    },
+    {
+      "role": "assistant",
+      "content": "In a recent project, I had a disagreement with a teammate regarding the choice of a database for our application.\n\n- The situation arose during the design phase when my teammate advocated for a NoSQL database due to its scalability, while I believed a relational database would better suit our data structure and transaction requirements.\n- My task was to express my concerns while ensuring we reached a consensus that would benefit the project.\n- I initiated a discussion where I presented my reasoning, focusing on the specific needs of our application, such as complex queries and data integrity. I backed my argument with examples of similar projects where relational databases excelled.\n- We decided to conduct a small proof of concept for both database types to evaluate their performance against our requirements.\n- Ultimately, the results showed that a relational database was more effective for our use case, and we moved forward with that choice. This not only strengthened our technical decision-making process but also fostered a collaborative approach in our team.\n\nThe experience taught me the importance of open communication and data-driven decision-making in resolving disagreements."
+    }
+  ],
+  "meta": {
+    "session_id": "f474e9bf937d",
+    "connection": "mock",
+    "overlay": {
+      "pid": null,
+      "native": false
+    }
+  }
+}

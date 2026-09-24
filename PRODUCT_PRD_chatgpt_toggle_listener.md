@@ -174,31 +174,31 @@ macOS desktop interview copilot: capture interviewer audio (BlackHole/mic) or ty
 Ship a **modular** desktop app that correctly implements:
 
 ### Must-have (P0)
-- [ ] Config from `.env` + typed settings (sample rate, devices, models)
-- [ ] Audio: BlackHole + mic modes, record/stop, WAV, level meter
-- [ ] STT: final Whisper on stop (retries); **live STT optional but recommended**
-- [ ] Streaming GPT answers into chat UI with cancel/stop
-- [ ] Model selector (at least 4o / 4o-mini)
-- [ ] Answer mode: default / quick / detailed / code
-- [ ] Load resume/JD/docs into system context (PDF/DOCX/TXT/code minimum)
-- [ ] Text chat input + Enter / Shift+Enter
-- [ ] Paste image + screenshot analyze (`--` or hotkey)
-- [ ] Chat autosave + resume last session + new chat
-- [ ] Prompt tabs/subtabs load from `tabs.json` + click-to-send
-- [ ] Default interview / Quick Setup one-by-one apply
-- [ ] Always-on-top + font size
-- [ ] Core global hotkeys: listen `` ` ``, stop `~`, screenshot `!`, upload, mic toggle
-- [ ] Package layout: `audio`, `stt`, `llm`, `context`, `session`, `ui` (no monolith)
-- [ ] README: BlackHole setup, `.env`, run instructions
-- [ ] Unit tests: message build / extract text / session save-load
+- [x] Config from `.env` + typed settings (sample rate, devices, models)
+- [x] Audio: BlackHole + mic modes, record/stop, WAV, level meter
+- [x] STT: final Whisper on stop (retries); **live STT optional but recommended**
+- [x] Streaming GPT answers into chat UI with cancel/stop
+- [x] Model selector (at least 4o / 4o-mini)
+- [x] Answer mode: default / quick / detailed / code
+- [x] Load resume/JD/docs into system context (PDF/DOCX/TXT/code minimum)
+- [x] Text chat input + Enter / Shift+Enter
+- [x] Paste image + screenshot analyze (`--` or hotkey)
+- [x] Chat autosave + resume last session + new chat
+- [x] Prompt tabs/subtabs load from `tabs.json` + click-to-send
+- [x] Default interview / Quick Setup one-by-one apply
+- [x] Always-on-top + font size
+- [x] Core global hotkeys: listen `` ` ``, stop `~`, screenshot `!`, upload, mic toggle
+- [x] Package layout: `audio`, `stt`, `llm`, `context`, `session`, `ui` (no monolith)
+- [x] README: BlackHole setup, `.env`, run instructions
+- [x] Unit tests: message build / extract text / session save-load
 
 ### Should-have in Phase 1 if time (P1)
-- [ ] Fast/Full optimization + background summary
+- [x] Fast/Full optimization (+ background summary later)
 - [ ] Performance diagnostics dialog
-- [ ] Bookmarks + persist
-- [ ] Chat prune / rename / delete
-- [ ] Setup profiles + order editor
-- [ ] UI prefs geometry/sash restore
+- [x] Bookmarks + persist
+- [x] Chat prune / rename / delete
+- [x] Setup profiles (order editor: via profiles store / double-click apply)
+- [x] UI prefs geometry/sash restore
 - [ ] Native AppKit file/folder picker
 
 ### Phase 1 acceptance criteria

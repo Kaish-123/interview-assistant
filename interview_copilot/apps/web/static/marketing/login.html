@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in · Interview Copilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/site.css" />
+</head>
+<body class="auth-page">
+  <div>
+    <a class="brand" href="/" style="justify-content:center;margin-bottom:18px;display:flex">
+      <span class="brand-mark"></span>
+      Interview Copilot
+    </a>
+    <div class="auth-card">
+      <div id="view-start">
+        <h1>Sign in to Interview Copilot</h1>
+        <button type="button" class="btn btn-black btn-wide" id="btn-google">Continue with Google</button>
+        <div class="or">OR</div>
+        <button type="button" class="btn btn-ghost btn-wide" id="btn-email">Continue with Email</button>
+        <p class="auth-note" style="margin-top:18px">Stay signed in on this browser. Signing in on another browser of the same type replaces this session.</p>
+      </div>
+
+      <div id="view-email" class="hidden">
+        <a href="#" id="back-start">←</a>
+        <h1>What’s your email address?</h1>
+        <input class="auth-input" id="email" type="email" autocomplete="email" placeholder="Enter email address" />
+        <button type="button" class="btn btn-black btn-wide" id="btn-send-code">Continue with Email</button>
+        <p class="error" id="email-error"></p>
+        <a class="back" href="#" id="back-login-1">Back to login</a>
+      </div>
+
+      <div id="view-code" class="hidden">
+        <a href="#" id="back-email">←</a>
+        <div class="envelope">✉</div>
+        <h1>Check your email</h1>
+        <p class="auth-note" id="code-copy">We sent a login link to your inbox. Open it on this device, or type the code from that email below.</p>
+        <div class="otp" id="otp">
+          <input maxlength="1" inputmode="numeric" />
+          <input maxlength="1" inputmode="numeric" />
+          <input maxlength="1" inputmode="numeric" />
+          <input maxlength="1" inputmode="numeric" />
+          <input maxlength="1" inputmode="numeric" />
+          <input maxlength="1" inputmode="numeric" />
+        </div>
+        <p class="auth-note" id="dev-code"></p>
+        <p class="error" id="code-error"></p>
+        <p class="auth-note">Didn’t receive your code? <a href="#" id="resend">Resend</a></p>
+        <a class="back" href="#" id="back-login-2">Back to login</a>
+      </div>
+      <p class="error" id="page-error"></p>
+    </div>
+  </div>
+  <script src="/static/js/login.js"></script>
+</body>
+</html>

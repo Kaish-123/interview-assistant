@@ -3111,7 +3111,7 @@ class Application(tk.Tk):
 
         # ====== BOOKMARK/POINTER PANEL (like debug breakpoints) ======
         # Pack FIRST (side=right) so it reserves space before response_box expands
-        self.bookmark_frame = ttk.Frame(text_frame, width=28)
+        self.bookmark_frame = ttk.Frame(text_frame, width=32)
         self.bookmark_frame.pack(side="right", fill="y", padx=(2, 0))
         self.bookmark_frame.pack_propagate(False)
         
@@ -3134,6 +3134,16 @@ class Application(tk.Tk):
         self.bookmark_listbox.pack(fill="both", expand=True)
         self.bookmark_listbox.bind("<<ListboxSelect>>", self._on_bookmark_click)
         self.bookmark_listbox.bind("<Double-Button-1>", self._on_bookmark_delete)
+        self.bookmark_listbox.bind("<Button-2>", self._show_bookmark_list_menu)
+        self.bookmark_listbox.bind("<Button-3>", self._show_bookmark_list_menu)
+        self.bookmark_listbox.bind("<Control-Button-1>", self._show_bookmark_list_menu)
+
+        ttk.Button(
+            self.bookmark_frame,
+            text="🗑",
+            width=3,
+            command=self.clear_all_bookmarks,
+        ).pack(side="bottom", pady=(2, 2))
         
         # Store bookmarks: [(line_index, question_preview), ...]
         self.bookmarks = []
@@ -3225,7 +3235,7 @@ class Application(tk.Tk):
         self.bookmark_btn = ttk.Button(row2, text="🔖", command=self.add_bookmark_at_cursor, width=3)
         self.bookmark_btn.pack(side="left", padx=2)
         
-        self.clear_bookmarks_btn = ttk.Button(row2, text="🗑", command=self.clear_all_bookmarks, width=3)
+        self.clear_bookmarks_btn = ttk.Button(row2, text="🗑 All", command=self.clear_all_bookmarks, width=6)
         self.clear_bookmarks_btn.pack(side="left", padx=2)
         
         # Report button
@@ -5122,10 +5132,30 @@ class Application(tk.Tk):
         for i, (_, _) in enumerate(self.bookmarks):
             self.bookmark_listbox.insert(tk.END, f"Q{i+1}")
     
+    def _show_bookmark_list_menu(self, event):
+        """Right-click the bookmark rail to remove one or all."""
+        menu = tk.Menu(self, tearoff=0)
+        if self.bookmarks:
+            menu.add_command(label="🗑 Remove All Bookmarks", command=self.clear_all_bookmarks)
+        else:
+            menu.add_command(label="ℹ️ No bookmarks", state="disabled")
+        try:
+            menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            menu.grab_release()
+
     def clear_all_bookmarks(self):
-        """Clear all bookmarks."""
+        """Clear all bookmarks in one go."""
         if not self.bookmarks:
             self.status.config(text="ℹ️ No bookmarks to clear")
+            return
+
+        n = len(self.bookmarks)
+        if not messagebox.askyesno(
+            "Remove all bookmarks",
+            f"Remove all {n} bookmark{'s' if n != 1 else ''} from this chat?",
+            parent=self,
+        ):
             return
         
         # Remove all highlights
@@ -5142,7 +5172,7 @@ class Application(tk.Tk):
         self._current_bookmark_index = -1
         self._save_current_bookmarks()   # persist the empty list
 
-        self.status.config(text="🗑 All bookmarks cleared")
+        self.status.config(text=f"🗑 All {n} bookmarks cleared")
     
     def auto_bookmark_question(self, question_text: str):
         """
@@ -5208,6 +5238,8 @@ class Application(tk.Tk):
         
         menu.add_separator()
         menu.add_command(label="📋 Show All Questions", command=self._show_all_questions_dialog)
+        if self.bookmarks:
+            menu.add_command(label="🗑 Remove All Bookmarks", command=self.clear_all_bookmarks)
 
         # ── Copy question + images for use in other AI tools ─────────────
         if nearest_q:

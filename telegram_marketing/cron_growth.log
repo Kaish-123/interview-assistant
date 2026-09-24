@@ -612,3 +612,36 @@ telethon.errors.rpcerrorlist.AuthKeyDuplicatedError: The authorization key (sess
 2026-08-05 01:54:22,146 - INFO - CRON JOB: Growth Started
 2026-08-05 01:54:22,146 - INFO - ==================================================
 2026-08-05 01:54:22,146 - INFO - Startup stagger: waiting 106s to avoid session collision with send job...
+2026-08-11 21:08:59,203 - INFO - ==================================================
+2026-08-11 21:08:59,204 - INFO - CRON JOB: Growth Started
+2026-08-11 21:08:59,204 - INFO - ==================================================
+2026-08-11 21:08:59,204 - INFO - Startup stagger: waiting 121s to avoid session collision with send job...
+2026-08-26 09:05:19,998 - INFO - ==================================================
+2026-08-26 09:05:19,998 - INFO - CRON JOB: Growth Started
+2026-08-26 09:05:19,999 - INFO - ==================================================
+2026-08-26 09:05:19,999 - INFO - Startup stagger: waiting 104s to avoid session collision with send job...
+2026-08-26 09:07:03,557 - INFO - ==================================================
+2026-08-26 09:07:03,558 - INFO - CRON JOB: Growth Started
+2026-08-26 09:07:03,558 - INFO - ==================================================
+2026-08-26 09:07:03,558 - INFO - Startup stagger: waiting 143s to avoid session collision with send job...
+2026-08-26 09:09:20,343 - INFO - ==================================================
+2026-08-26 09:09:20,344 - INFO - CRON JOB: Growth Started
+2026-08-26 09:09:20,344 - INFO - ==================================================
+2026-08-26 09:09:20,344 - INFO - Startup stagger: waiting 139s to avoid session collision with send job...
+2026-08-26 09:11:39,460 - INFO - Current targets: 28
+2026-08-26 09:11:39,474 - INFO - Connecting to 91.108.56.174:443/TcpFull...
+2026-08-26 09:11:39,476 - WARNING - Attempt 1 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:11:40,480 - WARNING - Attempt 2 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:11:41,495 - WARNING - Attempt 3 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:11:42,499 - WARNING - Attempt 4 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:11:43,509 - WARNING - Attempt 5 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:11:44,515 - WARNING - Attempt 6 at connecting failed: OSError: [Errno 101] Network is unreachable
+2026-08-26 09:11:45,522 - ERROR - Fatal error: Connection to Telegram failed 5 time(s)
+2026-08-27 09:05:36,478 - INFO - ==================================================
+2026-08-27 09:05:36,479 - INFO - CRON JOB: Growth Started
+2026-08-27 09:05:36,479 - INFO - ==================================================
+2026-08-27 09:05:36,479 - INFO - Startup stagger: waiting 135s to avoid session collision with send job...
+2026-09-12 00:52:41,724 - INFO - ==================================================
+2026-09-12 00:52:41,724 - INFO - CRON JOB: Growth Started
+2026-09-12 00:52:41,724 - INFO - ==================================================
+2026-09-12 00:52:41,724 - INFO - Startup stagger: waiting 142s to avoid session collision with send job...

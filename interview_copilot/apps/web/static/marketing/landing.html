@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interview Copilot — Real-time AI call assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/site.css" />
+</head>
+<body>
+  <header class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Interview Copilot
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="btn" href="/login">Sign in</a>
+        <a class="btn btn-black" href="/login?next=/app">Try for Free</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <h1>Your real-time<br>AI call assistant</h1>
+      <p>Get the right answer while you’re still talking — interviews, sales calls, and meetings where freezing up isn’t an option.</p>
+      <div class="hero-actions">
+        <a class="btn btn-green" href="/login?next=/app">Try Interview Copilot for Free →</a>
+        <a class="btn btn-ghost" href="#features">See how it works</a>
+      </div>
+      <div class="proof-row">
+        <span>Studio + Live in the browser</span>
+        <span><b>Your OpenAI key</b> · local sessions</span>
+        <span>macOS + Windows · web companion</span>
+      </div>
+      <div class="hero-stage" aria-hidden="true">
+        <div class="hero-stage-inner">
+          <aside class="hero-side">
+            <h3>Call Sessions</h3>
+            <div class="fake-row"><span>Studio</span><span class="pill-live">Ready</span></div>
+            <div class="fake-row"><span>Live overlay</span><span>Listen</span></div>
+            <div class="fake-row"><span>Documents</span><span>PDF / DOCX</span></div>
+            <div class="fake-row"><span>Prompts</span><span>Tabs</span></div>
+          </aside>
+          <div class="hero-main">
+            <div class="fake-row"><b>Live</b><span class="pill-live">Listening…</span><span>Auto Answer</span></div>
+            <p style="color:#9ca3af;font-size:13px;margin:18px 0 8px">Question</p>
+            <p style="margin:0 0 16px">Walk me through how DNS works when I type a URL.</p>
+            <p style="color:#9ca3af;font-size:13px;margin:0 0 8px">Answer</p>
+            <p style="margin:0">Resolve the name, open a connection, request the page, then render. Subresources use their own connections.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap center">
+      <h2>Everything you need,<br>mid-conversation</h2>
+      <p class="lede muted">Code, speech, and answers, handled live while the call is still happening.</p>
+      <div class="grid-2">
+        <article class="card">
+          <div class="feature-visual"><div class="mini"><code>def longest_unique(s): …</code><p class="muted" style="margin:8px 0 0">Coding support in Studio</p></div></div>
+          <h3>Full coding support</h3>
+          <p class="muted">Listens for technical questions, reads a screenshot of the problem, and talks the approach through with you.</p>
+        </article>
+        <article class="card">
+          <div class="feature-visual"><div class="mini"><b>Blazing transcription</b><p class="muted">Whisper STT with retries, then a streaming answer.</p></div></div>
+          <h3>Speech to answer</h3>
+          <p class="muted">Stop listening and get a streamed reply. Live mode can auto-detect a pause and answer for you.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="privacy">
+    <div class="wrap two-col">
+      <div>
+        <h2>Your <span class="green">private</span> advantage</h2>
+        <p class="muted">Real-time answers on your machine. We build honest privacy controls — not process hiding, cursor spoofing, or “undetectable” marketing.</p>
+        <ul class="privacy-list" id="privacy-tabs">
+          <li class="active" data-tab="share"><span class="num">01</span> Screen share safe</li>
+          <li data-tab="dock"><span class="num">02</span> Dock / taskbar hidden</li>
+          <li data-tab="click"><span class="num">03</span> Click-through overlay</li>
+        </ul>
+        <a class="btn btn-ghost" href="/app">Open Live overlay</a>
+      </div>
+      <div class="demo-card">
+        <div class="demo-window" id="privacy-demo">
+          <p><b>Hide from share</b></p>
+          <p class="muted">The Live overlay can be excluded from screen capture on Mac and Windows so your interviewer sees the call — not the copilot chrome.</p>
+        </div>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:28px">
+      <p class="muted center">Works alongside Zoom, Meet, Teams, and browser-based coding pads. You still follow the rules of the call.</p>
+      <div class="compat">
+        <span>Zoom</span><span>Microsoft Teams</span><span>Google Meet</span><span>Webex</span><span>CoderPad</span><span>HackerRank</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="journey">
+    <div class="wrap center">
+      <h2>Before, during, <span class="green">and after</span> the call.</h2>
+      <p class="lede muted">Interview Copilot knows your material and handles the session from setup to notes.</p>
+      <div class="grid-2">
+        <article>
+          <div class="feature-visual">
+            <div class="mini">
+              <div style="display:flex;justify-content:space-between;padding:8px 0">Language <span class="muted">English</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;background:#f3f4f6;border-radius:10px;padding:8px">Auto Answer <span class="toggle"></span></div>
+              <div style="padding:8px 0">Edit session</div>
+            </div>
+          </div>
+          <p class="muted">01</p>
+          <h3>Auto Answer</h3>
+          <p class="muted">Detects a pause after a question and suggests an answer, so you’re never staring at a blank pane.</p>
+        </article>
+        <article>
+          <div class="feature-visual">
+            <div class="mini"><b>Meeting started?</b><p class="muted">Start a Live session from the browser when you’re on the call.</p><span class="btn btn-black" style="margin-top:8px">Start Session</span></div>
+          </div>
+          <p class="muted">02</p>
+          <h3>Live session setup</h3>
+          <p class="muted">Resume, job description, extra notes, language, and model — then float the overlay.</p>
+        </article>
+        <article>
+          <div class="feature-visual">
+            <div class="mini"><span class="muted">Mar 14, 2026</span><p><b>React TLDR</b> <span class="green">✓ Uploaded</span></p><span class="muted">PDF · 1.1 MB</span></div>
+          </div>
+          <p class="muted">03</p>
+          <h3>Documents</h3>
+          <p class="muted">Upload briefs, notes, or playbooks to reference live during your call.</p>
+        </article>
+        <article>
+          <div class="feature-visual">
+            <div class="mini"><b>AI Notes</b><p class="muted">Key points, action items, and decisions after every Live session.</p></div>
+          </div>
+          <p class="muted">04</p>
+          <h3>AI Notes</h3>
+          <p class="muted">Summarize the call when you’re done — still stored locally with your session files.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <div class="wrap center">
+      <a class="btn btn-green" href="/login?next=/app">Try for Free →</a>
+      <p class="muted">No credit card required</p>
+      <h2 style="margin-top:48px"><span class="green">Transparent</span> pricing options</h2>
+      <p class="lede muted">Use your own OpenAI key. Sessions stay on this machine. Same Studio and Live answers either way.</p>
+      <div class="seg" id="price-seg">
+        <button type="button" class="on" data-plan="key">Bring your key</button>
+        <button type="button" data-plan="local">Local first</button>
+      </div>
+      <div class="grid-3" style="text-align:left;margin-top:28px">
+        <article class="card">
+          <h3>Studio</h3>
+          <div class="price">Included</div>
+          <p><span class="check">✓</span>Streaming answers</p>
+          <p><span class="check">✓</span>Prompt tabs & chats</p>
+          <p><span class="check">✓</span>Docs & screenshots</p>
+          <a class="btn btn-ghost btn-wide" href="/login?next=/app">Open Studio</a>
+        </article>
+        <article class="card popular">
+          <h3 class="green">Live</h3>
+          <div class="price">Included</div>
+          <p><span class="check">✓</span>Floating overlay</p>
+          <p><span class="check">✓</span>Auto-answer loop</p>
+          <p><span class="check">✓</span>Hide from share (Mac)</p>
+          <a class="btn btn-black btn-wide" href="/login?next=/app">Open Live</a>
+        </article>
+        <article class="card">
+          <h3>Your models</h3>
+          <div class="price">BYOK</div>
+          <p><span class="check">✓</span>OpenAI GPT models</p>
+          <p><span class="check">✓</span>Whisper transcription</p>
+          <p><span class="check">✓</span>No copilot subscription</p>
+          <a class="btn btn-ghost btn-wide" href="/login">Sign in</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="anywhere">
+    <div class="wrap">
+      <div class="center">
+        <h2>Your advantage, <span class="green">anywhere</span></h2>
+        <p class="lede muted">Desktop app, web, or phone browser. Same packages under the hood.</p>
+      </div>
+      <div class="platform-hero">
+        <div>
+          <h3>Native desktop + web</h3>
+          <p>The desktop app and this web companion share audio, STT, LLM, context, and session packages. No switching products.</p>
+          <a class="btn btn-green" href="/app">Open web app</a>
+        </div>
+        <div class="dark-ui">
+          <p>Answer · Screenshot · Chat</p>
+          <p class="muted">Listen · hide from share · click-through with a control strip that always stays clickable (⌘ on Mac, Ctrl on Windows)</p>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:22px">
+        <article class="card">
+          <h3>Works in your browser</h3>
+          <p class="muted">Access Interview Copilot instantly. Mic + screen capture via the browser.</p>
+          <a class="btn btn-black" href="/login?next=/app">Try for Free</a>
+        </article>
+        <article class="card">
+          <h3>Works on your phone</h3>
+          <p class="muted">Same web app, usable on iOS and Android browsers for review and chat.</p>
+          <a class="btn btn-ghost" href="/login">Sign in</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="wrap faq">
+      <div>
+        <h2>Frequently asked <span class="green">questions</span></h2>
+        <div class="faq-cats" id="faq-cats">
+          <button type="button" class="on" data-cat="features">Features</button>
+          <button type="button" data-cat="privacy">Privacy</button>
+          <button type="button" data-cat="account">Account</button>
+        </div>
+        <p class="muted">Couldn’t find what you were looking for?</p>
+      </div>
+      <div id="faq-list"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="ethics">Interview Copilot is built for conversations where AI assistance is <b style="color:#111">permitted</b>. Sales calls, internal meetings, mock calls, language practice, self-study. <b style="color:#111">Check the rules first.</b> If your company, school, or caller says no, respect it.</p>
+    </div>
+  </section>
+
+  <section class="footer-cta">
+    <div class="wrap">
+      <h2>Ready to answer every question?</h2>
+      <p class="muted">Sign in with Google or email. No credit card required.</p>
+      <a class="btn btn-green" href="/login?next=/app">Try for Free</a>
+    </div>
+  </section>
+
+  <footer class="wrap site-footer">
+    <span>Interview Copilot · local-first web companion</span>
+    <span><a href="#privacy">Privacy</a> · <a href="#pricing">Pricing</a> · <a href="/login">Sign in</a></span>
+  </footer>
+  <script src="/static/js/site.js"></script>
+</body>
+</html>

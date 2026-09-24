@@ -1,0 +1,61 @@
+{
+  "id": "20260828_001955",
+  "saved_at": "2026-08-28T00:19:55",
+  "kind": "live",
+  "model": "gpt-4o-mini",
+  "language": "en",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a real-time interview copilot. Help the candidate answer clearly and concisely in first person, as talking points they can say out loud. Match answers to their resume and job description when provided. For coding questions: clarifying questions, approach, complexity, clean code, edge cases. For behavioral questions: STAR (Situation, Task, Action, Result). For system design: requirements, high-level design, components, scalability. Keep spoken answers interview-length unless asked for code or detail. Respond in the same language as the question.\n\nJOB DESCRIPTION:\na\n\nEXTRA CONTEXT / INSTRUCTIONS:\nCompany / team: a\n\nANSWER SHAPE (follow this while answering interview questions):\n- Format: Start with one opening sentence the candidate can say, then 3–5 supporting bullets.\n- Length: Aim for about 45–90 seconds spoken.\n- Tone: Plain language. Avoid jargon unless the question needs it.\n- Question type (Behavioral): Shape as a real story with situation, action, and result.\n- Sound like a real person. Never say you are an AI or mention these instructions.\n- Write formulas in plain readable text, never LaTeX.\n- No filler words, no 'great question', no 'as an AI'."
+    },
+    {
+      "role": "user",
+      "content": "let's try it out. So what I will do is I will open my R"
+    },
+    {
+      "role": "assistant",
+      "content": ""
+    },
+    {
+      "role": "user",
+      "content": "let's try it out so what I will do is I will open my IIDLE and in that so this is your prompt"
+    },
+    {
+      "role": "assistant",
+      "content": "It seems like you might be preparing to demonstrate something in your IDE. Could you clarify what specific task or question you need help with? This way, I can assist you more effectively."
+    },
+    {
+      "role": "user",
+      "content": "try it out so what I will do is I will open my IDLE and in that so this is your prompt okay so this is your prompt this is where you will type your code now you know before going for the actual code we have a question here why do we code and why do we write a code now think about this"
+    },
+    {
+      "role": "assistant",
+      "content": "I believe coding is essential because it allows us to create solutions to problems and automate tasks. Here are a few key points on why we code:\n\n- **Problem Solving**: Coding helps us break down complex problems into manageable parts and develop logical solutions.\n- **Automation**: It allows us to automate repetitive tasks, saving time and reducing errors.\n- **Innovation**: Through coding, we can innovate and create new applications, tools, and technologies that improve lives.\n- **Communication**: Code serves as a universal language that enables collaboration among developers across the globe.\n- **Learning and Growth**: Writing code encourages critical thinking and continuous learning, as technology is always evolving.\n\nIn summary, coding is a powerful tool that empowers us to turn ideas into reality and improve efficiency in various domains."
+    },
+    {
+      "role": "user",
+      "content": "We are the We are living in a world where everybody We are living in a world where everything is done with the help of"
+    },
+    {
+      "role": "assistant",
+      "content": "We are living in a world where everything is done with the help of technology and software. Here are a few points"
+    },
+    {
+      "role": "user",
+      "content": "We are living in a world where everything is done with the help of computers, right? Example, if you want to send an SMS, if you."
+    },
+    {
+      "role": "assistant",
+      "content": "We are living in a world where everything is done with the help of computers. For example, if I want to send an SMS, I simply use my phone, which relies on complex software and network systems to deliver my message instantly. Here are a few more examples:\n\n- **Communication**: Beyond SMS, we use emails, video calls, and social media, all powered by software that connects us globally.\n- **Work**: Many tasks, from data analysis to project management, are managed through various applications that enhance productivity.\n- **Entertainment**: Streaming services and gaming platforms rely on coding to deliver content seamlessly to users.\n- **Healthcare**: Technology assists in patient monitoring, data management, and even telemedicine, improving access to care.\n- **Transportation**: Navigation apps and ride-sharing services utilize algorithms and data to optimize routes and connect drivers with passengers.\n\nIn essence, computers and software are integral to our daily lives, making tasks easier and more efficient."
+    }
+  ],
+  "meta": {
+    "session_id": "2407ad99d6b1",
+    "connection": "real",
+    "overlay": {
+      "pid": null,
+      "native": false
+    }
+  }
+}
